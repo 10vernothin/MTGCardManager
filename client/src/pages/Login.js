@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 class Login extends Component {
-  
+
   constructor(props){
       super(props);
       this.state = {
@@ -14,10 +14,10 @@ class Login extends Component {
                 value: ''
               }
           },
-		  postResponse: ''
+      postResponse: '',
       }
   }
-
+      
   handleSubmit = async e => {
     e.preventDefault();
     const response = await fetch('/api/login/submit-form', {
@@ -28,7 +28,12 @@ class Login extends Component {
 	  body: JSON.stringify(this.state)
     });
     const body = await response.text();
-    this.setState({ postResponse: body});
+    if (body === "Username or Password incorrect.") {
+      this.setState({ postResponse: body});
+    } else {
+        this.props.history.push("/collections");
+    }
+    
   };
   
   changeHandler = event => {
@@ -75,7 +80,7 @@ class Login extends Component {
                 <Link to={'./'}><button type= "button">Home</button></Link>
               </div>
           <p>{this.state.postResponse}</p>
-          </form>      
+          </form>   
       );
   }
 

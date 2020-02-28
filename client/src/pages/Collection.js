@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-class List extends Component {
+class Collection extends Component {
   // Initialize the state
   constructor(props){
     super(props);
@@ -17,7 +17,7 @@ class List extends Component {
 
   // Retrieves the list of items from the Express app
   getList = () => {
-    fetch('/api/getList')
+    fetch('/api/getCollection')
     .then(res => res.json())
     .then(list => this.setState({ list }))
   }
@@ -42,14 +42,14 @@ class List extends Component {
           </div>
         ) : (
           <div>
-            <h2>No Users Found</h2>
+            <h2>No Collection Found. =(</h2>
           </div>
         )
       }
-            <Link to={'./'}><button type= "button">Back to Homepage</button></Link>
+            <Link to={'./'}><button type= "button">Exit</button></Link>
       </div>
     );
   }
 }
 
-export default List;
+export default Collection;
