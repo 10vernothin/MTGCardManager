@@ -4,35 +4,28 @@ var router = express.Router();
 var _db = require('../database/database');
 var pgdb = _db.getConnectionInstance();
 
-/*check logged in session*/
-router.get('/api/request-session', function(req,res,next) {
-    console.log({Logged: _db.isLoggedIn(), User: _db.loggedUser()});
-    res.send({Logged:_db.isLoggedIn(), LoggedUser: _db.loggedUser()});
-});
-
 /* login handling */
 router.post('/api/login/submit-form', function(req, res, next) {
-    //console.log(req.body.formControls.name.value);
-    pgdb.any(
-              "SELECT * from users where username = $1 AND pwd = $2", 
-              [req.body.formControls.name.value, req.body.formControls.password.value]
-            ).then(
-      function(data) {
-        console.log('Login query completed.' + data.length);
-        if (data.length == 0) {
-          console.log("Login Not found.")
-          res.send("Username or Password incorrect.");
-        } else {
-          loggeduser = data[0].username;
-          _db.login(loggeduser);
-          res.send(data[0].username);
-        }
+  console.log("Login Form Submitted");
+  pgdb.any(
+            "SELECT * from users where username = $1 AND pwd = $2", 
+            [req.body.formControls.name.value, req.body.formControls.password.value]
+          ).then(
+    function(data) {
+      console.log('Login query completed.' + data.length);
+      if (data.length == 0) {
+        console.log("Login Not found.")
+        res.send("Username or Password incorrect.");
+      } else {
+        loggeduser = data[0].username;
+        res.send(data[0].username);
       }
-    ).catch (
-      error => {
-        console.log('ERROR:', error);
-      }
-    )
+    }
+  ).catch (
+    error => {
+      console.log('ERROR:', error);
+    }
+  )
 });
 
 /* new user handling */

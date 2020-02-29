@@ -6,24 +6,10 @@ import List from './pages/List';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Collection from './pages/Collection';
-import {LoggedInContext} from './tools/LoggedIn';
+import SessionInfo from './tools/ContentData';
+
 
 class App extends Component {
-	
-	constructor(props) {
-		super(props);
-		this.requestSession =  async () => {
-			let response =  await fetch('/api/request-session');
-			let body =  await response.text();
-			if (!(JSON.stringify(body).Logged ==null)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-
-	
 
 	render() {
 		const App = () => (
@@ -31,12 +17,27 @@ class App extends Component {
 		<Router>
 			<Switch>
 				<Route exact path='/' component={Home}/>
-				<Route path='/list' component={List}/>
-				<Route path='/login' component={Login}/>
-				<Route path='/signup' component={Signup}/>
-				<Route path='/collections' render = {() => {
-					 this.requestSession().then( (res) => {
-					 if (res === true) { return (<Collection/>) } else { return (<Redirect to="/login"/>)}})}}/>	  
+				<Route exact path='/list' component={List}/>
+				<Route exact path='/login' render = {() =>{
+						if (SessionInfo.isAuth) {
+							return(<Redirect to='/collections'/>);
+						} else {
+							alert("login");
+							return(<Route path= '/login' component = {Login}/>);
+						}
+					}
+				}/>
+				<Route exact path='/signup' component={Signup}/>		
+				<Route exact path='/collections' render = {
+					() => {	
+						if (!SessionInfo.isAuth){
+							return (<Redirect to='/login'/>)
+						}else {
+							return (<Route path= '/collections' component = {Collection}/>);
+						}}		
+				}
+				/>
+					  
 			</Switch>
 		</Router>
 		</div>
@@ -50,5 +51,4 @@ class App extends Component {
 		);
 	}
 }
-App.contextType = LoggedInContext;
 export default App;

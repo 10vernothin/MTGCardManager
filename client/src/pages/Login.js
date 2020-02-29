@@ -1,55 +1,51 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import {HomeButton, SignupButton} from '../elements/Buttons.js';
+import SessionInfo from '../tools/ContentData.js';
 
 class Login extends Component {
 
   constructor(props){
       super(props);
       this.state = {
-          formControls: {
-              name: {
-                value: ''
-              },
-              password: {
-                value: ''
-              }
-          },
-      postResponse: '',
+          formControls: { name: { value: '' },password: { value: ''}},
+          postResponse: ''
       }
   }
-      
-  handleSubmit = async e => {
+
+  handleSubmit = e => {
     e.preventDefault();
-    const response = await fetch('/api/login/submit-form', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-	  body: JSON.stringify(this.state)
-    });
-    const body = await response.text();
-    if (body === "Username or Password incorrect.") {
-      this.setState({ postResponse: body});
-    } else {
-        this.props.history.push("/collections");
-    }
-    
-  };
-  
+    fetch('/api/login/submit-form', 
+            { 
+              method: 'POST', 
+              headers: { 'Content-Type': 'application/json'},
+              body: JSON.stringify(this.state)
+            }
+          )
+    .then((res) =>
+    {
+      return res.text();
+    })
+    .then((body) => {
+      if (body === "Username or Password incorrect.")
+      {
+        this.setState({ postResponse: body});    
+      } else {
+        SessionInfo.isAuth = true;
+        SessionInfo.LoginUser = body;
+        this.props.history.push('./collections');
+      }});
+  }
+
   changeHandler = event => {
-      
       const name = event.target.name;
       const value = event.target.value;
-    
       this.setState({
         formControls: {
             ...this.state.formControls,
             [name]: {
             ...this.state.formControls[name],
             value
-          }
-        }
-      });
+      }}});
   }
 
   render() {
@@ -76,10 +72,10 @@ class Login extends Component {
               />
               <div>
                 <button type="submit">Submit</button>
-                <Link to={'./signup'}><button type= "button">Create New Account</button></Link>
-                <Link to={'./'}><button type= "button">Home</button></Link>
+                <HomeButton/>
+                <SignupButton/>
               </div>
-          <p>{this.state.postResponse}</p>
+          {this.state.postResponse}
           </form>   
       );
   }
