@@ -1,0 +1,50 @@
+This database uses PostgreSQL and the following tables:
+
+/*This table represent the list of all users currently using the app*/
+table users (
+	ID SERIAL NOT NULL UNIQUE,
+	EMAIL CITEXT NOT NULL UNIQUE,
+	USERNAME VARCHAR(100) NOT NULL UNIQUE,
+	PWD VARCHAR(100) NOT NULL,
+	PRIMARY KEY(ID)
+	)
+
+/*the table represents the list of all the collections that are available, can be seen as a header*/
+table collection_list (
+	ID SERIAL NOT NULL UNIQUE,
+	NAME VARCHAR(100) NOT NULL,
+	PLAYER_ID INTEGER REFERENCES users(ID),
+	UNIQUE(NAME, PLAYER_ID),
+	PRIMARY KEY(ID
+	)
+
+/*this table represents the list of all cards in Magic the Gathering will be updated every so often through 
+scryfall API (Scryfall recommends only using their endpoint to update a cache)*/
+table cards ( 
+	ID INTEGER NOT NULL,
+	NAME VARCHAR(100),
+	SET VARCHAR(5) NOT NULL,
+	SET_ID VARCHAR(10) NOT NULL,
+	MANA_COST VARCHAR(20) NOT NULL DEFAULT 0,
+	CMC INTEGER NOT NULL DEFAULT 0,
+	PRICE NUMERIC(10,2) DEFAULT 0.00,
+	IMG_LNK VARCHAR(200),
+	PRIMARY KEY(id),
+	UNIQUE(SET, SET_ID)
+	)
+
+/*
+This table represents the cards in all collections. This table can potentially take the most space as it can grow up to the size of
+size_of(cards)*size(collection_list). As such, the column-bytes are minimized, and the full table will be programmatically called on render.
+*/
+table collection (
+	ID SERIAL INTEGER NOT NULL,
+	CARD_ID INTEGER REFERENCES cards(id),
+	COLLECTION_LIST_ID INTEGER
+	REFERENCES collection_list(id),
+	AMT NUMERIC CHECK (AMT >=0),
+	PRIMARY KEY(ID),
+	UNIQUE(COLLECTION_LIST_ID, CARD_ID)
+	)
+	
+	

@@ -41,5 +41,10 @@ class LoginButton extends Component {
   }
 }
 
+class CreateCollectionButton extends Component {
+  render() {
+    return (<Link to={'./collections/?create-new-collection'}><button type= "button">Login</button></Link>);
+  }
+}
 
-export { HomeButton, SignupButton, SignoutButton, CollectionButton, LoginButton };
+export { HomeButton, SignupButton, SignoutButton, CollectionButton, LoginButton, CreateCollectionButton};

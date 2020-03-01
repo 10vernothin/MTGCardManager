@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 
-class AddButton extends Component {
+class EntryButton extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -10,7 +10,7 @@ class AddButton extends Component {
     }
     render() {
         return(
-            <button disabled = {this.activated}>+</button>
+            <button disabled = {this.activated}>Select</button>
         );
     }
 }
@@ -47,7 +47,7 @@ class CollectionTable extends Component {
                 return(
                   <div>
                     {item}
-                    <AddButton/>
+                    <EntryButton/>
                   </div>
                 );
               })}
