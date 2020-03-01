@@ -8,6 +8,7 @@ import Signup from './pages/Signup';
 import Collection from './pages/Collection';
 import SessionInfo from './tools/ContentData';
 
+SessionInfo.initializeSession();
 
 class App extends Component {
 
@@ -17,22 +18,25 @@ class App extends Component {
 		<Router>
 			<Switch>
 				<Route exact path='/' component={Home}/>
-				<Route exact path='/list' component={List}/>
-				<Route exact path='/login' render = {() =>{
-						if (SessionInfo.isAuth) {
+				<Route path='/list' component={List}/>
+				<Route path='/login' render = {() =>{
+						if (SessionInfo.getSessionStatus()) {
+							//alert("collections");
 							return(<Redirect to='/collections'/>);
 						} else {
-							alert("login");
+							//alert("login");
 							return(<Route path= '/login' component = {Login}/>);
 						}
 					}
 				}/>
-				<Route exact path='/signup' component={Signup}/>		
-				<Route exact path='/collections' render = {
+				<Route path='/signup' component={Signup}/>		
+				<Route path='/collections' render = {
 					() => {	
-						if (!SessionInfo.isAuth){
+						if (!SessionInfo.getSessionStatus()){
+							//alert("LOGIN");
 							return (<Redirect to='/login'/>)
 						}else {
+							//alert("COLLECTIONS");
 							return (<Route path= '/collections' component = {Collection}/>);
 						}}		
 				}

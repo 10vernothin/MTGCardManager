@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import SessionInfo from '../tools/ContentData.js';
 
 class HomeButton extends Component {
     render() {
@@ -15,21 +16,30 @@ class SignupButton extends Component {
 }
 
 class SignoutButton extends Component {
-    //Button that links to the Sign-Up page
-    constructor(props) {
-        super(props);
-        this.state = {
-            disable: true
-        }
-    }
+    //Button that Signs out and returns to homepage
 
     signout = () => {
-        fetch('/api/logout');
+        alert("Signing out");
+        SessionInfo.resetSession();
     }
-    
+
     render() {
-      return(<button type= "button" onClick = {this.signout()} disabled={this.state.disable}>Sign Out.</button>);
+      return(<Link to={'./'}><button type= "button" onClick = {() => this.signout()}>Sign Out</button></Link>);
     } 
 }
 
-export { HomeButton, SignupButton, SignoutButton };
+class CollectionButton extends Component {
+  //Button that links to the Sign-Up page
+  render() {
+    return (<Link to={'./collections'}><button type= "button">Your Collections</button></Link>);
+  }
+}
+
+class LoginButton extends Component {
+  render() {
+    return (<Link to={'./login'}><button type= "button">Login</button></Link>);
+  }
+}
+
+
+export { HomeButton, SignupButton, SignoutButton, CollectionButton, LoginButton };

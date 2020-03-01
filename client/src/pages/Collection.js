@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import {HomeButton, SignoutButton} from '../elements/Buttons.js';
+import SessionInfo from '../tools/ContentData.js';
+import CollectionTable from '../elements/CollectionTable';
 
 class Collection extends Component {
   
@@ -9,9 +11,11 @@ class Collection extends Component {
     return (
       <div className="App">
         <div>
-          <h>Your Collection:</h>
+          <h>{SessionInfo.getSessionUser()}'s Collection:</h>
+          <CollectionTable/>
         </div>
-            <Link to={'./'}><button type= "button">Exit</button></Link>
+            <HomeButton/>
+            <SignoutButton/>
       </div>
     );
   }

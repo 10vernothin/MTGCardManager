@@ -30,8 +30,8 @@ class Login extends Component {
       {
         this.setState({ postResponse: body});    
       } else {
-        SessionInfo.isAuth = true;
-        SessionInfo.LoginUser = body;
+        SessionInfo.changeSessionState(true);
+        SessionInfo.changeLoginUser(body);
         this.props.history.push('./collections');
       }});
   }
