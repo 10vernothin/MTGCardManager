@@ -1,19 +1,6 @@
 import React, { Component } from 'react';
-
-
-class EntryButton extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            activated: true
-        }
-    }
-    render() {
-        return(
-            <button disabled = {this.activated}>Select</button>
-        );
-    }
-}
+import SessionInfo from '../tools/ContentData'
+import {SelectCollectionButton, EditCollectionButton, DeleteCollectionButton} from '../elements/Buttons'
 
 
 class CollectionTable extends Component {
@@ -21,7 +8,10 @@ class CollectionTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            collectionList: []
+            collectionList: [],
+            username: SessionInfo.getSessionUser(),
+            userID: SessionInfo.getSessionUserID(),
+            postresponse: 'Fetching Data...'
         }
     }
 
@@ -31,9 +21,17 @@ class CollectionTable extends Component {
     
       // Retrieves the list of items from the Express app
       getList = () => {
-        fetch('/api/collections/getList')
+        fetch('/api/collections/getList', 
+        { 
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json'},
+          body: JSON.stringify(this.state)
+        })
         .then(res => res.json())
-        .then(list => this.setState({ collectionList: list }))
+        .then(list => {if (list.length === 0) {
+          this.setState({postresponse: 'You have no collections. =('})
+        } else { this.setState({ collectionList: list, postresponse: '' })}
+        })
       }
 
     render(){
@@ -42,22 +40,38 @@ class CollectionTable extends Component {
         <div>
         {list.length ? (
             <div>
+              <table>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Options</th>
+                </tr>
               {/* Render the list of items */}
               {this.state.collectionList.map((item) => {
+                if (!(item.name === '')){
                 return(
-                  <div>
-                    {item}
-                    <EntryButton/>
-                  </div>
+                    <tr>
+                      <td>{item.name}</td>
+                      <td>{item.description}</td>
+                      <td><SelectCollectionButton onclick = {() => this.CollectionSelected()}/>
+                          <EditCollectionButton/>
+                          <DeleteCollectionButton/>
+                      </td>
+                    </tr>
                 );
+                } else {
+                  return null;
+                }
               })}
+              </table>
             </div>
           ) :(
-            <div>
-              <h2>You have no collections right now. =(</h2>
-            </div>
+            <div></div>
           )
         }
+         <div>
+              <h2>{this.state.postresponse}</h2>
+          </div>
         </div>);
     }
 }

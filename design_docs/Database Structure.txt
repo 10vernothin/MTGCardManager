@@ -13,9 +13,10 @@ table users (
 table collection_list (
 	ID SERIAL NOT NULL UNIQUE,
 	NAME VARCHAR(100) NOT NULL,
-	PLAYER_ID INTEGER REFERENCES users(ID),
+	DESCRIPTION VARCHAR(200),
+	PLAYER_ID INTEGER REFERENCES users(ID) NOT NULL,
 	UNIQUE(NAME, PLAYER_ID),
-	PRIMARY KEY(ID
+	PRIMARY KEY(ID)
 	)
 
 /*this table represents the list of all cards in Magic the Gathering will be updated every so often through 

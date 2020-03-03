@@ -30,9 +30,15 @@ class Login extends Component {
       {
         this.setState({ postResponse: body});    
       } else {
-        SessionInfo.changeSessionState(true);
-        SessionInfo.changeLoginUser(body);
-        this.props.history.push('./collections');
+        const parsedbody = JSON.parse(body);
+        SessionInfo.setSessionState(true);
+        SessionInfo.setLoginUser(parsedbody.username);
+        SessionInfo.setLoginUserID(parsedbody.id);
+        this.props.history.push({
+          pathname: '/collections',
+          search: '?page=default',
+          state: {page: "default"}
+        });
       }});
   }
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-
+import {HomeButton} from '../elements/Buttons'
 
 
 class Signup extends Component {
@@ -86,7 +86,7 @@ class Signup extends Component {
               />
               <div>
                 <button type="submit">Submit</button>
-                <Link to={'./'}><button type= "button">Home</button></Link>
+                <HomeButton/>
                 <Link to={'./login'}><button type= "button">Back</button></Link>
               </div>
           <p>{this.state.postResponse}</p>

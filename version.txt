@@ -1,2 +1,6 @@
 Latest Version: Alpha 1.4
 Last Update: M3/01/2020
+
+Known bugs:
+ - session expiring if refreshing the page
+	->this is because the session object is not stored in a cache or backend. Will work on it in the future.

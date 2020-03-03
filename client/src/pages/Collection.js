@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {HomeButton, SignoutButton} from '../elements/Buttons.js';
+import {HomeButton, SignoutButton, CreateCollectionButton} from '../elements/Buttons.js';
 import SessionInfo from '../tools/ContentData.js';
 import CollectionTable from '../elements/CollectionTable';
 
@@ -16,6 +16,7 @@ class Collection extends Component {
         </div>
             <HomeButton/>
             <SignoutButton/>
+            <CreateCollectionButton/>
       </div>
     );
   }

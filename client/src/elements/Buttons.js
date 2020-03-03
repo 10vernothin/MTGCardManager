@@ -31,7 +31,7 @@ class SignoutButton extends Component {
 class CollectionButton extends Component {
   //Button that links to the Sign-Up page
   render() {
-    return (<Link to={'./collections'}><button type= "button">Your Collections</button></Link>);
+    return (<Link to={'./collections?page=default'}><button type= "button">Your Collections</button></Link>);
   }
 }
 
@@ -43,8 +43,36 @@ class LoginButton extends Component {
 
 class CreateCollectionButton extends Component {
   render() {
-    return (<Link to={'./collections/?create-new-collection'}><button type= "button">Login</button></Link>);
+    return (<Link to={'./collections?page=create-new-collection'}><button type= "button">Create New Collection</button></Link>);
   }
 }
 
-export { HomeButton, SignupButton, SignoutButton, CollectionButton, LoginButton, CreateCollectionButton};
+class SelectCollectionButton extends Component {
+  render() {
+    return (<button type= "button">Select</button>);
+  }
+}
+
+class DeleteCollectionButton extends Component {
+  render() {
+    return (<button type= "button">Delete</button>);
+  }
+}
+
+class EditCollectionButton extends Component {
+  render() {
+    return (<button type= "button">Edit</button>);
+  }
+}
+
+export {  
+  DeleteCollectionButton,
+  SelectCollectionButton, 
+  EditCollectionButton,
+  HomeButton, 
+  SignupButton, 
+  SignoutButton, 
+  CollectionButton, 
+  LoginButton, 
+  CreateCollectionButton
+};

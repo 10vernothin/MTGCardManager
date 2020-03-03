@@ -17,8 +17,7 @@ router.post('/api/login/submit-form', function(req, res, next) {
         console.log("Login Not found.")
         res.send("Username or Password incorrect.");
       } else {
-        loggeduser = data[0].username;
-        res.send(data[0].username);
+        res.json(data[0]);
       }
     }
   ).catch (
