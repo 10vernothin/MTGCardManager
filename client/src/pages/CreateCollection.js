@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {HomeButton} from '../elements/Buttons.js';
+import {HomeButton, CollectionButton} from '../elements/Buttons.js';
 import SessionInfo from '../tools/ContentData';
 
  class CreateCollection extends Component {
@@ -11,6 +11,7 @@ import SessionInfo from '../tools/ContentData';
             userID: SessionInfo.getSessionUserID()
         }
     }
+
     handleSubmit = e => {
         e.preventDefault();
         fetch('/api/collections/submit-creation-form', 
@@ -53,36 +54,37 @@ import SessionInfo from '../tools/ContentData';
         }}});
     }
 
-      render() {
-          return (<form method="post" onSubmit={this.handleSubmit}>
-          <title>Create Collection</title>
-            <div>Create a New Collection
-            </div>
-          <div>
-            Name:
+    render() {
+        return (<form method="post" onSubmit={this.handleSubmit}>
+        <title>Create Collection</title>
+          <div>Create a New Collection
           </div>
-          <input type="text" 
-                 name="name" 
-                 value={this.state.formControls.name.value} 
-                 onChange={this.changeHandler} 
-          />
-          <div>
-            Description:
-          </div>
-          <textarea type="text" 
-                 name="desc" 
-                 value={this.state.formControls.desc.value} 
-                 onChange={this.changeHandler} 
-                 cols="35" 
-                 wrap="soft"
-          />
-          <div>
-            <button type="submit">Submit</button>
-            <HomeButton/>
-          </div>
-      {this.state.postResponse}
-      </form>   );
-      }
+        <div>
+          Name:
+        </div>
+        <input type="text" 
+                name="name" 
+                value={this.state.formControls.name.value} 
+                onChange={this.changeHandler} 
+        />
+        <div>
+          Description:
+        </div>
+        <textarea type="text" 
+                name="desc" 
+                value={this.state.formControls.desc.value} 
+                onChange={this.changeHandler} 
+                cols="35" 
+                wrap="soft"
+        />
+        <div>
+          <button type="submit">Submit</button>
+          <HomeButton/>
+          <CollectionButton/>
+        </div>
+    {this.state.postResponse}
+    </form>   );
+    }
  };
 
 export default CreateCollection;

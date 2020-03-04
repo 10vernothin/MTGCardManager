@@ -8,12 +8,16 @@ import Signup from './pages/Signup';
 import Collection from './pages/Collection';
 import SessionInfo from './tools/ContentData';
 import CreateCollection from './pages/CreateCollection';
+import Downloads from './pages/Downloads';
 
+/*Initializing local cache*/
 SessionInfo.initializeSession();
 
 class App extends Component {
 
+	//This function reads the current href and parses the params 
 	readCurrURLParamsAsJSONString() {
+		
 		var params = '';
 		params = (window.location.href).split('?').slice(1).map((item) =>
 		{
@@ -21,8 +25,7 @@ class App extends Component {
 			items = item.split('=');
 			params = params.concat(',"' + items[0] + '":"' + items[1] + '"');
 			return params;
-		}
-	);
+		});
 		params = params.toString().substring(1);
 		params = '{'+ params + '}';
 		return params
@@ -35,6 +38,8 @@ class App extends Component {
 			<Switch>
 				<Route exact path='/' component={Home}/>
 				<Route path='/list' component={List}/>
+
+				{/*login page will redirect to collections page if logged in*/}
 				<Route path='/login' render = {() =>{
 						if (SessionInfo.getSessionStatus()) {
 							//alert("collections");
@@ -45,14 +50,15 @@ class App extends Component {
 						}
 					}
 				}/>
-				<Route path='/signup' component={Signup}/>		
+				<Route path='/signup' component={Signup}/>	
+				{/*collections pages will redirect to login page if logged out*/}	
 				<Route path='/collections' render = {
 					() => {	
 						if (!SessionInfo.getSessionStatus()){
 							//alert("LOGIN");
 							return (<Redirect to='/login'/>)
 						}else {
-								//alert(JSON.parse(this.readCurrURLParamsAsJSONString()).page === 'default');
+								//subrouting
 								switch (JSON.parse(this.readCurrURLParamsAsJSONString()).page) {
 								case "default":
 									return (<Route path= '/collections' component = {Collection}/>);
@@ -64,6 +70,21 @@ class App extends Component {
 						}
 					}		
 				}/>
+				<Route path='/downloads' render = {
+					() => {
+						switch (JSON.parse(this.readCurrURLParamsAsJSONString()).func) {
+							//subrouting
+							case '':
+								return (<Route exact path='/' component= {Home}/>)
+							default:
+								return (<Route path='/downloads' component= {Downloads}/>)
+						}
+					}
+				}/>
+
+				{/*Default route goes Home/or ERROR page if it gets to that*/}
+				<Route path="*" render= {() => {return (<Redirect to='/'/>)}}/>
+
 			</Switch>
 		</Router>
 		</div>

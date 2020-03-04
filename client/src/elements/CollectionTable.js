@@ -39,12 +39,11 @@ class CollectionTable extends Component {
         return (
         <div>
         {list.length ? (
-            <div>
               <table>
                 <tr>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Options</th>
+                  <td>Name</td>
+                  <td>Description</td>
+                  <td>Options</td>
                 </tr>
               {/* Render the list of items */}
               {this.state.collectionList.map((item) => {
@@ -53,7 +52,8 @@ class CollectionTable extends Component {
                     <tr>
                       <td>{item.name}</td>
                       <td>{item.description}</td>
-                      <td><SelectCollectionButton onclick = {() => this.CollectionSelected()}/>
+                      <td>
+                          <SelectCollectionButton onclick = {() => this.CollectionSelected()}/>
                           <EditCollectionButton/>
                           <DeleteCollectionButton/>
                       </td>
@@ -64,15 +64,13 @@ class CollectionTable extends Component {
                 }
               })}
               </table>
-            </div>
           ) :(
             <div></div>
           )
         }
-         <div>
-              <h2>{this.state.postresponse}</h2>
-          </div>
-        </div>);
+        <h2>{this.state.postresponse}</h2>
+        </div>
+        )
     }
 }
 

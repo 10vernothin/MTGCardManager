@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import {LoginButton, CollectionButton} from '../elements/Buttons';
+import {LoginButton, CollectionButton, DownloadBulkDataButton} from '../elements/Buttons';
 import SessionInfo from '../tools/ContentData.js';
+import PlaneswalkerSymbol from '../images/PlaneswalkerSymbol'
 
 class Home extends Component {
 
@@ -22,17 +23,22 @@ class Home extends Component {
     }
   }
 
+
   render() {
     return (
     <div className="App">
-      <h1>MTG Card Manager</h1>
-      {this.WelcomeUser()}
-      <Link to={'./list'}>
-        <button variant="raised">
-            Users
-        </button>
-      </Link>
-      {this.SwitchLoginCollectionButtons()}
+        <div><h1>MTG Card Manager</h1></div>
+        <div>{this.WelcomeUser()}</div>
+        <div><PlaneswalkerSymbol/></div>
+        <div>
+          <Link to={'./list'}>
+            <button variant="raised">
+                Users
+            </button>
+          </Link>
+          {this.SwitchLoginCollectionButtons()}
+          <DownloadBulkDataButton/>
+        </div>
     </div>
     );
   }

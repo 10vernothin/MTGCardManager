@@ -12,11 +12,15 @@ class Collection extends Component {
       <div className="App">
         <div>
           <h>{SessionInfo.getSessionUser()}'s Collection:</h>
+        </div>
+        <div>
           <CollectionTable/>
         </div>
+        <div>
             <HomeButton/>
             <SignoutButton/>
             <CreateCollectionButton/>
+        </div>
       </div>
     );
   }
