@@ -8,7 +8,9 @@ var indexRouter = require('./routes/index');
 var loginRouter = require('./routes/loginAPI')
 var userListRouter = require('./routes/userlistAPI')
 var collectionRouter = require('./routes/collectionAPI')
-var cardFetcherRouter = require('./routes/fetchCardAPI')
+var scryfallFetcherRouter = require('./routes/fetchScryfallAPI')
+var cardFetcherRouter = require('./routes/cardsAPI')
+
 var app = express();
 
 // view engine setup
@@ -26,6 +28,7 @@ app.use('/', indexRouter);
 app.use('/', loginRouter);
 app.use('/', userListRouter);
 app.use('/', collectionRouter);
+app.use('/', scryfallFetcherRouter);
 app.use('/', cardFetcherRouter);
 
 // catch 404 and forward to error handler
