@@ -1,6 +1,7 @@
 var fs = require('fs');
 var cardContainer;
-var cardDataPath = '../api/json/scryfall/cards.json';
+var _db = require('../database/database');
+var pgdb = _db.getConnectionInstance();
 
 /*This currently uses local JSON storage instead of postgreSQL*/
 exports.fetchCards = () => {
