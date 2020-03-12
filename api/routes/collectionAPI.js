@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 var _db = require('../database/database');
 var pgdb = _db.getConnectionInstance();
+var cards = require('../database/cards');
 
 router.post('/api/collections/submit-creation-form', function(req, res, next) {
     console.log("Collection Creation Form Submitted");
@@ -33,29 +34,44 @@ router.post('/api/collections/submit-creation-form', function(req, res, next) {
             console.log('Collection Creation ERROR:', error);
         }
         )
-    }});
+    }}
+);
 
-  router.post('/api/collections/getList', function(req, res, next) {
-    console.log("Getting Collection List for userID: " + req.body.userID);
-    pgdb.any(
-                "SELECT id, name, description from collection_list where player_id = $1", 
-                [req.body.userID]
-                ).then(
-        function(data) {
-            console.log('Collection list query completed.' + data.length);
-            if (data.length == 0) {
-                console.log("No collection found.")
-                res.send([]);
-            } else {
-                console.log(data);
-                res.json(data);
-            }
+router.post('/api/collections/getList', function(req, res, next) {
+console.log("Getting Collection List for userID: " + req.body.userID);
+pgdb.any(
+            "SELECT id, name, description from collection_list where player_id = $1", 
+            [req.body.userID]
+            ).then(
+    function(data) {
+        console.log('Collection list query completed.' + data.length);
+        if (data.length == 0) {
+            console.log("No collection found.")
+            res.send([]);
+        } else {
+            console.log(data);
+            res.json(data);
         }
-        ).catch (
-        error => {
-            console.log('Collection Creation ERROR:', error);
+    }
+    ).catch (
+    error => {
+        console.log('Collection Creation ERROR:', error);
+    }
+    )
+});
+
+router.post('/api/collections/fetch-collection', function(req, res, next) {
+    pgdb.any("SELECT * from collection where id = $1", [req.body.user_ID])
+    .then((data) => {
+        console.log(data);
+        if (data.length == 0) {
+            console.log('No cards in Collection.')
+            res.send([])
+        } else {
+            //cards.createCollectionList(data)
         }
-        )
-    });
+    })
+});
+
 
   module.exports = router

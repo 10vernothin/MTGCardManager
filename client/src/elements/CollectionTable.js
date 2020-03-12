@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
 import SessionInfo from '../tools/ContentData'
 import {SelectCollectionButton, EditCollectionButton, DeleteCollectionButton} from '../elements/Buttons'
 
@@ -19,20 +20,20 @@ class CollectionTable extends Component {
         this.getList();
       }
     
-      // Retrieves the list of items from the Express app
-      getList = () => {
-        fetch('/api/collections/getList', 
-        { 
-          method: 'POST', 
-          headers: { 'Content-Type': 'application/json'},
-          body: JSON.stringify(this.state)
-        })
-        .then(res => res.json())
-        .then(list => {if (list.length === 0) {
-          this.setState({postresponse: 'You have no collections. =('})
-        } else { this.setState({ collectionList: list, postresponse: '' })}
-        })
-      }
+    // Retrieves the list of items from the Express app
+    getList = () => {
+      fetch('/api/collections/getList', 
+      { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(this.state)
+      })
+      .then(res => res.json())
+      .then(list => {if (list.length === 0) {
+        this.setState({postresponse: 'You have no collections. =('})
+      } else { this.setState({ collectionList: list, postresponse: '' })}
+      })
+    }
 
     render(){
         const list = this.state.collectionList;
@@ -53,7 +54,7 @@ class CollectionTable extends Component {
                       <td>{item.name}</td>
                       <td>{item.description}</td>
                       <td>
-                          <SelectCollectionButton onclick = {() => this.CollectionSelected()}/>
+                      <Link to={`/collections?page=selected&id=${item.id}&name=${encodeURIComponent(item.name)}`}><SelectCollectionButton/></Link>
                           <EditCollectionButton/>
                           <DeleteCollectionButton/>
                       </td>

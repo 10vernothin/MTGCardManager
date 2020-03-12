@@ -9,6 +9,8 @@ import Collection from './pages/Collection';
 import SessionInfo from './tools/ContentData';
 import CreateCollection from './pages/CreateCollection';
 import Downloads from './pages/Downloads';
+import SelectedCollection from './pages/SelectedCollection';
+import readCurrURLParamsAsJSON from './tools/readCurrURLParamsAsJSONString';
 
 /*Initializing local cache*/
 SessionInfo.initializeSession();
@@ -16,20 +18,7 @@ SessionInfo.initializeSession();
 class App extends Component {
 
 	//This function reads the current href and parses the params 
-	readCurrURLParamsAsJSONString() {
-		
-		var params = '';
-		params = (window.location.href).split('?').slice(1).map((item) =>
-		{
-			var items;
-			items = item.split('=');
-			params = params.concat(',"' + items[0] + '":"' + items[1] + '"');
-			return params;
-		});
-		params = params.toString().substring(1);
-		params = '{'+ params + '}';
-		return params
-	}
+
 
 	render() {
 		const App = () => (
@@ -59,12 +48,18 @@ class App extends Component {
 							return (<Redirect to='/login'/>)
 						}else {
 								//subrouting
-								switch (JSON.parse(this.readCurrURLParamsAsJSONString()).page) {
+								switch (readCurrURLParamsAsJSON().page) {
 								case "default":
+									
 									return (<Route path= '/collections' component = {Collection}/>);
 								case "create-new-collection":
+				
 									return (<Route path= '/collections' component = {CreateCollection}/>);
+								case "selected":
+									
+									return (<Route path= '/collections' component = {SelectedCollection}/>)
 								default:
+									
 									return (<Route path= '/collections' component = {Collection}/>);
 								}
 						}
@@ -72,7 +67,7 @@ class App extends Component {
 				}/>
 				<Route path='/downloads' render = {
 					() => {
-						switch (JSON.parse(this.readCurrURLParamsAsJSONString()).func) {
+						switch (readCurrURLParamsAsJSON().func) {
 							//subrouting
 							case '':
 								return (<Route exact path='/' component= {Home}/>)
