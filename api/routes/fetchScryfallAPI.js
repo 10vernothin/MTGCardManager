@@ -6,8 +6,8 @@ var dpd = require('../database/downloadPricingData')
 
 /*This part will require a connection to the internet*/
 uri = 'https://api.scryfall.com/cards'
-path = "../api/json/scryfall/cards"
-datePath = '../api/json/scryfall/last_updated_date.date';
+path = "../api/database/scryfall/cards"
+datePath = '../api/databse/scryfall/last_updated_date.date';
 
 /*This accesses the scryfall API and downloads the data into the server cache at './api/json/scryfall'*/
 router.get('/api/fetch-card/download-bulk-data', function(req, res, next) {
