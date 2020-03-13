@@ -4,16 +4,16 @@ var pgdb = _db.getConnectionInstance();
 path = "../api/json/scryfall/cards"
 
 /*This now uses postgreSQL*/
-exports.fetchAllCards = async (orderby = 'name') => {
-        return await pgdb.any(`SELECT * from cards order by ${orderby} LIMIT 30`).catch((err) => {
+exports.fetchAllCards = async (orderby = 'name', limit = 50) => {
+        return await pgdb.any(`SELECT * from cards order by ${orderby} LIMIT ${limit}`).catch((err) => {
             console.log(err.message);
             err = null;
         });
 }
 
 /*Subcontainer so this function can be chained to refine results. E.g. C->Co->Cob->Cobr...*/
-exports.queryCardList = async (nameFragment, orderby = 'name') => {
-    res = await pgdb.any(`SELECT * from cards where name ~* '${nameFragment}' order by ${orderby} LIMIT 30`).catch((err) => {
+exports.queryCardList = async (nameFragment, orderby = 'name', limit = 50) => {
+    res = await pgdb.any(`SELECT * from cards where name ~* '(\\m${nameFragment})' order by ${orderby} LIMIT ${limit}`).catch((err) => {
         console.log("Database Error:", err);
         err = null;
     }).catch((err)=> {console.log(err)});
@@ -40,12 +40,10 @@ exports.selectCardJSONDataByCardID = async (id) => {
         console.log(err.message);
         err = null;
     });
-    //console.log(res);
     if (res.length == 0) {
         return null;
     } else {
         cardpath = path.concat('/').concat(res[0].set).concat('/').concat(res[0].set_id.replace('*', '_star')).concat('.json')
-        //console.log(cardpath);
         return JSON.parse(await fs.readFile(cardpath, "utf-8"));
     }
 }
@@ -68,8 +66,8 @@ exports.selectCardJSONDataByIDInBulk = async (lstIDs) => {
     return lst
 }
 
-exports.getPreviews = async (nameFragment, subcontainer = this.fetchAllCards()) => {
-    lst = await Promise.all(await this.selectCardJSONDataInBulk(nameFragment, subcontainer));
+exports.getPreviews = async (nameFragment) => {
+    lst = await Promise.all(await this.selectCardJSONDataInBulk(nameFragment));
     list = lst.map( (JSONCardObj) => {
             return `${JSONCardObj.name} [${(JSONCardObj.set).toUpperCase()}]`;
         }
@@ -77,10 +75,24 @@ exports.getPreviews = async (nameFragment, subcontainer = this.fetchAllCards()) 
     return list;
 }
 
-exports.getPrices = async (nameFragment, subcontainer = this.fetchAllCards()) => {
-    lst = await Promise.all(await this.selectCardJSONDataInBulk(nameFragment, subcontainer));
+exports.getDetailedPreviews = async (nameFragment) => {
+    lst = await Promise.all(await this.selectCardJSONDataInBulk(nameFragment));
     list = lst.map( (JSONCardObj) => {
-            return `${JSONCardObj.prices.usd}`;
+            return {"name": JSONCardObj.name, "mana_cost": JSONCardObj.mana_cost, "set_name": JSONCardObj.set_name, 
+            "set": JSONCardObj.set,
+            "set_id": JSONCardObj.set_id,
+            "foil": JSONCardObj.foil,
+            "nonfoil": JSONCardObj.nonfoil,
+            "prices": JSONCardObj.prices};
+        }
+    )
+    return list;
+}
+
+exports.getPrices = async (nameFragment) => {
+    lst = await Promise.all(await this.selectCardJSONDataInBulk(nameFragment));
+    list = lst.map( (JSONCardObj) => {
+            return JSONCardObj.prices;
         }
     )
     return list;
@@ -97,4 +109,17 @@ exports.createCollectionList = async (lstIDs) => {
         )
     }
     return list;
+}
+
+exports.getID = async (set, set_id) => {
+    res = await pgdb.any('SELECT id from cards where set_id = $1 and set = $2', [set_id, set]).catch((err) => {
+        console.log(err.message);
+        err = null;
+    });
+    //console.log(res);
+    if (res.length == 0) {
+        return null;
+    } else {
+        return res[0];
+    }
 }

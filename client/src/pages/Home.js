@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {LoginButton, CollectionButton, DownloadBulkDataButton} from '../elements/Buttons';
 import SessionInfo from '../tools/ContentData.js';
-import PlaneswalkerSymbol from '../images/PlaneswalkerSymbol'
+import PlaneswalkerSymbol from '../images/PlaneswalkerSymbol';
 
 class Home extends Component {
 

@@ -73,5 +73,19 @@ router.post('/api/collections/fetch-collection', function(req, res, next) {
     })
 });
 
+router.post('/api/collections/add-to-collection', function(req, res, next) {
+    cards.getID(req.body.set, req.body.set_id).then((id) =>{
+    pgdb.any("INSERT INTO COLLECTION ()", [req.body])
+        .then((data) => {
+            console.log(data);
+            if (data.length == 0) {
+                console.log('No cards in Collection.')
+                res.send([])
+            } else {
+                //cards.createCollectionList(data)
+            }
+        })
+    })
+});
 
   module.exports = router
