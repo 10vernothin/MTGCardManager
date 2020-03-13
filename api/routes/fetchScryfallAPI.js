@@ -16,7 +16,7 @@ router.get('/api/fetch-card/download-bulk-data', function(req, res, next) {
         day = dateobj.getDate().toString().padStart(2,'0');
         datestring = ''.concat(year_month).concat('_').concat(day);
         //writing date tag file
-        fs.mkdir("../api/json/scryfall/cards", (err) => {
+        fs.mkdir(path, (err) => {
             //console.log(err);
             err = null;
         });

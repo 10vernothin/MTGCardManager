@@ -109,4 +109,4 @@ dist
 #anything in /json since these will be generated, and .date files
 .date
 
-api/json/scryfall/cards/*
+api/json/scryfall/cards/**/*.json
