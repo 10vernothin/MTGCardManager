@@ -1,7 +1,7 @@
 var fs = require('fs').promises;
 var _db = require('../database/database');
 var pgdb = _db.getConnectionInstance();
-path = "../api/database/scryfall/cards"
+path = "../api/json/scryfall/cards"
 
 /*This now uses postgreSQL*/
 exports.fetchAllCards = async (orderby = 'name', limit = 50) => {
