@@ -107,6 +107,6 @@ dist
 .vscode-test
 
 #anything in /json since these will be generated, and .date files
-/api/json/scryfall/**/*.
 .date
 
+api/json/scryfall/cards/*
