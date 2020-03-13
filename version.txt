@@ -1,0 +1,8 @@
+Latest Version: Alpha 1.5
+Last Update: M3/04/2020
+
+Known bugs:
+ - session expiring if refreshing the page
+	->this is because the session object is not stored in a cache or backend. Will work on it in the future.
+ - fetch(download) not receiving results
+	->res.send() is buried too deep in the callbacks, or something is wrong. Will deal with
