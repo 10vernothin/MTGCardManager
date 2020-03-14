@@ -23,6 +23,7 @@ class CardSearchBox extends Component {
         this.state = {
             formControls: { cardName: { value: '' }},
             postResponse: [],
+            
         }
     }
     changeHandler = event => {
@@ -69,7 +70,7 @@ class CardSearchBox extends Component {
                     <div>
                         <div style={Dropdown}>
                             {this.state.postResponse.map((item) => {
-                                return (<SearchResultBox item = {item}/>) 
+                                return (<SearchResultBox item = {item} updateTopmostState={this.props.updateState}/>) 
                             })}
                         </div> 
                     </div>

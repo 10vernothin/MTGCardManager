@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import SessionInfo from '../tools/ContentData.js';
 
+
+const tableCSS = {
+  border: '1px black solid',
+  margin: '0 auto',
+  width: '90%'
+}
+
 class CardTable extends Component {
   
   // Retrieves the list of items from the Express app
@@ -8,49 +15,46 @@ class CardTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        collectionList: [],
         username: SessionInfo.getSessionUser(),
         userID: SessionInfo.getSessionUserID(),
-        postresponse: 'Fetching Data...'
+        collectionID: SessionInfo.getCollectionID(),
+        collectionName: SessionInfo.getCollectionName()
         }
     }
 
-    componentDidMount() {
-        this.fetchTable();
-    }
-
-    fetchTable = () => {
-        fetch('/api/collections/fetch-collection', 
-        { 
-          method: 'POST', 
-          headers: { 'Content-Type': 'application/json'},
-          body: JSON.stringify(this.state)
-        })
-        .then(res => res.json())
-        .then(list => {if (list.length === 0) {
-          this.setState({postresponse: 'You have no cards in collection.'})
-        } else { this.setState({ collectionList: list, postresponse: '' })}
-        })
-      }
-
     render(){
-        const list = this.state.collectionList;
+        const list = this.props.collectionList
         return (
         <div>
         {list.length ? (
-              <table>
+              <table style={tableCSS}>
                 <tr>
-                  <td>Name</td>
-                  <td>Amount</td>
-                  <td>Price</td>
+                  <th>MANA COST</th>
+                  <th>CARD NAME</th>
+                  <th>SET</th>
+                  <th>TYPE</th>
+                  <th>RARITY</th>
+                  <th>AMOUNT</th>
+                  <th>FOIL</th>
+                  <th>PRICE</th>
+                  <th>OPTIONS</th>
                 </tr>
               {/* Render the list of items */}
-              {this.state.collectionList.map((item) => {
-                if (!(item.name === '')){
+              {list.map((item) => {
+                if (!(item.card_data.name === '')){
                 return(
                     <tr>
-                      <td>{item.name}</td>
-                      <td>{item.description}</td>
+                      <td>{item.card_data.mana_cost}</td>
+                      <td>{item.card_data.name}</td>
+                      <td>{item.card_data.set_name}</td>
+                      <td>{item.card_data.type_line}</td>
+                      <td>{item.card_data.rarity.substring(0,1).toUpperCase()}</td>
+                      <td>{item.amt}</td>
+                      <td>{item.is_foil ? "Yes" : "No"}</td>
+                      <td>{item.is_foil ? 
+                             (item.card_data.prices.usd_foil === null ? 'N/A':`$${item.card_data.prices.usd_foil}`)
+                            :(item.card_data.prices.usd === null ? 'N/A':`$${item.card_data.prices.usd}`)}
+                      </td>
                       <td>
                           {/*buttons go here*/}
                       </td>
@@ -65,7 +69,7 @@ class CardTable extends Component {
             <div></div>
           )
         }
-        <h2>{this.state.postresponse}</h2>
+        <h2>{this.state.postResponse}</h2>
         </div>
         )
     }

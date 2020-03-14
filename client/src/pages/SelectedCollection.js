@@ -36,25 +36,69 @@ class SelectedCollection extends Component {
             userName: SessionInfo.getSessionUser(),
             collectionID : readCurrURLParamsAsJSONString().id,
             collectionName: readCurrURLParamsAsJSONString().name,
+            CardTableProps: {
+                collectionList: [],
+                postResponse: 'Fetching data...'
+            }
         }
+        this.updateState = this.updateState.bind(this)
+        SessionInfo.setCollectionName(this.state.collection);
+        SessionInfo.setCollectionID(this.state.collectionID);
     };
 
     componentDidMount() {
-        SessionInfo.setCollectionName(this.state.collection);
-        SessionInfo.setCollectionID(this.state.collectionID);
+        this.fetchTable();
     }
 
+    componentDidUpdate() {
+        this.fetchTable();
+    }
+
+    fetchTable = () => {
+        fetch('/api/collections/fetch-collection', 
+        { 
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json'},
+          body: JSON.stringify(this.state)
+        })
+        .then(res => res.json())
+        .then(list => {if (list.length === 0) {
+            let newCardTableProps = {...this.state.CardTableProps}
+            newCardTableProps.postResponse = 'You have no cards in collection.'
+            this.setState({CardTableProps: newCardTableProps})
+        } else { 
+            let newCardTableProps = {...this.state.CardTableProps}
+            newCardTableProps.postResponse = ''
+            newCardTableProps.collectionList = list
+            if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.CardTableProps.collectionList))){
+                this.setState({CardTableProps: newCardTableProps})
+            }
+        }
+        })
+      }
+
+      /*Binding a listener for the child component*/
+      updateState = () => {
+            this.setState({
+                userName: SessionInfo.getSessionUser()
+            })
+      }
+   
 
     render() {
         return (
         <div>
+            
             <div>
                 <div style={InlineLeft}>
-                    <CardSearchBox/>
+                    <CardSearchBox updateState={this.updateState}/>
                 </div>
                 <div style={InlineRight}>
-                    <p>{this.state.collectionName}</p>
-                    <CardTable/>
+                    <div style={{margin: '0 auto', width: '100%', 'text-align': 'center'}}>
+                        <h1>{this.state.collectionName}</h1>
+                        </div>
+                    <p>{/*JSON.stringify(this.state.CardTableProps.collectionList)*/}</p>
+                    <CardTable collectionList={this.state.CardTableProps.collectionList} postResponse={this.state.CardTableProps.postResponse}/>
                 </div>
             </div>  
         </div>);

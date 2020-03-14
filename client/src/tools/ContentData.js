@@ -19,6 +19,10 @@ class SessionInfo {
         return this.#LoginUserID;
     };
 
+    static getCollectionName() {
+        return this.#CollectionName;
+    };
+
     static getCollectionID() {
         return this.#CollectionID;
     };

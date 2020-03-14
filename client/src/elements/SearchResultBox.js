@@ -103,6 +103,37 @@ class SearchResultBox extends Component {
             foilBox: newFoilBoxStyle
         })
     }
+    selectFoil = e => {
+        e.preventDefault()
+        let newState = {...this.state}
+        newState.chosenIsFoil = true
+        fetch('/api/collections/add-card-to-collection', 
+            { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify(newState)
+            }
+        ).then((res) => {
+            this.props.updateTopmostState()
+        })
+    }
+    
+    selectCard = e => {
+        e.preventDefault()
+        let newState = {...this.state}
+        newState.chosenIsFoil = false
+        fetch('/api/collections/add-card-to-collection', 
+        { 
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json'},
+          body: JSON.stringify(newState)
+        }).then((res) => {
+            return res.json();
+        }).then((body) =>{
+            this.props.updateTopmostState()
+        })
+
+    }
 
     render() {
         return (     
@@ -113,11 +144,10 @@ class SearchResultBox extends Component {
                         <div style={this.state.selectBox}>
                             {this.props.item.nonfoil ? (
                                 <div type= "button" 
-                                        variant="raised" 
                                         style={this.state.nonfoilBox} 
                                         onMouseDown={this.handleCardMouseDown}
                                         onMouseUp={this.handleCardMouseUp}
-                                        onClick={this.SelectCard}>
+                                        onClick={this.selectCard}>
                                             Add Card {this.props.item.prices.usd === null ? 
                                                     "(Price Unavailable)":`(USD$${this.props.item.prices.usd})`}
                                 </div>
@@ -128,7 +158,7 @@ class SearchResultBox extends Component {
                                         style={this.state.foilBox}
                                         onMouseDown={this.handleFoilMouseDown}
                                         onMouseUp={this.handleCardMouseUp}
-                                        onClick={this.SelectFoil}>
+                                        onClick={this.selectFoil}>
                                             Add Foil Card {this.props.item.prices.usd_foil === null ? 
                                                             "(Price Unavailable)": `(USD$${this.props.item.prices.usd_foil})`}
                                 </div>
