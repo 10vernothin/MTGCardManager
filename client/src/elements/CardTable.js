@@ -2,34 +2,28 @@ import React, { Component } from 'react';
 import SessionInfo from '../tools/ContentData.js';
 import CardTableResultBox from '../elements/CardTableResultBox';
 
+/* These constants define the inline CSS properties of elements in this component*/
 const tableCSS = {
-  border: '1px black solid',
+  'border-bottom': '1px black solid',
+  'border-top': '1px black solid',
   margin: '0 auto',
-  width: '95%',
+  width: '100%',
   display: 'flex',
   flex: 1,
   'text-align': 'center'
 }
 
-const flexBoxContainer = {
-  border: '1px black solid',
-  margin: '0 auto',
-  padding: '0',
-  width: '95%',
-}
-
 const cardResflexboxCSS = [{
-  display:'flex', 'text-align': 'center', margin: '0 auto',
+  display:'flex', 'text-align': 'center', margin: '0',
   width: '100%', backgroundColor: 'gray', padding: '0'
 }, {
-  display:'flex', 'text-align': 'center', margin: '0 auto',
-  width: '100%', backgroundColor: 'white', padding: '0'
+  display:'flex', 'text-align': 'center', margin: '0'
 }]
 
-
+/*
+CardTable renders a table that contains all the cards in a user's collection
+*/
 class CardTable extends Component {
-  
-  // Retrieves the list of items from the Express app
 
   constructor(props) {
     super(props);
@@ -41,6 +35,9 @@ class CardTable extends Component {
         }
     }
 
+  /*
+  This function renders the Child result rows
+  */
   renderResultBoxes = (list) => {
     let CSSIter = 0;
     return (
@@ -57,11 +54,13 @@ class CardTable extends Component {
 
   render(){
         if (!(this.props.collectionList.length === 0)) {
+          
           /*deep copying the prop and sorting it*/
           const list = this.props.collectionList.slice()
           .sort((a,b) => {return (a.name.localeCompare(b.name))})
           .sort((a,b) => {return (a.set.localeCompare(b.set))})
           .sort((a,b) => {return (a.is_foil===b.is_foil? 0: (a.is_foil? 1:-1))})
+
           return (
             <div>
               <div style={tableCSS}>
@@ -75,10 +74,9 @@ class CardTable extends Component {
                   <div style={{flex: 1}}>PRICE</div>
                   <div style={{flex: 1}}>AMOUNT</div>
                   <div style={{flex: 1}}></div>
+                  <div style={{flex: 1}}></div>
               </div>
-              <div style={flexBoxContainer}>
-                {this.renderResultBoxes(list)}
-              </div>
+              {this.renderResultBoxes(list)}
             </div>
             )
         } else {

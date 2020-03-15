@@ -4,6 +4,22 @@ import SessionInfo from '../tools/ContentData'
 import {SelectCollectionButton, EditCollectionButton, DeleteCollectionButton} from '../elements/Buttons'
 
 
+const collectionTitleCSS = {
+  width: '90%',
+  display: 'flex',
+  margin: '0 auto',
+  'border-bottom': '1px solid black',
+  'text-align': 'left',
+  'font-weight': 'bold'
+}
+
+const collectionCSS = {
+  width: '90%',
+  display: 'flex',
+  margin: '0 auto',
+  'text-align': 'left'
+}
+
 class CollectionTable extends Component {
 
     constructor(props) {
@@ -40,31 +56,32 @@ class CollectionTable extends Component {
         return (
         <div>
         {list.length ? (
-              <table>
-                <tr>
-                  <td>Name</td>
-                  <td>Description</td>
-                  <td>Options</td>
-                </tr>
+          <div>
+              <div style={collectionTitleCSS}>
+                  <div style={{flex: 2}}>Name</div>
+                  <div style={{flex: 7}}>Description</div>
+                  <div style={{flex: 3}}>Options</div>
+              </div>
               {/* Render the list of items */}
               {this.state.collectionList.map((item) => {
                 if (!(item.name === '')){
                 return(
-                    <tr>
-                      <td>{item.name}</td>
-                      <td>{item.description}</td>
-                      <td>
-                      <Link to={`/collections?page=selected&id=${item.id}&name=${encodeURIComponent(item.name)}`}><SelectCollectionButton/></Link>
+                  <div style={collectionCSS}>
+                      <div style={{flex: 2}}>{item.name}</div>
+                      <div style={{flex: 7}}>{item.description}</div>
+                      <div style={{flex: 3}}>
+                          <Link to={`/collections?page=selected&id=${item.id}&name=${encodeURIComponent(item.name)}`}>
+                            <SelectCollectionButton/>
+                          </Link>
                           <EditCollectionButton/>
                           <DeleteCollectionButton/>
-                      </td>
-                    </tr>
-                );
+                      </div>
+                  </div>)
                 } else {
-                  return null;
+                  return(null);
                 }
               })}
-              </table>
+          </div>
           ) :(
             <div></div>
           )

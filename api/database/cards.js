@@ -70,7 +70,8 @@ exports.getPreviews = async (nameFragment, opts = {type: 'string'}) => {
                     set_name: JSONCardObj.set_name,
                     prices: JSONCardObj.prices,
                     foil: JSONCardObj.foil,
-                    nonfoil: JSONCardObj.nonfoil
+                    nonfoil: JSONCardObj.nonfoil,
+                    image_uris: JSONCardObj.image_uris
                 });
             })
     return list;

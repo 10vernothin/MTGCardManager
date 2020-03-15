@@ -1,6 +1,21 @@
 import React, { Component } from 'react';
 import SessionInfo from '../tools/ContentData';
 
+const ImageCSS = {
+    display: 'block',
+    position: 'absolute',
+    padding: '0',
+    'margin-top':'30px',
+    'margin-left': '50px',
+    height: 'auto',
+    width: '200px',
+    'z-index': '10'
+}
+
+const HiddenImageCSS = {
+    display: 'none',
+}
+
 class SearchResultBox extends Component {
     constructor(props) {
         super(props)
@@ -13,8 +28,7 @@ class SearchResultBox extends Component {
                 right:'0',
                 margin: '0 0 0 0',
                 backgroundColor: 'white',
-                color: 'black',
-                'z-index': '5'
+                color: 'black'
             },
             titleBox:  {
                 position: 'relative',
@@ -44,6 +58,7 @@ class SearchResultBox extends Component {
                 margin: '0'
                 
             },
+            imageCSS: HiddenImageCSS,
             collectionID: SessionInfo.getCollectionID()
         }
     }
@@ -55,7 +70,7 @@ class SearchResultBox extends Component {
         newBoxStyle.color = 'white'
         this.setState({
             boxStyle: newBoxStyle,
-            
+            imageCSS: ImageCSS
         })
     }
 
@@ -66,6 +81,7 @@ class SearchResultBox extends Component {
         newBoxStyle.color = 'black'
         this.setState({
             boxStyle: newBoxStyle,
+            imageCSS: HiddenImageCSS
         })
     }
     handleCardMouseDown = e => {
@@ -132,6 +148,11 @@ class SearchResultBox extends Component {
     render() {
         return (     
                 <div style={this.state.boxStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+                    {this.props.item.image_uris?
+                        <img src={this.props.item.image_uris.border_crop} alt={this.props.item.name} style={this.state.imageCSS}></img>:
+                        null
+                    }
+                        
                         <div style={this.state.titleBox}>
                             {`${this.props.item.name} (${this.props.item.set_name})`}
                         </div>

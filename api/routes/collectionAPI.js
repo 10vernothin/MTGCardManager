@@ -72,7 +72,7 @@ This api receives a request(collectionID) to fetch all rows in TABLE collection 
 joined with the associated columns in TABLE cards where cards.id = collection.card_id
 */
 router.post('/api/collections/fetch-collection-id', function(req, res, next) {
-    pgdb.any("SELECT * from collection inner join cards on collection.card_id = cards.id where collection_list_id = $1", [req.body.collectionID])
+    pgdb.any("SELECT * from collection inner join cards on collection.card_id = cards.id inner join collection_list on collection_list.id = collection.collection_list_id where collection_list_id = $1", [req.body.collectionID])
     .then((data) => {
         if (data.length == 0) {
             console.log('No cards in Collection.')
@@ -122,10 +122,9 @@ from {$collection_id} and creates the entry with amt=1, or add 1 from the matchi
 */
 router.post('/api/collections/add-card-to-collection', function(req, res, next) {
     cards.getID(req.body.set, req.body.set_id).then((id_) =>{
-        console.log("Card: " + req.body.set + req.body.set_id +" Foil: " + req.body.chosenIsFoil)
     pgdb.any("INSERT INTO COLLECTION (card_id, collection_list_id, is_foil, amt) VALUES ($1, $2, $3, 1) ON CONFLICT ON CONSTRAINT unique_id_key DO UPDATE SET amt = COLLECTION.amt+1 WHERE collection.card_id = EXCLUDED.card_id and collection.collection_list_id = EXCLUDED.collection_list_id and collection.is_foil = EXCLUDED.is_foil",
      [id_.id, req.body.collectionID, req.body.chosenIsFoil])
-        .then((data) => {
+        .then(() => {
             res.send([])
         }).catch((err) => {console.log(err)})
     }).catch((err) => {console.log(err.message)})
@@ -140,7 +139,7 @@ router.post('/api/collections/remove-card-from-collection', function(req, res, n
         console.log("Card ID: " + id_.id +" Foil: " + req.body.chosenIsFoil)
         pgdb.any("DELETE from collection where amt = 1 and collection.card_id = $1 and collection.collection_list_id = $2 and collection.is_foil = $3",
                     [id_.id, req.body.collectionID, req.body.chosenIsFoil])
-        .then((data) => {
+        .then(() => {
             pgdb.any("UPDATE collection SET amt = collection.amt - 1 WHERE collection.card_id = $1 and collection.collection_list_id = $2 and collection.is_foil = $3",
                         [id_.id, req.body.collectionID, req.body.chosenIsFoil])
             .then(res.send([]))

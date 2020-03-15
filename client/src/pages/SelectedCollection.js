@@ -100,6 +100,7 @@ class SelectedCollection extends Component {
                 <div style={InlineRight}>
                     <div style={{margin: '0 auto', width: '100%', 'text-align': 'center'}}>
                         <h1>{this.state.collectionName}</h1>
+                        <p>{this.state.CardTableProps.collectionList[0] ? this.state.CardTableProps.collectionList[0].description: null}</p>
                         </div>
                     <p>{/*JSON.stringify(this.state.CardTableProps.collectionList)*/}</p>
                     <CardTable updateState={this.updateState} collectionList={this.state.CardTableProps.collectionList} postResponse={this.state.CardTableProps.postResponse}/>

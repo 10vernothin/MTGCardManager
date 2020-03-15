@@ -11,7 +11,7 @@ class Collection extends Component {
     return (
       <div className="App">
         <div>
-          <h>{SessionInfo.getSessionUser()}'s Collection:</h>
+          <h1>{SessionInfo.getSessionUser()}'s Collection:</h1>
         </div>
           <CollectionTable/>
         <div>

@@ -3,16 +3,41 @@ import React, { Component } from 'react';
 import SessionInfo from '../tools/ContentData';
 
 
+const AddRemoveButtonCSS = {
+    display: 'block',
+    padding:'auto auto',
+    margin:'auto auto',
+    height: '100%',
+    width: '100%',
+    font: '15px black',
+    'font-weight': 'bold',
+}
+
+const ImageCSS = {
+    display: 'block',
+    position: 'absolute',
+    padding: '0',
+    'margin-top':'30px',
+    'margin-left': '50px',
+    height: 'auto',
+    width: '200px'
+}
+
+const HiddenImageCSS = {
+    display: 'none',
+}
+
 /*This component renders a search box element*/
 class CardTableResultBox extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-        item: []
+        item: [],
+        imagePopup: HiddenImageCSS
         }
     }
-
+    /*Fetching the row data*/
     fetchTableRow = () => {
       fetch('/api/collections/fetch-row', 
       { 
@@ -33,6 +58,7 @@ class CardTableResultBox extends Component {
       })
     }
 
+    /*Handle Add card button */
     addCard = e => {
         e.preventDefault()
         let item = this.state.item[0]
@@ -43,12 +69,11 @@ class CardTableResultBox extends Component {
             body: JSON.stringify({chosenIsFoil: this.props.cardInfo.is_foil, set: item.set, set_id: item.set_id, collectionID: SessionInfo.getCollectionID()})
             }
         ).then((res) => {
-            res.json()
-        }).then(() => {
             this.props.updateTopmostState()
         })
     }
 
+    /*Handle remove card button */
     removeCard = e => {
         e.preventDefault()
         let item = this.state.item[0]
@@ -59,39 +84,61 @@ class CardTableResultBox extends Component {
             body: JSON.stringify({chosenIsFoil: this.props.cardInfo.is_foil, set: item.set, set_id: item.set_id, collectionID: SessionInfo.getCollectionID()})
             }
         ).then((res) => {
-            res.json()
-        }).then(() => {
             this.props.updateTopmostState()
         })
     }
 
+    showImage = e => {
+        e.preventDefault()
+        this.setState({
+                imagePopup: ImageCSS
+        })
+        
+    }
+
+    hideImage = e => {
+        e.preventDefault()
+        this.setState({
+            imagePopup: HiddenImageCSS
+        })
+    }
     createRow = () => {
         this.fetchTableRow()
         if (!(JSON.stringify(this.state.item) === '[]')) {
-            let item = this.state.item[0]
+            let cardObj = this.state.item[0]
             return(
-            <div style={this.props.resBoxCSS}>
-                <div style={{flex: 2}}>{item.name}</div>
-                <div style={{flex: 1}}>{item.mana_cost}</div>
-                <div style={{flex: 1}}>{item.rarity.substring(0,1).toUpperCase()}</div>
-                <div style={{flex: 3}}>{item.type_line}</div>
-                <div style={{flex: 3}}>{`${item.set_name} [${item.set.toUpperCase()}]`}</div>
-                <div style={{flex: 1}}>{item.set_id.toUpperCase()}</div>
+            <div>
+                <img src={cardObj.image_uris.border_crop} style={this.state.imagePopup} alt={cardObj.name} onMouseOut={this.hideImage}/>
+            <div style={this.props.resBoxCSS}  onMouseEnter={this.showImage} onMouseLeave={this.hideImage}>
+                <div style={{flex: 2}} >{cardObj.name}</div>
+                <div style={{flex: 1}}>{cardObj.mana_cost}</div>
+                <div style={{flex: 1}}>{cardObj.rarity.substring(0,1).toUpperCase()}</div>
+                <div style={{flex: 3}}>{cardObj.type_line}</div>
+                <div style={{flex: 3}}>{`${cardObj.set_name} [${cardObj.set.toUpperCase()}]`}</div>
+                <div style={{flex: 1}}>{cardObj.set_id.toUpperCase()}</div>
                 <div style={{flex: 1}}>{this.props.cardInfo.is_foil ? <b>Yes</b> : "No"}</div>
                 <div style={{flex: 1}}>{this.props.cardInfo.is_foil ? 
-                    (item.prices.usd_foil === null ? 'N/A':`$${item.prices.usd_foil}`)
-                    :(item.prices.usd === null ? 'N/A':`$${item.prices.usd}`)}
+                    (cardObj.prices.usd_foil === null ? 'N/A':`$${cardObj.prices.usd_foil}`)
+                    :(cardObj.prices.usd === null ? 'N/A':`$${cardObj.prices.usd}`)}
                 </div>
                 <div style={{flex: 1}}>{this.props.cardInfo.amt}</div>
-                <div style={{flex: 1}}>
-                    <button onClick={this.addCard}>+</button>
-                    <button onClick={this.removeCard}>-</button>
+                <div style={{flex: 1, 'text-align': 'center'}}>
+                    <button style={AddRemoveButtonCSS} onClick={this.addCard}>
+                                <div>Add Card</div>
+                        </button>
                 </div>
+                <div style={{flex: 1, 'text-align': 'center'}}>
+                            <button style={AddRemoveButtonCSS} onClick={this.removeCard}>
+                                <div>Remove Card</div>
+                            </button>
+                </div>
+            </div>
             </div>
             );
         } else {
             return null;
         }
+        
     }
 
 
