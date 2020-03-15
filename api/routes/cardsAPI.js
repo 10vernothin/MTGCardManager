@@ -9,7 +9,10 @@ router.post('/api/cards/query-card', function(req, res, next) {
     if (cardName === '') {
         res.send([])
     } else {
-        cards.getDetailedPreviews(req.body.formControls.cardName.value).then((list) => {console.log(list.length+" Results Queried."); res.json(list)})
+        cards.getPreviews(req.body.formControls.cardName.value).then((list) => {
+            //console.log(list[0])
+            console.log(list.length+" Results Queried.");
+            res.send(list)})
     }
 });
 

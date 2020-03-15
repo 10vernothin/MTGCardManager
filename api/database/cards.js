@@ -63,13 +63,20 @@ exports.selectCardJSONDataInBulk = async (variable, opts = {type: 'string'}) => 
 exports.getPreviews = async (nameFragment, opts = {type: 'string'}) => {
     lst = await Promise.all(await this.selectCardJSONDataInBulk(nameFragment, opts));
     list = lst.map( (JSONCardObj) => {
-            return `${JSONCardObj.name} [${(JSONCardObj.set).toUpperCase()}]`;
-        }
-    )
+            return ({
+                    name: JSONCardObj.name,
+                    set_id: JSONCardObj.collector_number,
+                    set: JSONCardObj.set,
+                    set_name: JSONCardObj.set_name,
+                    prices: JSONCardObj.prices,
+                    foil: JSONCardObj.foil,
+                    nonfoil: JSONCardObj.nonfoil
+                });
+            })
     return list;
 }
 
-exports.getDetailedPreviews = async (nameFragment, opts = {type: 'string'}) => {
+exports.getDetails = async (nameFragment, opts = {type: 'string'}) => {
     lst = await Promise.all(await this.selectCardJSONDataInBulk(nameFragment, opts));
     list = lst.map( (JSONCardObj) => {
             JSONCardObj.set_id = JSONCardObj.collector_number;

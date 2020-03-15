@@ -44,8 +44,6 @@ class SearchResultBox extends Component {
                 margin: '0'
                 
             },
-            set: this.props.item.set,
-            set_id: this.props.item.set_id,
             collectionID: SessionInfo.getCollectionID()
         }
     }
@@ -105,13 +103,11 @@ class SearchResultBox extends Component {
     }
     selectFoil = e => {
         e.preventDefault()
-        let newState = {...this.state}
-        newState.chosenIsFoil = true
         fetch('/api/collections/add-card-to-collection', 
             { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify(newState)
+            body: JSON.stringify({chosenIsFoil: true, set: this.props.item.set, set_id: this.props.item.set_id, collectionID: this.state.collectionID})
             }
         ).then((res) => {
             this.props.updateTopmostState()
@@ -120,13 +116,11 @@ class SearchResultBox extends Component {
     
     selectCard = e => {
         e.preventDefault()
-        let newState = {...this.state}
-        newState.chosenIsFoil = false
         fetch('/api/collections/add-card-to-collection', 
         { 
           method: 'POST', 
           headers: { 'Content-Type': 'application/json'},
-          body: JSON.stringify(newState)
+          body: JSON.stringify({chosenIsFoil: false, set: this.props.item.set, set_id: this.props.item.set_id, collectionID: this.state.collectionID})
         }).then((res) => {
             return res.json();
         }).then((body) =>{
@@ -167,8 +161,6 @@ class SearchResultBox extends Component {
                 </div>
         )
     }
-
-
 } 
 
 export default SearchResultBox;

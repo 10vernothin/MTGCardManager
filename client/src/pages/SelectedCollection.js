@@ -16,6 +16,7 @@ const InlineLeft = {
     margin: '0'
 };
 const InlineRight = {
+    overflow: 'auto',
     border: '1px black solid',
     display: 'inline-block',
     position: 'fixed',
@@ -34,7 +35,7 @@ class SelectedCollection extends Component {
         this.state = {
             userID : SessionInfo.getSessionUserID(),
             userName: SessionInfo.getSessionUser(),
-            collectionID : readCurrURLParamsAsJSONString().id,
+            collectionID: readCurrURLParamsAsJSONString().id,
             collectionName: readCurrURLParamsAsJSONString().name,
             CardTableProps: {
                 collectionList: [],
@@ -55,7 +56,7 @@ class SelectedCollection extends Component {
     }
 
     fetchTable = () => {
-        fetch('/api/collections/fetch-collection', 
+        fetch('/api/collections/fetch-collection-id', 
         { 
           method: 'POST', 
           headers: { 'Content-Type': 'application/json'},
@@ -65,7 +66,10 @@ class SelectedCollection extends Component {
         .then(list => {if (list.length === 0) {
             let newCardTableProps = {...this.state.CardTableProps}
             newCardTableProps.postResponse = 'You have no cards in collection.'
-            this.setState({CardTableProps: newCardTableProps})
+            newCardTableProps.collectionList = list
+            if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.CardTableProps.collectionList))){
+                this.setState({CardTableProps: newCardTableProps})
+            }
         } else { 
             let newCardTableProps = {...this.state.CardTableProps}
             newCardTableProps.postResponse = ''
@@ -79,6 +83,7 @@ class SelectedCollection extends Component {
 
       /*Binding a listener for the child component*/
       updateState = () => {
+            //alert("Updating top")
             this.setState({
                 userName: SessionInfo.getSessionUser()
             })
@@ -88,7 +93,6 @@ class SelectedCollection extends Component {
     render() {
         return (
         <div>
-            
             <div>
                 <div style={InlineLeft}>
                     <CardSearchBox updateState={this.updateState}/>
@@ -98,7 +102,7 @@ class SelectedCollection extends Component {
                         <h1>{this.state.collectionName}</h1>
                         </div>
                     <p>{/*JSON.stringify(this.state.CardTableProps.collectionList)*/}</p>
-                    <CardTable collectionList={this.state.CardTableProps.collectionList} postResponse={this.state.CardTableProps.postResponse}/>
+                    <CardTable updateState={this.updateState} collectionList={this.state.CardTableProps.collectionList} postResponse={this.state.CardTableProps.postResponse}/>
                 </div>
             </div>  
         </div>);

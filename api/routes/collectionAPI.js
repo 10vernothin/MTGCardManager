@@ -5,6 +5,10 @@ var _db = require('../database/database');
 var pgdb = _db.getConnectionInstance();
 var cards = require('../database/cards');
 
+/*
+This api call receives a request:{form:{name,userID,desc}} and creates an entry in collection_list
+that is associated with that user, with the given name and desc 
+*/
 router.post('/api/collections/submit-creation-form', function(req, res, next) {
     console.log("Collection Creation Form Submitted");
     //console.log("UserID" + req.body.userID);
@@ -37,6 +41,9 @@ router.post('/api/collections/submit-creation-form', function(req, res, next) {
     }}
 );
 
+/*
+This api call receives a request:{userID} to fetches all rows in collection_list associated with that user
+*/
 router.post('/api/collections/getList', function(req, res, next) {
     console.log("Getting Collection List for userID: " + req.body.userID);
     pgdb.any(
@@ -60,32 +67,48 @@ router.post('/api/collections/getList', function(req, res, next) {
     )
 });
 
-router.post('/api/collections/fetch-collection', function(req, res, next) {
-    pgdb.any("SELECT * from collection where collection_list_id = $1", [req.body.collectionID])
+/*
+This api receives a request(collectionID) to fetch all rows in TABLE collection associated with the unique collection_list_id
+joined with the associated columns in TABLE cards where cards.id = collection.card_id
+*/
+router.post('/api/collections/fetch-collection-id', function(req, res, next) {
+    pgdb.any("SELECT * from collection inner join cards on collection.card_id = cards.id where collection_list_id = $1", [req.body.collectionID])
     .then((data) => {
         if (data.length == 0) {
             console.log('No cards in Collection.')
             res.send([])
         } else {
-            ///.///console.log(data);
-            lstIDs = data.map((ids) => {return ids.card_id})
-            this.createCollectionList(lstIDs, {type: 'list'}).then(
-                (list)=> {
-                    //console.log(list);
-                    data.forEach((item) => {
-                        item.card_data = list.filter((list_i) => list_i.card_id == item.card_id)[0]
-                    })
-                res.send(data);
-            })
-            
+            res.send(data);
         }
     }).catch((err) => {
         console.log(err.message);
     })
 });
 
+/*
+This api call receives a request:{card_id} to fetch cardObject data by its unique card_id, and send the cardObject to the client
+*/
+router.post('/api/collections/fetch-row', function(req, res, next) {
+    cards.getDetails([req.body.card_id], {type: 'list'})
+    .then((data) => {
+        if (data.length == 0) {
+            console.log('No cards in Collection.')
+            res.send([])
+        } else {
+            res.send(data);
+        }
+    }).catch((err) => {
+        console.log(err.message);
+    })
+});
+
+/*
+This helper function fetches cardObject details using a list of card_ids with set_id=collector_number 
+(Warning: if lstIDs.length is too large you will receive a . 
+    It is recommended to do Z=XY query with X arrays of Y(<20) items)
+*/
 createCollectionList = async (lstIDs, opts = {type: 'list'}) => {
-    lst = await Promise.all(await cards.getDetailedPreviews(lstIDs, opts));
+    lst = await Promise.all(await cards.getDetails(lstIDs, opts));
     if (lst.length === 0) {
         return []
     } else {
@@ -93,15 +116,37 @@ createCollectionList = async (lstIDs, opts = {type: 'list'}) => {
     }
 }
 
+/*
+This api call receives a add request for a card defined by {$set, $set_id, $chosenIsFoil}
+from {$collection_id} and creates the entry with amt=1, or add 1 from the matching amt column if the card exists
+*/
 router.post('/api/collections/add-card-to-collection', function(req, res, next) {
     cards.getID(req.body.set, req.body.set_id).then((id_) =>{
-        console.log("Card:" + req.body.set_id + req.body.set +" Foil:" + req.body.chosenIsFoil)
+        console.log("Card: " + req.body.set + req.body.set_id +" Foil: " + req.body.chosenIsFoil)
     pgdb.any("INSERT INTO COLLECTION (card_id, collection_list_id, is_foil, amt) VALUES ($1, $2, $3, 1) ON CONFLICT ON CONSTRAINT unique_id_key DO UPDATE SET amt = COLLECTION.amt+1 WHERE collection.card_id = EXCLUDED.card_id and collection.collection_list_id = EXCLUDED.collection_list_id and collection.is_foil = EXCLUDED.is_foil",
      [id_.id, req.body.collectionID, req.body.chosenIsFoil])
         .then((data) => {
             res.send([])
         }).catch((err) => {console.log(err)})
     }).catch((err) => {console.log(err.message)})
+});
+
+/*
+This api call receives a delete request for a card defined by {$set, $set_id, $chosenIsFoil}
+from {$collection_id} and removes 1 from the matching amt column or deletes the entry if amt=1
+*/
+router.post('/api/collections/remove-card-from-collection', function(req, res, next) {
+    cards.getID(req.body.set, req.body.set_id).then((id_) =>{
+        console.log("Card ID: " + id_.id +" Foil: " + req.body.chosenIsFoil)
+        pgdb.any("DELETE from collection where amt = 1 and collection.card_id = $1 and collection.collection_list_id = $2 and collection.is_foil = $3",
+                    [id_.id, req.body.collectionID, req.body.chosenIsFoil])
+        .then((data) => {
+            pgdb.any("UPDATE collection SET amt = collection.amt - 1 WHERE collection.card_id = $1 and collection.collection_list_id = $2 and collection.is_foil = $3",
+                        [id_.id, req.body.collectionID, req.body.chosenIsFoil])
+            .then(res.send([]))
+            .catch((err) => {console.log("UPD Err: ", err.message)})
+        }).catch((err) => {"DEL Err: ", console.log(err)})
+    }).catch((err) => {"getID err: ", console.log(err.message)})
 });
 
   module.exports = router

@@ -42,13 +42,16 @@ class CardSearchBox extends Component {
           headers: { 'Content-Type': 'application/json'},
           body: JSON.stringify(this.state)
         }).then((res) => {
-            return res.json();
+           
+            return res.text();
         }).then((postResponse) => {
+            //alert(postResponse);
+            postResponse = JSON.parse(postResponse)
                 if (!(postResponse === this.state.postResponse)){
                     this.setState({postResponse});
                 }
         }).catch((err) => {
-            alert(err.message);
+            alert(err);
         })});  
     }
 
