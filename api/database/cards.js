@@ -12,7 +12,7 @@ exports.fetchAllCards = async (orderby = 'name', limit = 50) => {
 }
 
 /*Subcontainer so this function can be chained to refine results. E.g. C->Co->Cob->Cobr...*/
-exports.queryCardList = async (nameFragment, orderby = 'name', limit = 50) => {
+exports.queryCardList = async (nameFragment, orderby = 'name', limit = 100) => {
     res = await pgdb.any(`SELECT * from cards where name ~* '(\\m${nameFragment})' order by ${orderby} LIMIT ${limit}`).catch((err) => {
         console.log("Database Error:", err);
         err = null;

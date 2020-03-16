@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
 import SessionInfo from '../tools/ContentData'
-import {SelectCollectionButton, EditCollectionButton, DeleteCollectionButton} from '../elements/Buttons'
+import {SelectCollectionButton, DeleteCollectionButton} from '../elements/Buttons'
 
 
 const collectionTitleCSS = {
@@ -73,7 +73,6 @@ class CollectionTable extends Component {
                           <Link to={`/collections?page=selected&id=${item.id}&name=${encodeURIComponent(item.name)}`}>
                             <SelectCollectionButton/>
                           </Link>
-                          <EditCollectionButton/>
                           <DeleteCollectionButton/>
                       </div>
                   </div>)

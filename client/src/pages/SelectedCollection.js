@@ -3,6 +3,7 @@ import SessionInfo from '../tools/ContentData.js';
 import readCurrURLParamsAsJSONString from '../tools/readCurrURLParamsAsJSONString'
 import CardTable from '../elements/CardTable'
 import CardSearchBox from '../elements/CardSearchBox'
+import {CollectionButton} from '../elements/Buttons'
 
 const InlineLeft = {
     border: '1px black solid',
@@ -13,7 +14,8 @@ const InlineLeft = {
     left: '0',
     bottom: '0',
     padding: '0',
-    margin: '0'
+    margin: '0',
+    'z-index': '1'
 };
 const InlineRight = {
     overflow: 'auto',
@@ -25,8 +27,15 @@ const InlineRight = {
     bottom: '0',
     left: '25%',
     padding: '0',
-    margin: '0'
+    margin: '0',
+    'z-index': '1'
 };
+
+const ExitButtonCSS = {
+    position: 'fixed',
+    right: '0',
+    'z-index': '3'
+}
 
 class SelectedCollection extends Component {
     
@@ -40,20 +49,14 @@ class SelectedCollection extends Component {
             CardTableProps: {
                 collectionList: [],
                 postResponse: 'Fetching data...'
-            }
+            },
+            CardTable: ''
         }
         this.updateState = this.updateState.bind(this)
         SessionInfo.setCollectionName(this.state.collection);
         SessionInfo.setCollectionID(this.state.collectionID);
     };
 
-    componentDidMount() {
-        this.fetchTable();
-    }
-
-    componentDidUpdate() {
-        this.fetchTable();
-    }
 
     fetchTable = () => {
         fetch('/api/collections/fetch-collection-id', 
@@ -63,20 +66,27 @@ class SelectedCollection extends Component {
           body: JSON.stringify(this.state)
         })
         .then(res => res.json())
-        .then(list => {if (list.length === 0) {
-            let newCardTableProps = {...this.state.CardTableProps}
-            newCardTableProps.postResponse = 'You have no cards in collection.'
-            newCardTableProps.collectionList = list
-            if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.CardTableProps.collectionList))){
-                this.setState({CardTableProps: newCardTableProps})
-            }
-        } else { 
-            let newCardTableProps = {...this.state.CardTableProps}
-            newCardTableProps.postResponse = ''
-            newCardTableProps.collectionList = list
-            if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.CardTableProps.collectionList))){
-                this.setState({CardTableProps: newCardTableProps})
-            }
+        .then(list => {
+            if (list.length === 0) {
+                let newCardTableProps = {...this.state.CardTableProps}
+                newCardTableProps.postResponse = 'You have no cards in collection.'
+                newCardTableProps.collectionList = list
+                if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.CardTableProps.collectionList))){
+                    this.setState({
+                        CardTableProps: newCardTableProps,
+                        CardTable: <CardTable updateState={this.updateState} collectionList={newCardTableProps.collectionList} postResponse={this.state.CardTableProps.postResponse}/>
+                    })
+                }
+            }  else { 
+                let newCardTableProps = {...this.state.CardTableProps}
+                newCardTableProps.postResponse = ''
+                newCardTableProps.collectionList = list
+                if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.CardTableProps.collectionList))){
+                    this.setState({
+                        CardTableProps: newCardTableProps,
+                        CardTable: <CardTable updateState={this.updateState} collectionList={newCardTableProps.collectionList} postResponse={this.state.CardTableProps.postResponse}/>
+                    })
+                }
         }
         })
       }
@@ -91,9 +101,11 @@ class SelectedCollection extends Component {
    
 
     render() {
+        this.fetchTable();
         return (
         <div>
             <div>
+                <div style={ExitButtonCSS}><CollectionButton></CollectionButton></div>
                 <div style={InlineLeft}>
                     <CardSearchBox updateState={this.updateState}/>
                 </div>
@@ -103,7 +115,7 @@ class SelectedCollection extends Component {
                         <p>{this.state.CardTableProps.collectionList[0] ? this.state.CardTableProps.collectionList[0].description: null}</p>
                         </div>
                     <p>{/*JSON.stringify(this.state.CardTableProps.collectionList)*/}</p>
-                    <CardTable updateState={this.updateState} collectionList={this.state.CardTableProps.collectionList} postResponse={this.state.CardTableProps.postResponse}/>
+                    {this.state.CardTable}
                 </div>
             </div>  
         </div>);

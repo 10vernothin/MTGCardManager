@@ -5,11 +5,11 @@ const ImageCSS = {
     display: 'block',
     position: 'absolute',
     padding: '0',
-    'margin-top':'30px',
-    'margin-left': '50px',
+    top:'50',
+    left: '50',
     height: 'auto',
     width: '200px',
-    'z-index': '10'
+    'z-index': '10',
 }
 
 const HiddenImageCSS = {
@@ -34,15 +34,13 @@ class SearchResultBox extends Component {
                 position: 'relative',
                 left: '0',
                 height: '100%',
-                width: '70%',
-
+                width: '70%'
             },
             selectBox:  {
                 position: 'relative',
                 right: '0',
                 height: '100%',
                 width: '30%',
-
             },
             nonfoilBox: {
                 border: '1px black dotted',
@@ -69,9 +67,9 @@ class SearchResultBox extends Component {
         newBoxStyle.backgroundColor = 'blue'
         newBoxStyle.color = 'white'
         this.setState({
-            boxStyle: newBoxStyle,
-            imageCSS: ImageCSS
+            boxStyle: newBoxStyle
         })
+        this.showImage()
     }
 
     handleMouseLeave = e => {
@@ -80,9 +78,9 @@ class SearchResultBox extends Component {
         newBoxStyle.backgroundColor = 'white'
         newBoxStyle.color = 'black'
         this.setState({
-            boxStyle: newBoxStyle,
-            imageCSS: HiddenImageCSS
+            boxStyle: newBoxStyle
         })
+        this.hideImage()
     }
     handleCardMouseDown = e => {
         e.preventDefault()
@@ -145,18 +143,29 @@ class SearchResultBox extends Component {
 
     }
 
+    showImage = () => {
+        this.setState({
+            imageCSS: ImageCSS
+        })
+    }
+
+    hideImage = () => {
+        this.setState({
+            imageCSS: HiddenImageCSS
+        })
+    }
+
     render() {
         return (     
                 <div style={this.state.boxStyle} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
-                    {this.props.item.image_uris?
-                        <img src={this.props.item.image_uris.border_crop} alt={this.props.item.name} style={this.state.imageCSS}></img>:
-                        null
-                    }
-                        
+                        {this.props.item.image_uris?
+                                <img src={this.props.item.image_uris.border_crop} alt={this.props.item.name} style={this.state.imageCSS}></img>:
+                                null
+                        }
                         <div style={this.state.titleBox}>
-                            {`${this.props.item.name} (${this.props.item.set_name})`}
+                            <div style={{width:'100%', height: '100%'}}>{`${this.props.item.name} (${this.props.item.set_name})`}</div>
                         </div>
-                        <div style={this.state.selectBox}>
+                        <div style={this.state.selectBox} onMouseEnter={this.hideImage} onMouseLeave={this.showImage}>
                             {this.props.item.nonfoil ? (
                                 <div type= "button" 
                                         style={this.state.nonfoilBox} 

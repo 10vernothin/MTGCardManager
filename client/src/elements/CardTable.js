@@ -15,9 +15,10 @@ const tableCSS = {
 
 const cardResflexboxCSS = [{
   display:'flex', 'text-align': 'center', margin: '0',
-  width: '100%', backgroundColor: 'gray', padding: '0'
+  width: '100%', backgroundColor: 'gray', padding: '0', 'z-index': 2
 }, {
-  display:'flex', 'text-align': 'center', margin: '0'
+  display:'flex', 'text-align': 'center', margin: '0',
+  width: '100%', backgroundColor: 'white', padding: '0', 'z-index': 2
 }]
 
 /*
@@ -35,31 +36,16 @@ class CardTable extends Component {
         }
     }
 
-  /*
-  This function renders the Child result rows
-  */
-  renderResultBoxes = (list) => {
-    let CSSIter = 0;
-    return (
-      list.map((info,index) => {
-          CSSIter === 1? CSSIter = 0: CSSIter = 1
-          return <CardTableResultBox 
-            key={index}
-            cardInfo={info}
-            resBoxCSS={cardResflexboxCSS[CSSIter]} 
-            updateTopmostState={this.props.updateState}/>
-      })
-    )
-  }
 
   render(){
         if (!(this.props.collectionList.length === 0)) {
           
-          /*deep copying the prop and sorting it*/
-          const list = this.props.collectionList.slice()
-          .sort((a,b) => {return (a.name.localeCompare(b.name))})
-          .sort((a,b) => {return (a.set.localeCompare(b.set))})
-          .sort((a,b) => {return (a.is_foil===b.is_foil? 0: (a.is_foil? 1:-1))})
+          /*deep copying the prop and sorting it (use fast data-loss sorting since everything is JSON)*/
+          let list = JSON.stringify(this.props.collectionList).valueOf()
+          list = JSON.parse(list)
+
+          list.sort((a,b) => {return (a.name.localeCompare(b.name) || a.set.localeCompare(b.set) || a.is_foil-b.is_foil)})
+          let CSSIter = 0
 
           return (
             <div>
@@ -76,7 +62,13 @@ class CardTable extends Component {
                   <div style={{flex: 1}}></div>
                   <div style={{flex: 1}}></div>
               </div>
-              {this.renderResultBoxes(list)}
+              {
+              list.map((info) => {
+                CSSIter === 1? CSSIter = 0: CSSIter = 1
+                return (<CardTableResultBox 
+                  cardInfo={info}
+                  resBoxCSS={cardResflexboxCSS[CSSIter]} 
+                  updateTopmostState={this.props.updateState}/>)})}
             </div>
             )
         } else {
