@@ -61,8 +61,30 @@ class SelectCollectionButton extends Component {
 
 class DeleteCollectionButton extends Component {
   //Button that deletes the chosen collection 
+  constructor(props) {
+    super(props)
+    this.state = {
+      id: this.props.col_id
+    }
+  }
+  
+  deleteCollection = e => {
+    e.preventDefault()
+    fetch('/api/collections/delete-collection',
+    { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({collectionID: this.state.id})
+    }
+    ).then(
+      ()=> {
+        this.props.updateState()
+      }
+    )
+  }
+
   render() {
-    return (<button type= "button">Delete</button>);
+    return (<button type= "button" onClick={this.deleteCollection}>Delete</button>);
   }
 }
 

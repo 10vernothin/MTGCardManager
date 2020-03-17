@@ -33,7 +33,7 @@ const InlineRight = {
 
 const ExitButtonCSS = {
     position: 'fixed',
-    right: '0',
+    right: '20px',
     'z-index': '3'
 }
 

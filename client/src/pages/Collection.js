@@ -7,13 +7,29 @@ class Collection extends Component {
   
   // Retrieves the list of items from the Express app
 
+  constructor(props) {
+    super(props)
+    this.state=({
+      loading: ''
+    })
+    this.updateState.bind(this)
+  }
+
+  
+  updateState = () => {
+    //alert("Updating top")
+    this.setState({
+      loading: "..."
+    })
+  }
+
   render() {
     return (
       <div className="App">
         <div>
           <h1>{SessionInfo.getSessionUser()}'s Collection:</h1>
         </div>
-          <CollectionTable/>
+          <CollectionTable updateState={this.updateState}/>
         <div>
             <HomeButton/>
             <SignoutButton/>

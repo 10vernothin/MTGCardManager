@@ -32,9 +32,6 @@ class CollectionTable extends Component {
         }
     }
 
-    componentDidMount() {
-        this.getList();
-      }
     
     // Retrieves the list of items from the Express app
     getList = () => {
@@ -47,11 +44,15 @@ class CollectionTable extends Component {
       .then(res => res.json())
       .then(list => {if (list.length === 0) {
         this.setState({postresponse: 'You have no collections. =('})
-      } else { this.setState({ collectionList: list, postresponse: '' })}
+      } else { 
+        if (!(JSON.stringify(this.state.collectionList) === JSON.stringify(list))) {
+          this.setState({ collectionList: list, postresponse: '' })}
+        }
       })
     }
 
     render(){
+        this.getList();
         const list = this.state.collectionList;
         return (
         <div>
@@ -73,7 +74,7 @@ class CollectionTable extends Component {
                           <Link to={`/collections?page=selected&id=${item.id}&name=${encodeURIComponent(item.name)}`}>
                             <SelectCollectionButton/>
                           </Link>
-                          <DeleteCollectionButton/>
+                          <DeleteCollectionButton col_id={item.id} updateState={this.props.updateState}/>
                       </div>
                   </div>)
                 } else {

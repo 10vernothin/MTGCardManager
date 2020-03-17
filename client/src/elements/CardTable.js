@@ -9,16 +9,25 @@ const tableCSS = {
   margin: '0 auto',
   width: '100%',
   display: 'flex',
-  flex: 1,
-  'text-align': 'center'
+  'text-align': 'center',
+  padding: '0'
 }
 
 const cardResflexboxCSS = [{
-  display:'flex', 'text-align': 'center', margin: '0',
-  width: '100%', backgroundColor: 'gray', padding: '0', 'z-index': 2
-}, {
-  display:'flex', 'text-align': 'center', margin: '0',
-  width: '100%', backgroundColor: 'white', padding: '0', 'z-index': 2
+  margin: '0 auto',
+  width: '100%',
+  display: 'flex',
+  'text-align': 'center', 
+  backgroundColor: 'gray', 
+  padding: '0'
+  },
+  {
+  display:'flex', 
+  'text-align': 'center', 
+  margin: '0',
+  width: '100%', 
+  backgroundColor: 'white', 
+  padding: '0'
 }]
 
 /*
@@ -36,29 +45,29 @@ class CardTable extends Component {
         }
     }
 
-
   render(){
         if (!(this.props.collectionList.length === 0)) {
           
-          /*deep copying the prop and sorting it (use fast data-loss sorting since everything is JSON)*/
+          /*deep copying the prop and sorting it (use fast data-loss copy since everything is JSON)*/
           let list = JSON.stringify(this.props.collectionList).valueOf()
           list = JSON.parse(list)
-
           list.sort((a,b) => {return (a.name.localeCompare(b.name) || a.set.localeCompare(b.set) || a.is_foil-b.is_foil)})
+          
           let CSSIter = 0
-
+          
           return (
             <div>
               <div style={tableCSS}>
+                  <div style={{width:'150px'}}></div>
                   <div style={{flex: 2}}>CARD NAME</div>
                   <div style={{flex: 1}}>MANA COST</div>
                   <div style={{flex: 1}}>RARITY</div>
                   <div style={{flex: 3}}>TYPE</div>
                   <div style={{flex: 3}}>SET</div>
-                  <div style={{flex: 1}}>COLLECTOR NO.</div>
+                  <div style={{flex: 1}}>SET NO.</div>
                   <div style={{flex: 1}}>FOIL</div>
                   <div style={{flex: 1}}>PRICE</div>
-                  <div style={{flex: 1}}>AMOUNT</div>
+                  <div style={{flex: 1}}>AMT</div>
                   <div style={{flex: 1}}></div>
                   <div style={{flex: 1}}></div>
               </div>

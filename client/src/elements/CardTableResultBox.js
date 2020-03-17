@@ -14,18 +14,12 @@ const AddRemoveButtonCSS = {
 }
 
 const ImageCSS = {
-    display: 'block',
-    position: 'absolute',
     padding: '0',
-    'margin-top':'30px',
-    'margin-left': '50px',
     height: 'auto',
-    width: '200px'
+    width: '150px',
+    flex: 2
 }
 
-const HiddenImageCSS = {
-    display: 'none',
-}
 
 /*This component renders a search box element*/
 class CardTableResultBox extends Component {
@@ -34,7 +28,7 @@ class CardTableResultBox extends Component {
     super(props);
     this.state = {
         item: [],
-        imagePopup: HiddenImageCSS
+        imagePopup: ImageCSS
         }
     }
     /*Fetching the row data*/
@@ -88,28 +82,14 @@ class CardTableResultBox extends Component {
         })
     }
 
-    showImage = e => {
-        e.preventDefault()
-        this.setState({
-                imagePopup: ImageCSS
-        })
-        
-    }
-
-    hideImage = e => {
-        e.preventDefault()
-        this.setState({
-            imagePopup: HiddenImageCSS
-        })
-    }
     createRow = () => {
         this.fetchTableRow()
         if (!(JSON.stringify(this.state.item) === '[]')) {
             let cardObj = this.state.item[0]
             return(
             <div>
-                <img src={cardObj.image_uris.border_crop} style={this.state.imagePopup} alt={cardObj.name} onMouseOut={this.hideImage}/>
-            <div style={this.props.resBoxCSS}  onMouseEnter={this.showImage} onMouseLeave={this.hideImage}>
+            <div style={this.props.resBoxCSS}>
+                <img src={cardObj.image_uris.normal} style={this.state.imagePopup} alt={cardObj.name}/>
                 <div style={{flex: 2}} >{cardObj.name}</div>
                 <div style={{flex: 1}}>{cardObj.mana_cost}</div>
                 <div style={{flex: 1}}>{cardObj.rarity.substring(0,1).toUpperCase()}</div>

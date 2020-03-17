@@ -42,6 +42,21 @@ router.post('/api/collections/submit-creation-form', function(req, res, next) {
 );
 
 /*
+This api receives a request(collectionID) deletes the collection
+*/
+router.post('/api/collections/delete-collection', function(req, res, next) {
+    pgdb.any("DELETE from collection_list where id = $1", [req.body.collectionID])
+    .then((data) => {
+        if (data.length == 0) {
+            console.log('Collection Deleted.')
+            res.send([])}
+        }).catch((err) => {
+        console.log(err.message);
+    })
+});
+
+
+/*
 This api call receives a request:{userID} to fetches all rows in collection_list associated with that user
 */
 router.post('/api/collections/getList', function(req, res, next) {
@@ -72,7 +87,7 @@ This api receives a request(collectionID) to fetch all rows in TABLE collection 
 joined with the associated columns in TABLE cards where cards.id = collection.card_id
 */
 router.post('/api/collections/fetch-collection-id', function(req, res, next) {
-    pgdb.any("SELECT * from collection inner join cards on collection.card_id = cards.id inner join collection_list on collection_list.id = collection.collection_list_id where collection_list_id = $1", [req.body.collectionID])
+    pgdb.any("SELECT collection.id, cards.set_id, cards.set, collection.card_id, cards.name, collection_list.description, collection_list.id, collection.amt, collection.is_foil from collection inner join cards on collection.card_id = cards.id inner join collection_list on collection_list.id = collection.collection_list_id where collection_list_id = $1", [req.body.collectionID])
     .then((data) => {
         if (data.length == 0) {
             console.log('No cards in Collection.')
