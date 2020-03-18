@@ -42,8 +42,57 @@ class CardTable extends Component {
         userID: SessionInfo.getSessionUserID(),
         collectionID: SessionInfo.getCollectionID(),
         collectionName: SessionInfo.getCollectionName(),
-        page: 1
+        page: 1,
+        elemPerPage: 10,
+        lastDisabled: true,
+        nextDisabled: true
         }
+    this.props.collectionList.length > (this.state.page)*(this.state.elemPerPage)? this.state.nextDisabled = false: this.state.nextDisabled = true;
+    this.props.collectionList.length <= (this.state.page)*(this.state.elemPerPage)? this.state.lastDisabled = false: this.state.lastDisabled = true;
+  }
+
+  handleNextPage = e => {
+    e.preventDefault()
+    let nextPage = this.state.page+1;
+    let nextLastDisabled = false;
+    let nextNextDisabled = false;
+    this.props.collectionList.length > (nextPage)*(this.state.elemPerPage)? nextNextDisabled = false: nextNextDisabled = true;
+    nextPage > 1? nextLastDisabled = false: nextLastDisabled = true;
+    this.setState({
+      page: nextPage,
+      lastDisabled: nextLastDisabled,
+      nextDisabled: nextNextDisabled
+    })
+  }
+
+  handleLastPage = e => {
+    e.preventDefault()
+    let nextPage = this.state.page-1;
+    let nextLastDisabled = false;
+    let nextNextDisabled = false;
+    this.props.collectionList.length > (nextPage)*(this.state.elemPerPage)? nextNextDisabled = false: nextNextDisabled = true;
+    nextPage > 1? nextLastDisabled = false: nextLastDisabled = true;
+    this.setState({
+      page: nextPage,
+      lastDisabled: nextLastDisabled,
+      nextDisabled: nextNextDisabled
+    })
+  }
+
+  renderPageNav() {
+    return(
+      <div style={{margin:'0 auto', width: '100%', 'text-align': 'center'}}>
+        <div style={{display: 'inline-block', width: '10%', margin: 'auto 0'}}>
+          <button onClick={this.handleLastPage} disabled={this.state.lastDisabled}>Previous Page</button>
+        </div>
+      <div style={{display: 'inline-block', width: '80%', margin: 'auto 0'}}>
+        <p>Page {this.state.page}</p>
+      </div>
+      <div style={{display: 'inline-block', width: '10%', margin: 'auto 0'}}>
+        <button onClick={this.handleNextPage} disabled={this.state.nextDisabled}>Next Page</button>
+      </div>
+    </div>
+    )
   }
 
   render(){
@@ -53,19 +102,20 @@ class CardTable extends Component {
           let list = JSON.stringify(this.props.collectionList).valueOf()
           list = JSON.parse(list)
           list.sort((a,b) => {return (a.name.localeCompare(b.name) || a.set.localeCompare(b.set) || a.is_foil-b.is_foil)})
-          
+         
           let CSSIter = 0
           return (
             <div>
+              {this.renderPageNav()}
               <div style={tableCSS}>
-                  <div style={{width:'150px'}}></div>
+                  <div style={{flex: 3}}></div>
                   <div style={{flex: 1}}>NO.</div>
                   <div style={{flex: 2}}>CARD NAME</div>
-                  <div style={{flex: 1}}>MANA COST</div>
+                  <div style={{flex: 1}}>MANA</div>
                   <div style={{flex: 1}}>RARITY</div>
                   <div style={{flex: 3}}>TYPE</div>
                   <div style={{flex: 3}}>SET</div>
-                  <div style={{flex: 1}}>SET NO.</div>
+                  <div style={{flex: 1}}>ID</div>
                   <div style={{flex: 1}}>FOIL</div>
                   <div style={{flex: 1}}>PRICE</div>
                   <div style={{flex: 1}}>AMT</div>
@@ -87,7 +137,6 @@ class CardTable extends Component {
                 }
               })
               }
-              <div style={{padding:'0 auto', width: '100%'}}><button>Previous Page</button>{this.state.page}<button>Next Page</button></div>
             </div>
             )
         } else {
