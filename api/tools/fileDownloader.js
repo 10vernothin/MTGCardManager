@@ -18,8 +18,13 @@ exports.downloadFile = function(uri, filename, callback) {
         fs.writeFile(filename, data).then(() =>{
           callback(0)
         }).catch((err) => {
+          console.log(err.errno)
           callback(err.errno)
         })
+      })
+      resp.on('error', (err) => {
+        console.log(err.errno)
+        callback(err.errno)
       })
     })
 };

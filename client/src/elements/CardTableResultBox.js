@@ -17,9 +17,16 @@ const ImageCSS = {
     padding: '0',
     height: 'auto',
     width: '150px',
-    flex: 2
+    border: '1px black solid',
+    flex: 3
 }
 
+const ImgNotAvailableCSS = {
+    padding: '0',
+    height: 'auto',
+    border: '1px black solid',
+    flex: 3
+}
 
 /*This component renders a search box element*/
 class CardTableResultBox extends Component {
@@ -28,8 +35,8 @@ class CardTableResultBox extends Component {
     super(props);
     this.state = {
         item: [],
-        imagePopup: ImageCSS,
-        cardImageURI: ''
+        cardImageURI: undefined,
+        id_key: this.props.id_key
         }
     }
 
@@ -46,12 +53,9 @@ class CardTableResultBox extends Component {
       })
       .then(res => res.json())
       .then(list => {
-        if (list.length === 0) {
-      } else {
-          if(!(JSON.stringify(this.state.item) === JSON.stringify(list))) {
-                this.fetchImage(list, {type:"normal"}, (uri) => {this.setState({cardImageURI: uri, item: list})})
+        if (!(list.length === 0) && !(JSON.stringify(this.state.item) === JSON.stringify(list))) {
+                this.fetchImage(list, {type:"normal"}, (uri) => {this.setState({cardImageURI: uri, item: list, id_key: this.props.id_key})})
           }
-      }
       })
     }
 
@@ -71,7 +75,6 @@ class CardTableResultBox extends Component {
                 ).then((result) =>{
                     if (!(result.uri === this.state.cardImageURI)) {
                         callback(result.uri);
-                        //this.setState({cardImageURI: result.uri, item:cardObjList})
                     }
                 })
         }
@@ -109,12 +112,16 @@ class CardTableResultBox extends Component {
 
     /*This function contains the logic that creates the JSX*/
     createRow = () => {
-        if (!(JSON.stringify(this.state.item) === '[]') && !(this.state.cardImageURI === '')) {
+        if (!(JSON.stringify(this.state.item) === '[]') && !(this.state.cardImageURI === undefined)) {
             let cardObj = this.state.item[0]
             return(
             <div>
             <div style={this.props.resBoxCSS}>
-                <img src={cardObj.image_uris.normal} style={this.state.imagePopup} alt={cardObj.name}/>
+                {this.state.cardImageURI === ''? 
+                 <div style={ImgNotAvailableCSS}> IMAGE NOT AVAILABLE </div>:
+                <img src={cardObj.image_uris.normal} style={ImageCSS} alt={cardObj.name}/>
+                }
+                <div style={{flex: 1}}>{this.state.id_key}</div>
                 <div style={{flex: 2}} >{cardObj.name}</div>
                 <div style={{flex: 1}}>{cardObj.mana_cost}</div>
                 <div style={{flex: 1}}>{cardObj.rarity.substring(0,1).toUpperCase()}</div>
@@ -146,8 +153,12 @@ class CardTableResultBox extends Component {
         
     }
 
-    render(){
+    renderRow() {
         this.fetchTableRow()
+        return(this.createRow())
+    }
+
+    render(){   
         return(this.renderRow())
     }
 }

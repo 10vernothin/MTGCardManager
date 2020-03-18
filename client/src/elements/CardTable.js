@@ -41,9 +41,10 @@ class CardTable extends Component {
         username: SessionInfo.getSessionUser(),
         userID: SessionInfo.getSessionUserID(),
         collectionID: SessionInfo.getCollectionID(),
-        collectionName: SessionInfo.getCollectionName()
+        collectionName: SessionInfo.getCollectionName(),
+        page: 1
         }
-    }
+  }
 
   render(){
         if (!(this.props.collectionList.length === 0)) {
@@ -54,11 +55,11 @@ class CardTable extends Component {
           list.sort((a,b) => {return (a.name.localeCompare(b.name) || a.set.localeCompare(b.set) || a.is_foil-b.is_foil)})
           
           let CSSIter = 0
-          
           return (
             <div>
               <div style={tableCSS}>
                   <div style={{width:'150px'}}></div>
+                  <div style={{flex: 1}}>NO.</div>
                   <div style={{flex: 2}}>CARD NAME</div>
                   <div style={{flex: 1}}>MANA COST</div>
                   <div style={{flex: 1}}>RARITY</div>
@@ -72,12 +73,21 @@ class CardTable extends Component {
                   <div style={{flex: 1}}></div>
               </div>
               {
-              list.map((info) => {
+              list.map((info, index) => {
                 CSSIter === 1? CSSIter = 0: CSSIter = 1
-                return (<CardTableResultBox 
-                  cardInfo={info}
-                  resBoxCSS={cardResflexboxCSS[CSSIter]} 
-                  updateTopmostState={this.props.updateState}/>)})}
+                if ((index < this.state.page*10) && (index >= (this.state.page-1)*10)) {
+                  //alert(JSON.stringify(info));
+                  return (<CardTableResultBox 
+                    id_key={index+1}
+                    cardInfo={info}
+                    resBoxCSS={cardResflexboxCSS[CSSIter]} 
+                    updateTopmostState={this.props.updateState}/>)
+                } else {
+                  return (null)
+                }
+              })
+              }
+              <div style={{padding:'0 auto', width: '100%'}}><button>Previous Page</button>{this.state.page}<button>Next Page</button></div>
             </div>
             )
         } else {
