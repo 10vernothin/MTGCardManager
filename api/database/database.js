@@ -25,5 +25,3 @@ exports.loggedUser = () => {
         return null;
     }
 }
-
-

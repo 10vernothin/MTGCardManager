@@ -3,7 +3,7 @@ var express = require('express');
 var router = express.Router();
 var _db = require('../database/database');
 var pgdb = _db.getConnectionInstance();
-var cards = require('../database/cards');
+var cards = require('../tools/cardFetcher');
 
 /*
 This api call receives a request:{form:{name,userID,desc}} and creates an entry in collection_list

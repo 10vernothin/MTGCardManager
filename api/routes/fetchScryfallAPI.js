@@ -2,7 +2,7 @@
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
-var dpd = require('../database/downloadPricingData')
+var dpd = require('../tools/ScryfallDataDownloader')
 
 /*This part will require a connection to the internet*/
 uri = 'https://api.scryfall.com/cards'

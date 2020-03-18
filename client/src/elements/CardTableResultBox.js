@@ -28,10 +28,15 @@ class CardTableResultBox extends Component {
     super(props);
     this.state = {
         item: [],
-        imagePopup: ImageCSS
+        imagePopup: ImageCSS,
+        cardImageURI: ''
         }
     }
-    /*Fetching the row data*/
+
+    /*
+    This function fetches the row data,
+    then calls fetchImage to retrieve the cached image url from the callback,
+    and finally sets the whole state*/
     fetchTableRow = () => {
       fetch('/api/collections/fetch-row', 
       { 
@@ -43,13 +48,33 @@ class CardTableResultBox extends Component {
       .then(list => {
         if (list.length === 0) {
       } else {
-          //alert(JSON.stringify(this.state.item))
-          //alert(JSON.stringify(list)) 
-          if(!(JSON.stringify(this.state.item) === JSON.stringify(list))){
-                this.setState({item: list})
+          if(!(JSON.stringify(this.state.item) === JSON.stringify(list))) {
+                this.fetchImage(list, {type:"normal"}, (uri) => {this.setState({cardImageURI: uri, item: list})})
           }
       }
       })
+    }
+
+    /*
+    This function lazy fetches an image, then updates the URI
+    Sends the URI through the callback
+    */
+    fetchImage = (cardObjList, image_type, callback) => {
+            let cardObj = cardObjList[0];
+            if (!(cardObj === undefined)) {
+                fetch('/api/cards/retrieve-cached-image', {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json'},
+                    body: JSON.stringify({set: cardObj.set, set_id: cardObj.set_id, image_uris: cardObj.image_uris, image_type: image_type})
+                }).then(
+                    (res) => {return res.json()}
+                ).then((result) =>{
+                    if (!(result.uri === this.state.cardImageURI)) {
+                        callback(result.uri);
+                        //this.setState({cardImageURI: result.uri, item:cardObjList})
+                    }
+                })
+        }
     }
 
     /*Handle Add card button */
@@ -82,9 +107,9 @@ class CardTableResultBox extends Component {
         })
     }
 
+    /*This function contains the logic that creates the JSX*/
     createRow = () => {
-        this.fetchTableRow()
-        if (!(JSON.stringify(this.state.item) === '[]')) {
+        if (!(JSON.stringify(this.state.item) === '[]') && !(this.state.cardImageURI === '')) {
             let cardObj = this.state.item[0]
             return(
             <div>
@@ -121,9 +146,9 @@ class CardTableResultBox extends Component {
         
     }
 
-
     render(){
-        return (<div>{this.createRow()}</div>)
+        this.fetchTableRow()
+        return(this.renderRow())
     }
 }
 

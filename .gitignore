@@ -110,3 +110,4 @@ dist
 .date
 
 api/json/scryfall/cards/**/*.json
+api/json/scryfall/cards/**/images/*.png

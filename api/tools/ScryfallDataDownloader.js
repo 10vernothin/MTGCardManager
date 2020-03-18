@@ -1,6 +1,6 @@
 var https = require('https');
 var fs = require('fs');
-var _db = require('./database');
+var _db = require('../database/database');
 var pgdb = _db.getConnectionInstance();
 
 /*
@@ -66,11 +66,11 @@ exports.downloadPricingData = (uri, path) => {
                     let next_p = ds.next_page.valueOf();
                     setTimeout(() => { this.downloadPricingData(next_p, path);
                         next_p = null;
-                        ds = null;
-                        dataset = null;
-                        resp = null;
-                        uri = null;
                     }, 50);
+                    ds = null;
+                    dataset = null;
+                    resp = null;
+                    uri = null;
                     return;
                 } else {
                     return;
