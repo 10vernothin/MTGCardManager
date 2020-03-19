@@ -1,8 +1,19 @@
-Latest Version: Alpha 1.5
-Last Update: M3/04/2020
+Latest Version: Alpha 2.0
+Last Update: M03/D19/Y2020
+
+What's new:
+ - Added SVG image for the mana costs
+ - Implemented Pagination for collection
+ - Prettified the collection
+ - Changed image view to embed from hover
+ - Added some error handling
+ - Optimize some backend and frontend code so the program runs faster
+ - Documentation
 
 Known bugs:
- - session expiring if refreshing the page
-	->this is because the session object is not stored in a cache or backend. Will work on it in the future.
- - fetch(download) not receiving results
-	->res.send() is buried too deep in the callbacks, or something is wrong. Will deal with
+ - Mana cost for split cards (eg. {B}//{G}) does not work
+
+What's to come:
+ - Total cost of collection
+ - More improvement
+ - More documentation
