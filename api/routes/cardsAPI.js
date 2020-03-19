@@ -66,4 +66,33 @@ router.post('/api/cards/retrieve-cached-image', function(req, res, next) {
 
 
 
+/*
+Lazy image caching,
+This API call receives a request(set, set_id, image_type={type:normal}, image_uris) and
+downloads the .png file to its proper set folder at json/scryfall/cards if it does not exist
+Then sends the img URL, or if the download fails sends the URI
+*/
+
+
+
+router.post('/api/cards/fetch-list-of-SVG', function(req, res, next) {
+    let SymFolderPath = "../api/json/scryfall/symbols/"
+    let metafile = SymFolderPath.concat('sym_index.json')
+    try{
+        fsPromise.readFile(metafile, {encoding: 'utf-8'})
+        .then((data) => {
+            let ds = JSON.parse(data)
+            listOfURLs = req.body.map((symbol) => { 
+                return(ds.filter((item) => item.symbol === symbol)[0].local_path)   
+            })
+           res.json({data:listOfURLs})
+        })
+        .catch((err)=>{console.log(err); res.json({data:[]})})
+    } catch (err) {
+        console.log(err)
+        res.json({data:[]})
+    }
+});
+
+
 module.exports = router;

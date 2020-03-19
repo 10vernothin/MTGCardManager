@@ -10,15 +10,14 @@ import SessionInfo from './tools/ContentData';
 import CreateCollection from './pages/CreateCollection';
 import Downloads from './pages/Downloads';
 import SelectedCollection from './pages/SelectedCollection';
-import readCurrURLParamsAsJSON from './tools/readCurrURLParamsAsJSONString';
+import readCurrURLParamsAsJSON from './tools/ParamsReader';
+//import replaceManaCostWithSVG from './tools/ManaCostSVGReplacer'
 
 /*Initializing local cache*/
 SessionInfo.initializeSession();
+//replaceManaCostWithSVG('{1}{U/B}{U/B}').then((res)=>{alert(JSON.stringify(res))});
 
 class App extends Component {
-
-	//This function reads the current href and parses the params 
-
 
 	render() {
 		const App = () => (

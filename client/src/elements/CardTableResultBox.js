@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import SessionInfo from '../tools/ContentData';
-
+import replaceManaCostWithSVG from '../tools/ManaCostSVGReplacer'
 
 const AddRemoveButtonCSS = {
     display: 'block',
@@ -36,7 +36,8 @@ class CardTableResultBox extends Component {
     this.state = {
         item: [],
         cardImageURI: undefined,
-        id_key: this.props.id_key
+        id_key: this.props.id_key,
+        svgList: []
         }
     }
 
@@ -54,7 +55,7 @@ class CardTableResultBox extends Component {
       .then(res => res.json())
       .then(list => {
         if (!(list.length === 0) && !(JSON.stringify(this.state.item) === JSON.stringify(list))) {
-                this.fetchImage(list, {type:"normal"}, (uri) => {this.setState({cardImageURI: uri, item: list, id_key: this.props.id_key})})
+                this.fetchImage(list, {type:"normal"}, (uri, svgList) => {this.setState({cardImageURI: uri, svgList:svgList, item: list,id_key: this.props.id_key})})
           }
       })
     }
@@ -74,7 +75,7 @@ class CardTableResultBox extends Component {
                     (res) => {return res.json()}
                 ).then((result) =>{
                     if (!(result.uri === this.state.cardImageURI)) {
-                        callback(result.uri);
+                        this.updateManaCost(cardObj, (svgList)=>{callback(result.uri, svgList);})
                     }
                 })
         }
@@ -95,6 +96,27 @@ class CardTableResultBox extends Component {
         })
     }
 
+    updateManaCost = (cardObj, callback) => {
+        replaceManaCostWithSVG(cardObj.mana_cost).then((listURL) =>
+        {
+            let listofSVGs=[]
+            let listFileName = listURL.map((url) => {
+                return url.split(/(\\|\/)/g).pop()
+            })
+            let listSVGFiles = this.props.svgPack.keys().map((url) => {
+                return url.split(/(\\|\/)/g).pop()
+            })
+            listFileName.forEach((path) =>{
+                if (listSVGFiles.includes(path))
+                {
+                    let i = this.props.svgPack(this.props.svgPack.keys().filter((key) =>key.includes(path))[0])
+                    listofSVGs.push(i)
+                }
+            })
+            callback(listofSVGs)
+        })
+    }
+
     /*Handle remove card button */
     removeCard = e => {
         e.preventDefault()
@@ -110,6 +132,16 @@ class CardTableResultBox extends Component {
         })
     }
 
+    renderManaSymbol = (item) => {
+        return (
+            <div>
+                <object data={item} type="image/svg+xml" style={{width:'20px', height:'auto'}}>
+                    <img src={item} alt="imgSym" style={{width:'20px', height:'auto'}}></img>
+                </object>
+            </div>
+        )
+    }
+
     /*This function contains the logic that creates the JSX*/
     createRow = () => {
         if (!(JSON.stringify(this.state.item) === '[]') && !(this.state.cardImageURI === undefined)) {
@@ -123,7 +155,13 @@ class CardTableResultBox extends Component {
                 }
                 <div style={{flex: 1}}>{this.state.id_key}</div>
                 <div style={{flex: 2}} >{cardObj.name}</div>
-                <div style={{flex: 1}}>{cardObj.mana_cost}</div>
+                <div style={{flex: 2}}>
+                    <div style={{display: 'flex', justifyContent: 'center', 'flex-wrap':'wrap'}}>
+                        {this.state.svgList.map((item) => {
+                            return this.renderManaSymbol(item)
+                        })}
+                    </div>
+                </div>
                 <div style={{flex: 1}}>{cardObj.rarity.substring(0,1).toUpperCase()}</div>
                 <div style={{flex: 3}}>{cardObj.type_line}</div>
                 <div style={{flex: 3}}>{`${cardObj.set_name} [${cardObj.set.toUpperCase()}]`}</div>

@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import SessionInfo from '../tools/ContentData.js';
 import CardTableResultBox from '../elements/CardTableResultBox';
 
+//import all mana icon a list of svg images
+const listOfSvgs = require.context( '../images', true, /\.svg$/ )
+
 /* These constants define the inline CSS properties of elements in this component*/
 const tableCSS = {
   'border-bottom': '1px black solid',
@@ -47,15 +50,12 @@ class CardTable extends Component {
         lastDisabled: true,
         nextDisabled: true
         }
-    this.props.collectionList.length > (this.state.page)*(this.state.elemPerPage)? this.state.nextDisabled = false: this.state.nextDisabled = true;
-    this.props.collectionList.length <= (this.state.page)*(this.state.elemPerPage)? this.state.lastDisabled = false: this.state.lastDisabled = true;
   }
 
   handleNextPage = e => {
     e.preventDefault()
     let nextPage = this.state.page+1;
-    let nextLastDisabled = false;
-    let nextNextDisabled = false;
+    let nextLastDisabled, nextNextDisabled = false;
     this.props.collectionList.length > (nextPage)*(this.state.elemPerPage)? nextNextDisabled = false: nextNextDisabled = true;
     nextPage > 1? nextLastDisabled = false: nextLastDisabled = true;
     this.setState({
@@ -68,8 +68,7 @@ class CardTable extends Component {
   handleLastPage = e => {
     e.preventDefault()
     let nextPage = this.state.page-1;
-    let nextLastDisabled = false;
-    let nextNextDisabled = false;
+    let nextLastDisabled, nextNextDisabled = false;
     this.props.collectionList.length > (nextPage)*(this.state.elemPerPage)? nextNextDisabled = false: nextNextDisabled = true;
     nextPage > 1? nextLastDisabled = false: nextLastDisabled = true;
     this.setState({
@@ -86,7 +85,7 @@ class CardTable extends Component {
           <button onClick={this.handleLastPage} disabled={this.state.lastDisabled}>Previous Page</button>
         </div>
       <div style={{display: 'inline-block', width: '80%', margin: 'auto 0'}}>
-        <p>Page {this.state.page}</p>
+        <p>Page {this.state.page}/{Math.ceil(this.props.collectionList.length/this.state.elemPerPage)}</p>
       </div>
       <div style={{display: 'inline-block', width: '10%', margin: 'auto 0'}}>
         <button onClick={this.handleNextPage} disabled={this.state.nextDisabled}>Next Page</button>
@@ -95,55 +94,76 @@ class CardTable extends Component {
     )
   }
 
-  render(){
-        if (!(this.props.collectionList.length === 0)) {
-          
-          /*deep copying the prop and sorting it (use fast data-loss copy since everything is JSON)*/
-          let list = JSON.stringify(this.props.collectionList).valueOf()
-          list = JSON.parse(list)
-          list.sort((a,b) => {return (a.name.localeCompare(b.name) || a.set.localeCompare(b.set) || a.is_foil-b.is_foil)})
-         
-          let CSSIter = 0
-          return (
-            <div>
-              {this.renderPageNav()}
-              <div style={tableCSS}>
-                  <div style={{flex: 3}}></div>
-                  <div style={{flex: 1}}>NO.</div>
-                  <div style={{flex: 2}}>CARD NAME</div>
-                  <div style={{flex: 1}}>MANA</div>
-                  <div style={{flex: 1}}>RARITY</div>
-                  <div style={{flex: 3}}>TYPE</div>
-                  <div style={{flex: 3}}>SET</div>
-                  <div style={{flex: 1}}>ID</div>
-                  <div style={{flex: 1}}>FOIL</div>
-                  <div style={{flex: 1}}>PRICE</div>
-                  <div style={{flex: 1}}>AMT</div>
-                  <div style={{flex: 1}}></div>
-                  <div style={{flex: 1}}></div>
-              </div>
-              {
-              list.map((info, index) => {
-                CSSIter === 1? CSSIter = 0: CSSIter = 1
-                if ((index < this.state.page*10) && (index >= (this.state.page-1)*10)) {
-                  //alert(JSON.stringify(info));
-                  return (<CardTableResultBox 
-                    id_key={index+1}
-                    cardInfo={info}
-                    resBoxCSS={cardResflexboxCSS[CSSIter]} 
-                    updateTopmostState={this.props.updateState}/>)
-                } else {
-                  return (null)
-                }
-              })
-              }
-            </div>
-            )
-        } else {
-          return(<div>You have no cards in collection.</div>)
-        }
+  renderTable = () => {
+    if (!(this.props.collectionList.length === 0)) {
+      /*deep copying the prop and sorting it (use fast data-loss copy since everything is JSON)*/
+      let list = JSON.stringify(this.props.collectionList).valueOf()
+      list = JSON.parse(list)
+      list.sort((a,b) => {return (a.name.localeCompare(b.name) || a.set.localeCompare(b.set) || a.is_foil-b.is_foil)})
+     
+      let CSSIter = 0
+      return (
+        <div>
+          {this.renderPageNav()}
+          <div style={tableCSS}>
+              <div style={{flex: 3}}></div>
+              <div style={{flex: 1}}>NO.</div>
+              <div style={{flex: 2}}>CARD NAME</div>
+              <div style={{flex: 2}}>MANA</div>
+              <div style={{flex: 1}}>RARITY</div>
+              <div style={{flex: 3}}>TYPE</div>
+              <div style={{flex: 3}}>SET</div>
+              <div style={{flex: 1}}>ID</div>
+              <div style={{flex: 1}}>FOIL</div>
+              <div style={{flex: 1}}>PRICE</div>
+              <div style={{flex: 1}}>AMT</div>
+              <div style={{flex: 1}}></div>
+              <div style={{flex: 1}}></div>
+          </div>
+          {
+          list.map((info, index) => {
+            CSSIter === 1? CSSIter = 0: CSSIter = 1
+            if ((index < this.state.page*10) && (index >= (this.state.page-1)*10)) {
+              //alert(JSON.stringify(info));
+              return (<CardTableResultBox 
+                id_key={index+1}
+                cardInfo={info}
+                svgPack = {listOfSvgs}
+                resBoxCSS={cardResflexboxCSS[CSSIter]} 
+                updateTopmostState={this.props.updateState}/>)
+            } else {
+              return (null)
+            }
+          })
+          }
+        </div>
+        )
+    } else {
+      return(<div>You have no cards in collection.</div>)
     }
+  }
 
+
+  renderTableAfterCheck() {
+    let nextLastDisabled = false;
+    let nextNextDisabled = false;
+    this.props.collectionList.length > (this.state.page)*(this.state.elemPerPage)? nextNextDisabled = false: nextNextDisabled = true;
+    this.state.page > 1? nextLastDisabled = false: nextLastDisabled = true;
+    if (this.state.lastDisabled === nextLastDisabled && this.state.nextDisabled === nextNextDisabled) {
+        return this.renderTable()
+    } else {
+      this.setState({
+        lastDisabled: nextLastDisabled,
+        nextDisabled: nextNextDisabled
+      })
+      return null;
+    }
+  }
+
+  
+  render(){
+    return(this.renderTableAfterCheck())
+  }
 
 }
 

@@ -5,7 +5,7 @@ var https = require('https')
 downloadFile(uri, filename, callback) downloads a file in any file format from an uri to a file
 Source: https://stackoverflow.com/questions/12740659/downloading-images-with-node-js
 */
-exports.downloadFile = function(uri, filename, callback) {
+exports.downloadFile = function(uri, filename, callback=undefined) {
     https.get(uri, (resp) => {
       let data = Buffer.alloc(0);
       resp.on('data', (chunk) => {
@@ -16,15 +16,22 @@ exports.downloadFile = function(uri, filename, callback) {
       resp.on('end', () => {
         resp = null;
         fs.writeFile(filename, data).then(() =>{
-          callback(0)
+          if (!(callback===undefined)){
+            callback(0)
+          }
         }).catch((err) => {
           console.log(err.errno)
-          callback(err.errno)
+          if (!(callback===undefined)){
+            callback(err.errno)
+          }
+          
         })
       })
       resp.on('error', (err) => {
         console.log(err.errno)
-        callback(err.errno)
+        if (!(callback===undefined)){
+          callback(err.errno)
+        }
       })
     })
 };

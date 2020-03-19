@@ -2,7 +2,7 @@ var https = require('https');
 var fs = require('fs');
 var _db = require('../database/database');
 var pgdb = _db.getConnectionInstance();
-
+var downloader = require('../tools/fileDownloader')
 /*
 This function fetches the paginated card data from Scryfall and populates each JSON card data object
 into a file sorted into folders by the set where it was released. The name of the file will be its collector
@@ -24,7 +24,7 @@ and all values are accessed byValue() if possible, then the variable is set to n
 Real runtime: ~0.98s/page so about 5% efficient.
 */
 
-exports.downloadPricingData = (uri, path) => {
+exports.downloadScryfallData = (uri, path) => {
         uri = uri.valueOf();
         https.get(uri, (resp) =>
         {
@@ -64,7 +64,7 @@ exports.downloadPricingData = (uri, path) => {
                 if (ds.has_more) {
                     console.log(`${uri} logged. Logging next page...`);
                     let next_p = ds.next_page.valueOf();
-                    setTimeout(() => { this.downloadPricingData(next_p, path);
+                    setTimeout(() => { this.downloadScryfallData(next_p, path);
                         next_p = null;
                     }, 50);
                     ds = null;
@@ -80,3 +80,32 @@ exports.downloadPricingData = (uri, path) => {
         .on("error", (err) => {console.log("Error: " + err); err = null});
         return;
 };
+
+exports.downloadSymbology = (uri, path, opts={includeMeta: true, metaDirPath:path}) => {
+    uri = uri.valueOf()
+    https.get(uri, (resp) => {
+        let data = ''
+        resp.on('data', (chunk) => {
+            data += chunk;
+            chunk=null;
+            resp=null;
+        })
+        resp.on('end', () => {
+                let ds = JSON.parse(data).data
+                ds.forEach((item, index)=>{
+                        let filename = `symbol_id_${index}`
+                        let imgPath = path.concat(filename).concat('.svg')
+                        item.local_path = imgPath; 
+                        downloader.downloadFile(item.svg_uri, imgPath, (err) => {if(!(err === 0)){console.log(err)}})
+                })
+                if (opts.includeMeta) {
+                    let metaFilePath = opts.metaDirPath.concat('sym_index').concat('.json')
+                    fs.writeFile(metaFilePath, JSON.stringify(ds), (err) => {
+                        err = null;
+                    });
+                }
+        })
+
+    })
+
+}

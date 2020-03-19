@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import SessionInfo from '../tools/ContentData.js';
-import readCurrURLParamsAsJSONString from '../tools/readCurrURLParamsAsJSONString'
+import readCurrURLParamsAsJSONString from '../tools/ParamsReader'
 import CardTable from '../elements/CardTable'
 import CardSearchBox from '../elements/CardSearchBox'
 import {CollectionButton} from '../elements/Buttons'
