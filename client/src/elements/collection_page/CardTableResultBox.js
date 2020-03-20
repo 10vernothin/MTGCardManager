@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
-import SessionInfo from '../tools/ContentData';
-import replaceManaCostWithSVG from '../tools/ManaCostSVGReplacer'
+import SessionInfo from '../../tools/ContentData';
+import replaceManaCostWithSVG from '../../tools/ManaCostSVGReplacer'
 
 const AddRemoveButtonCSS = {
     display: 'block',

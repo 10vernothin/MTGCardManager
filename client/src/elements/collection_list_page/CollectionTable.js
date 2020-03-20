@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
-import SessionInfo from '../tools/ContentData'
-import {SelectCollectionButton, DeleteCollectionButton} from '../elements/Buttons'
+import SessionInfo from '../../tools/ContentData'
+import {SelectCollectionButton, DeleteCollectionButton} from '../Buttons'
 
 
 const collectionTitleCSS = {
@@ -61,6 +61,7 @@ class CollectionTable extends Component {
               <div style={collectionTitleCSS}>
                   <div style={{flex: 2}}>Name</div>
                   <div style={{flex: 7}}>Description</div>
+                  <div style={{flex: 1}}>Price</div>
                   <div style={{flex: 3}}>Options</div>
               </div>
               {/* Render the list of items */}
@@ -70,6 +71,7 @@ class CollectionTable extends Component {
                   <div style={collectionCSS}>
                       <div style={{flex: 2}}>{item.name}</div>
                       <div style={{flex: 7}}>{item.description}</div>
+                      <div style={{flex: 1}}>${item.sum}</div>
                       <div style={{flex: 3}}>
                           <Link to={`/collections?page=selected&id=${item.id}&name=${encodeURIComponent(item.name)}`}>
                             <SelectCollectionButton/>

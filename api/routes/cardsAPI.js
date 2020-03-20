@@ -17,8 +17,6 @@ router.post('/api/cards/query-card', function(req, res, next) {
     }
 });
 
-
-
 /*
 Lazy image caching,
 This API call receives a request(set, set_id, image_type={type:normal}, image_uris) and
@@ -72,8 +70,6 @@ This API call receives a request(set, set_id, image_type={type:normal}, image_ur
 downloads the .png file to its proper set folder at json/scryfall/cards if it does not exist
 Then sends the img URL, or if the download fails sends the URI
 */
-
-
 
 router.post('/api/cards/fetch-list-of-SVG', function(req, res, next) {
     let SymFolderPath = "../api/json/scryfall/symbols/"

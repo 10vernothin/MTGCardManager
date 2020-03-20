@@ -62,7 +62,7 @@ This api call receives a request:{userID} to fetches all rows in collection_list
 router.post('/api/collections/getList', function(req, res, next) {
     console.log("Getting Collection List for userID: " + req.body.userID);
     pgdb.any(
-            "SELECT id, name, description from collection_list where player_id = $1", 
+            "SELECT id, name, description, sum from collection_list INNER JOIN (SELECT collection.collection_list_id as collection_list_id, SUM((foil_price*collection.amt*(is_foil::int))+(price*collection.amt*((NOT is_foil)::int))) as sum from cards INNER JOIN collection ON cards.id = collection.card_id GROUP BY collection.collection_list_id) AS sum_query ON sum_query.collection_list_id=collection_list.id where collection_list.player_id = $1", 
             [req.body.userID]
             ).then(
     function(data) {
@@ -87,7 +87,7 @@ This api receives a request(collectionID) to fetch all rows in TABLE collection 
 joined with the associated columns in TABLE cards where cards.id = collection.card_id
 */
 router.post('/api/collections/fetch-collection-id', function(req, res, next) {
-    pgdb.any("SELECT collection.id, cards.set_id, cards.set, collection.card_id, cards.name, collection_list.description, collection_list.id, collection.amt, collection.is_foil from collection inner join cards on collection.card_id = cards.id inner join collection_list on collection_list.id = collection.collection_list_id where collection_list_id = $1", [req.body.collectionID])
+    pgdb.any("SELECT collection.id, cards.set_id, cards.set, collection.card_id, cards.name, collection_list.description, collection_list.id as collection_list_id, collection.amt, collection.is_foil from collection inner join cards on collection.card_id = cards.id inner join collection_list on collection_list.id = collection.collection_list_id where collection_list_id = $1", [req.body.collectionID])
     .then((data) => {
         if (data.length == 0) {
             console.log('No cards in Collection.')
@@ -99,6 +99,9 @@ router.post('/api/collections/fetch-collection-id', function(req, res, next) {
         console.log(err.message);
     })
 });
+
+
+
 
 /*
 This api call receives a request:{card_id} to fetch cardObject data by its unique card_id, and send the cardObject to the client
@@ -119,8 +122,8 @@ router.post('/api/collections/fetch-row', function(req, res, next) {
 
 /*
 This helper function fetches cardObject details using a list of card_ids with set_id=collector_number 
-(Warning: if lstIDs.length is too large you will receive a . 
-    It is recommended to do Z=XY query with X arrays of Y(<20) items)
+(Warning: if lstIDs.length is too large you will receive an error 
+    It is recommended to do Z queries with X arrays of Y(<20) items)
 */
 createCollectionList = async (lstIDs, opts = {type: 'list'}) => {
     lst = await Promise.all(await cards.getDetails(lstIDs, opts));

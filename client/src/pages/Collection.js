@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {HomeButton, SignoutButton, CreateCollectionButton} from '../elements/Buttons.js';
 import SessionInfo from '../tools/ContentData.js';
-import CollectionTable from '../elements/CollectionTable';
+import CollectionTable from '../elements/collection_list_page/CollectionTable';
 
 class Collection extends Component {
   

@@ -49,9 +49,8 @@ exports.downloadScryfallData = (uri, path) => {
                             fs.writeFile(cardPath, stringJSON, (err) => {//
                                     err = null;
                             });
-                            
-                            pgdb.none("INSERT into cards(name, set, set_id) values($1, $2, $3) ON CONFLICT ON CONSTRAINT cards_set_key DO UPDATE SET name = EXCLUDED.name, set = EXCLUDED.set, set_id = EXCLUDED.set_id",
-                            [item.name, item.set , item.collector_number])
+                            pgdb.none("INSERT into cards(name, set, set_id, price, foil_price) values($1, $2, $3, $4, $5) ON CONFLICT ON CONSTRAINT cards_set_key DO UPDATE SET name = EXCLUDED.name, set = EXCLUDED.set, set_id = EXCLUDED.set_id, price = EXCLUDED.price, foil_price = EXCLUDED.foil_price",
+                            [item.name, item.set , item.collector_number, (item.prices.usd === null? 0:item.prices.usd),  (item.prices.usd_foil === null? 0:item.prices.usd_foil)])
                             .catch((err) => {
                                 console.log(err.message);
                                 err = null;

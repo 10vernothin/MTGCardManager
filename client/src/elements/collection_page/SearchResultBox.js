@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import SessionInfo from '../tools/ContentData';
+import SessionInfo from '../../tools/ContentData';
 
 const ImageCSS = {
     display: 'block',

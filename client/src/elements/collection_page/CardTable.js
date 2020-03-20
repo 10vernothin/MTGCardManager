@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import SessionInfo from '../tools/ContentData.js';
-import CardTableResultBox from '../elements/CardTableResultBox';
+import SessionInfo from '../../tools/ContentData.js';
+import CardTableResultBox from './CardTableResultBox';
 
 //import all mana icon a list of svg images
-const listOfSvgs = require.context( '../images', true, /\.svg$/ )
+const listOfSvgs = require.context( '../../images', true, /\.svg$/ )
 
 /* These constants define the inline CSS properties of elements in this component*/
 const tableCSS = {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import SearchResultBox from '../elements/SearchResultBox'
+import SearchResultBox from './SearchResultBox'
 
 
 /*Inline CSS Constants*/

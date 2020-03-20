@@ -89,6 +89,7 @@ class DeleteCollectionButton extends Component {
 }
 
 class EditCollectionButton extends Component {
+  
   //Button that accesses the chosen Collection for deletion
   render() {
     return (<button type= "button">Edit</button>);
