@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import SessionInfo from '../../tools/ContentData';
+import SessionInfo from '../../../common/cached_data/session-info';
 
 const ImageCSS = {
     display: 'block',

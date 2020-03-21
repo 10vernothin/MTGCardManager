@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-class List extends Component {
+class UserListingPage extends Component {
   // Initialize the state
   constructor(props){
     super(props);
@@ -52,4 +52,4 @@ class List extends Component {
   }
 }
 
-export default List;
+export default UserListingPage;

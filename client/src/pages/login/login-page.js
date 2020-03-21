@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import {HomeButton, SignupButton} from '../elements/Buttons.js';
-import SessionInfo from '../tools/ContentData.js';
+import {HomeButton} from './../../common/elements/common-buttons';
+import SessionInfo from '../../common/cached_data/session-info';
+import {SignupButton} from './elements/login-buttons';
 
-class Login extends Component {
+class LoginPage extends Component {
 
   constructor(props){
       super(props);
@@ -88,5 +89,4 @@ class Login extends Component {
 
 }
 
-export default Login;
-
+export default LoginPage;

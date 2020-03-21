@@ -1,21 +1,24 @@
 import React, { Component} from 'react';
 import {BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import './App.css';
-import Home from './pages/Home';
-import List from './pages/List';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Collection from './pages/Collection';
-import SessionInfo from './tools/ContentData';
-import CreateCollection from './pages/CreateCollection';
-import Downloads from './pages/Downloads';
-import SelectedCollection from './pages/SelectedCollection';
-import readCurrURLParamsAsJSON from './tools/ParamsReader';
-//import replaceManaCostWithSVG from './tools/ManaCostSVGReplacer'
+
+//Importing pages
+import HomePage from './pages/home/home-page';
+import UserListingPage from './pages/home/user-listing-page';
+import LoginPage from './pages/login/login-page';
+import SignupPage from './pages/login/signup-page';
+import CollectionListPage from './pages/listing/collection-list-page';
+import CreateCollectionPage from './pages/listing/create-collection-page';
+import EditCollectionPage from './pages/listing/edit-collection-page';
+import DownloadPage from './pages/download/download-page';
+import CollectionPage from './pages/collection/collection-page';
+
+//importing required common tools
+import SessionInfo from './common/cached_data/session-info';
+import readCurrURLParamsAsJSON from './common/functions/read-url-params';
 
 /*Initializing local cache*/
 SessionInfo.initializeSession();
-//replaceManaCostWithSVG('{1}{U/B}{U/B}').then((res)=>{alert(JSON.stringify(res))});
 
 class App extends Component {
 
@@ -24,8 +27,8 @@ class App extends Component {
 		<div>
 		<Router>
 			<Switch>
-				<Route exact path='/' component={Home}/>
-				<Route path='/list' component={List}/>
+				<Route exact path='/' component={HomePage}/>
+				<Route path='/userlist' component={UserListingPage}/>
 
 				{/*login page will redirect to collections page if logged in*/}
 				<Route path='/login' render = {() =>{
@@ -34,11 +37,11 @@ class App extends Component {
 							return(<Redirect to='/collections'/>);
 						} else {
 							//alert("login");
-							return(<Route path= '/login' component = {Login}/>);
+							return(<Route path= '/login' component = {LoginPage}/>);
 						}
 					}
 				}/>
-				<Route path='/signup' component={Signup}/>	
+				<Route path='/signup' component={SignupPage}/>	
 				{/*collections pages will redirect to login page if logged out*/}	
 				<Route path='/collections' render = {
 					() => {	
@@ -48,18 +51,16 @@ class App extends Component {
 						}else {
 								//subrouting
 								switch (readCurrURLParamsAsJSON().page) {
-								case "default":
-									
-									return (<Route path= '/collections' component = {Collection}/>);
+								case "default":				
+									return (<Route path= '/collections' component = {CollectionListPage}/>);
 								case "create-new-collection":
-				
-									return (<Route path= '/collections' component = {CreateCollection}/>);
+									return (<Route path= '/collections' component = {CreateCollectionPage}/>);
 								case "selected":
-									
-									return (<Route path= '/collections' component = {SelectedCollection}/>)
-								default:
-									
-									return (<Route path= '/collections' component = {Collection}/>);
+									return (<Route path= '/collections' component = {CollectionPage}/>)
+								case "edit":
+									return (<Route path= '/collections' component = {EditCollectionPage}/>)
+								default:	
+									return (<Route path= '/collections' component = {CollectionListPage}/>);
 								}
 						}
 					}		
@@ -69,9 +70,9 @@ class App extends Component {
 						switch (readCurrURLParamsAsJSON().func) {
 							//subrouting
 							case '':
-								return (<Route exact path='/' component= {Home}/>)
+								return (<Route exact path='/' component= {HomePage}/>)
 							default:
-								return (<Route path='/downloads' component= {Downloads}/>)
+								return (<Route path='/downloads' component= {DownloadPage}/>)
 						}
 					}
 				}/>

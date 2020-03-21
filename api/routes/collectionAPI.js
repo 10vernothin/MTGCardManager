@@ -3,7 +3,7 @@ var express = require('express');
 var router = express.Router();
 var _db = require('../database/database');
 var pgdb = _db.getConnectionInstance();
-var cards = require('../tools/cardFetcher');
+var cards = require('../tools/card-fetcher');
 
 /*
 This api call receives a request:{form:{name,userID,desc}} and creates an entry in collection_list
@@ -55,6 +55,27 @@ router.post('/api/collections/delete-collection', function(req, res, next) {
     })
 });
 
+router.post('/api/collections/edit-collection', function(req, res, next) {
+    if (req.body.formControls.name.value.replace(/^\s+$/, '').length === 0) {
+        console.log("Collection Creation Error: Name is not defined");
+        res.send('-1'); 
+    }  else if (req.body.collectionID === 0) {
+        console.log("Collection Creation Error: CollectionID is not defined");
+        res.send('-3'); 
+    } else {
+        pgdb.none("UPDATE collection_list SET name= $2, description = $3 where collection_list.id = $1", [req.body.collectionID, req.body.formControls.name.value, req.body.formControls.desc.value])
+        .then(() => {
+                console.log('Collection Deleted.')
+                res.send('0')
+    }
+        ).catch((err) => {
+        console.log(err);
+        res.send('-2')
+        })
+    }
+});
+
+
 
 /*
 This api call receives a request:{userID} to fetches all rows in collection_list associated with that user
@@ -62,7 +83,7 @@ This api call receives a request:{userID} to fetches all rows in collection_list
 router.post('/api/collections/getList', function(req, res, next) {
     console.log("Getting Collection List for userID: " + req.body.userID);
     pgdb.any(
-            "SELECT id, name, description, sum from collection_list INNER JOIN (SELECT collection.collection_list_id as collection_list_id, SUM((foil_price*collection.amt*(is_foil::int))+(price*collection.amt*((NOT is_foil)::int))) as sum from cards INNER JOIN collection ON cards.id = collection.card_id GROUP BY collection.collection_list_id) AS sum_query ON sum_query.collection_list_id=collection_list.id where collection_list.player_id = $1", 
+            "SELECT id, name, description, CASE WHEN sum is NULL THEN 0 ELSE sum END AS sum from collection_list LEFT OUTER JOIN (SELECT collection.collection_list_id as collection_list_id, SUM((foil_price*collection.amt*(is_foil::int))+(price*collection.amt*((NOT is_foil)::int))) as sum from cards INNER JOIN collection ON cards.id = collection.card_id GROUP BY collection.collection_list_id) AS sum_query ON sum_query.collection_list_id=collection_list.id where collection_list.player_id = $1", 
             [req.body.userID]
             ).then(
     function(data) {

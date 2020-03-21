@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import SearchResultBox from './SearchResultBox'
+import SearchResultBox from './search-result-box'
 
 
 /*Inline CSS Constants*/
@@ -16,7 +16,7 @@ const Dropdown = {
 }
 
 /*CardSearchBox*/
-class CardSearchBox extends Component {
+class SearchBox extends Component {
 
     constructor(props){
         super(props);
@@ -41,11 +41,7 @@ class CardSearchBox extends Component {
           method: 'POST', 
           headers: { 'Content-Type': 'application/json'},
           body: JSON.stringify(this.state)
-        }).then((res) => {
-           
-            return res.text();
-        }).then((postResponse) => {
-            //alert(postResponse);
+        }).then((res) => {return res.text();}).then((postResponse) => {
             postResponse = JSON.parse(postResponse)
                 if (!(postResponse === this.state.postResponse)){
                     this.setState({postResponse});
@@ -55,10 +51,10 @@ class CardSearchBox extends Component {
         })});  
     }
 
-    render(){
+    renderSearchBox = () => {
         return(
             <div>
-                    <div style={{backgroundColor: 'gray'}}>
+            <div style={{backgroundColor: 'gray'}}>
                         <div>
                             {"Search Card:  "}
                             <input  type="text" 
@@ -68,15 +64,21 @@ class CardSearchBox extends Component {
                                     style= {{width: '70%', right: 0}}
                             />
                         </div>   
-                    </div>
-                    <div style={{backgroundColor: 'gray', height: '2px'}}/>
-                    <div>
-                        <div style={Dropdown}>
-                            {this.state.postResponse.map((item) => {
-                                return (<SearchResultBox item = {item} updateTopmostState={this.props.updateState}/>) 
-                            })}
-                        </div> 
-                    </div>
+            </div>
+            <div style={{backgroundColor: 'gray', height: '2px'}}/>
+            </div>
+        )
+    }
+
+    render(){
+        return(
+            <div>
+                    {this.renderSearchBox()}
+                    <div style={Dropdown}>
+                        {this.state.postResponse.map((item) => {
+                            return (<SearchResultBox item = {item} updateTopmostState={this.props.updateState}/>) 
+                        })}
+                    </div> 
             </div>
     );}
 }
@@ -85,4 +87,4 @@ class CardSearchBox extends Component {
 
 
 
-export default CardSearchBox;
+export default SearchBox;

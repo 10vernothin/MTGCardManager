@@ -1,6 +1,6 @@
 //Defining a database
 var pgp = require('pg-promise') (/*options*/);
-var dbDets = require('./dbInfo.js');
+var dbDets = require('./db-info.js');
 var connected = false;
 var pgdb;
 

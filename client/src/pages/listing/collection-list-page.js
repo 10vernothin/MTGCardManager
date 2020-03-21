@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import {HomeButton, SignoutButton, CreateCollectionButton} from '../elements/Buttons.js';
-import SessionInfo from '../tools/ContentData.js';
-import CollectionTable from '../elements/collection_list_page/CollectionTable';
+import {HomeButton, SignoutButton} from '../../common/elements/common-buttons';
+import {CreateCollectionButton} from './elements/collection-list-buttons'
+import CollectionTable from './elements/collections-table';
+import SessionInfo from '../../common/cached_data/session-info';
 
-class Collection extends Component {
+class CollectionListPage extends Component {
   
   // Retrieves the list of items from the Express app
 
@@ -40,4 +41,4 @@ class Collection extends Component {
   }
 }
 
-export default Collection;
+export default CollectionListPage;

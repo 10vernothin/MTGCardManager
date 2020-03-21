@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import {HomeButton, CollectionButton} from '../elements/Buttons.js';
-import SessionInfo from '../tools/ContentData';
+import {HomeButton, CollectionListButton} from '../../common/elements/common-buttons'
+import SessionInfo from '../../common/cached_data/session-info';
 
- class CreateCollection extends Component {
+ class CreateCollectionPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -80,11 +80,11 @@ import SessionInfo from '../tools/ContentData';
         <div>
           <button type="submit">Submit</button>
           <HomeButton/>
-          <CollectionButton/>
+          <CollectionListButton/>
         </div>
     {this.state.postResponse}
     </form>   );
     }
  };
 
-export default CreateCollection;
+export default CreateCollectionPage;

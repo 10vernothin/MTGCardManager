@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import SessionInfo from '../tools/ContentData.js';
-import readCurrURLParamsAsJSONString from '../tools/ParamsReader'
-import CardTable from '../elements/collection_page/CardTable'
-import CardSearchBox from '../elements/collection_page/CardSearchBox'
-import {CollectionButton} from '../elements/Buttons'
+import SessionInfo from '../../common/cached_data/session-info';
+import readCurrURLParamsAsJSONString from '../../common/functions/read-url-params'
+import SearchBox from './elements/search-box'
+import CollectionTable from './elements/collection-table'
+import {CollectionListButton} from '../../common/elements/common-buttons'
 
 const InlineLeft = {
     border: '1px black solid',
@@ -37,7 +37,7 @@ const ExitButtonCSS = {
     'z-index': '3'
 }
 
-class SelectedCollection extends Component {
+class CollectionPage extends Component {
     
     constructor(props) {
         super(props);
@@ -46,11 +46,11 @@ class SelectedCollection extends Component {
             userName: SessionInfo.getSessionUser(),
             collectionID: readCurrURLParamsAsJSONString().id,
             collectionName: readCurrURLParamsAsJSONString().name,
-            CardTableProps: {
+            cardTableProps: {
                 collectionList: [],
                 postResponse: 'Fetching data...'
             },
-            CardTable: ''
+            cardTable: ''
         }
         this.updateState = this.updateState.bind(this)
         SessionInfo.setCollectionName(this.state.collection);
@@ -68,23 +68,23 @@ class SelectedCollection extends Component {
         .then(res => res.json())
         .then(list => {
             if (list.length === 0) {
-                let newCardTableProps = {...this.state.CardTableProps}
+                let newCardTableProps = {...this.state.cardTableProps}
                 newCardTableProps.postResponse = 'You have no cards in collection.'
                 newCardTableProps.collectionList = list
-                if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.CardTableProps.collectionList))){
+                if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.cardTableProps.collectionList))){
                     this.setState({
-                        CardTableProps: newCardTableProps,
-                        CardTable: <CardTable updateState={this.updateState} collectionList={newCardTableProps.collectionList} postResponse={this.state.CardTableProps.postResponse}/>
+                        cardTableProps: newCardTableProps,
+                        cardTable: <CollectionTable updateState={this.updateState} collectionList={newCardTableProps.collectionList} postResponse={this.state.cardTableProps.postResponse}/>
                     })
                 }
             }  else { 
-                let newCardTableProps = {...this.state.CardTableProps}
+                let newCardTableProps = {...this.state.cardTableProps}
                 newCardTableProps.postResponse = ''
                 newCardTableProps.collectionList = list
-                if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.CardTableProps.collectionList))){
+                if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.cardTableProps.collectionList))){
                     this.setState({
-                        CardTableProps: newCardTableProps,
-                        CardTable: <CardTable updateState={this.updateState} collectionList={newCardTableProps.collectionList} postResponse={this.state.CardTableProps.postResponse}/>
+                        cardTableProps: newCardTableProps,
+                        cardTable: <CollectionTable updateState={this.updateState} collectionList={newCardTableProps.collectionList} postResponse={this.state.cardTableProps.postResponse}/>
                     })
                 }
         }
@@ -105,17 +105,17 @@ class SelectedCollection extends Component {
         return (
         <div>
             <div>
-                <div style={ExitButtonCSS}><CollectionButton></CollectionButton></div>
+                <div style={ExitButtonCSS}><CollectionListButton/></div>
                 <div style={InlineLeft}>
-                    <CardSearchBox updateState={this.updateState}/>
+                    <SearchBox updateState={this.updateState}/>
                 </div>
                 <div style={InlineRight}>
                     <div style={{margin: '0 auto', width: '100%', 'text-align': 'center'}}>
                         <h1>{this.state.collectionName}</h1>
-                        <p>{this.state.CardTableProps.collectionList[0] ? this.state.CardTableProps.collectionList[0].description: null}</p>
+                        <p>{this.state.cardTableProps.collectionList[0] ? this.state.cardTableProps.collectionList[0].description: null}</p>
                         </div>
-                    <p>{/*JSON.stringify(this.state.CardTableProps.collectionList)*/}</p>
-                    {this.state.CardTable}
+                    <p>{/*JSON.stringify(this.state.cardTableProps.collectionList)*/}</p>
+                    {this.state.cardTable}
                 </div>
             </div>  
         </div>);
@@ -123,4 +123,4 @@ class SelectedCollection extends Component {
 
 }
 
-export default SelectedCollection;
+export default CollectionPage;

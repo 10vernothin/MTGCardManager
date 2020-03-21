@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
-import SessionInfo from '../../tools/ContentData';
-import replaceManaCostWithSVG from '../../tools/ManaCostSVGReplacer'
+import SessionInfo from '../../../common/cached_data/session-info';
+import replaceManaCostWithSVG from '../../../common/functions/replace-mana-with-symbol'
 
 const AddRemoveButtonCSS = {
     display: 'block',
@@ -29,7 +29,7 @@ const ImgNotAvailableCSS = {
 }
 
 /*This component renders a search box element*/
-class CardTableResultBox extends Component {
+class CollectionTableElement extends Component {
 
   constructor(props) {
     super(props);
@@ -201,4 +201,4 @@ class CardTableResultBox extends Component {
     }
 }
 
-export default CardTableResultBox
+export default CollectionTableElement

@@ -2,7 +2,7 @@ var https = require('https');
 var fs = require('fs');
 var _db = require('../database/database');
 var pgdb = _db.getConnectionInstance();
-var downloader = require('../tools/fileDownloader')
+var downloader = require('../tools/file-downloader')
 /*
 This function fetches the paginated card data from Scryfall and populates each JSON card data object
 into a file sorted into folders by the set where it was released. The name of the file will be its collector

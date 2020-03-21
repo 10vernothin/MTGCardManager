@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import SessionInfo from '../../tools/ContentData.js';
-import CardTableResultBox from './CardTableResultBox';
+import SessionInfo from '../../../common/cached_data/session-info';
+import CollectionTableElement from './collection-table-elem';
 
 //import all mana icon a list of svg images
-const listOfSvgs = require.context( '../../images', true, /\.svg$/ )
+const listOfSvgs = require.context( '../../../common/images/image_src', true, /\.svg$/ )
 
 /* These constants define the inline CSS properties of elements in this component*/
 const tableCSS = {
@@ -34,9 +34,9 @@ const cardResflexboxCSS = [{
 }]
 
 /*
-CardTable renders a table that contains all the cards in a user's collection
+CollectionTable renders a table that contains all the cards in a user's collection
 */
-class CardTable extends Component {
+class CollectionTable extends Component {
 
   constructor(props) {
     super(props);
@@ -125,7 +125,7 @@ class CardTable extends Component {
             CSSIter === 1? CSSIter = 0: CSSIter = 1
             if ((index < this.state.page*10) && (index >= (this.state.page-1)*10)) {
               //alert(JSON.stringify(info));
-              return (<CardTableResultBox 
+              return (<CollectionTableElement 
                 id_key={index+1}
                 cardInfo={info}
                 svgPack = {listOfSvgs}
@@ -167,4 +167,4 @@ class CardTable extends Component {
 
 }
 
-export default CardTable;
+export default CollectionTable;

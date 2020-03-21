@@ -2,7 +2,7 @@
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
-var dpd = require('../tools/ScryfallDataDownloader')
+var dpd = require('../tools/Scryfall-data-downloader')
 
 /*This part will require a connection to the internet*/
 
@@ -12,7 +12,8 @@ path = "../api/json/scryfall/cards"
 datePath = '../api/json/scryfall/last_updated_date.date';
 symuri = 'https://api.scryfall.com/symbology'
 sympath = '../api/json/scryfall/symbols/'
-clientsympath = '../client/src/images/image_src/'
+clientsympath = '../client/src/common/images/image_src/'
+
 /*This accesses the scryfall API and downloads the data into the server cache at './api/json/scryfall'*/
 router.get('/api/fetch-card/download-bulk-data', function(req, res, next) {
         dateobj = new Date();

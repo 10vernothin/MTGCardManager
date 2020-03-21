@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import {LoginButton, CollectionButton, DownloadBulkDataButton} from '../elements/Buttons';
-import SessionInfo from '../tools/ContentData.js';
-import PlaneswalkerSymbol from '../images/PlaneswalkerSymbol';
+import {LoginButton, CollectionListButton} from './../../common/elements/common-buttons';
+import {DownloadBulkDataButton} from './elements/home-buttons'
+import SessionInfo from '../../common/cached_data/session-info';
+import PlaneswalkerSymbol from '../../common/images/PlaneswalkerSymbol';
 
-class Home extends Component {
+class HomePage extends Component {
 
   WelcomeUser() {
       //alert(SessionInfo.getSessionUser());
@@ -17,7 +18,7 @@ class Home extends Component {
 
   SwitchLoginCollectionButtons() {
     if (SessionInfo.getSessionStatus() === true) {
-      return (<CollectionButton/>)
+      return (<CollectionListButton/>)
     } else {
       return <LoginButton/>
     }
@@ -31,7 +32,7 @@ class Home extends Component {
         <div>{this.WelcomeUser()}</div>
         <div><PlaneswalkerSymbol/></div>
         <div>
-          <Link to={'./list'}>
+          <Link to={'./userlist'}>
             <button variant="raised">
                 Users
             </button>
@@ -43,4 +44,4 @@ class Home extends Component {
     );
   }
 }
-export default Home;
+export default HomePage;

@@ -1,23 +1,17 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import {HomeButton} from '../elements/Buttons'
+import {HomeButton} from '../../common/elements/common-buttons'
 
 
-class Signup extends Component {
+class SignupPage extends Component {
   
   constructor(props){
       super(props);
       this.state = {
           formControls: {
-              name: {
-                value: ''
-              },
-              password: {
-                value: ''
-              },
-              email: {
-                value: ''
-              }
+              name: {value: ''},
+              password: {value: ''},
+              email: {value: ''}
           },
 		  postResponse: ''
       }
@@ -93,8 +87,7 @@ class Signup extends Component {
           </form>      
       );
   }
-
 }
 
-export default Signup;
+export default SignupPage;
 

@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import {Link} from 'react-router-dom';
-import SessionInfo from '../../tools/ContentData'
-import {SelectCollectionButton, DeleteCollectionButton} from '../Buttons'
-
+import SessionInfo from '../../../common/cached_data/session-info'
+import {EditCollectionButton, SelectCollectionButton, DeleteCollectionButton} from './collection-list-buttons'
 
 const collectionTitleCSS = {
   width: '90%',
@@ -20,7 +18,7 @@ const collectionCSS = {
   'text-align': 'left'
 }
 
-class CollectionTable extends Component {
+class CollectionsTable extends Component {
 
     constructor(props) {
         super(props);
@@ -62,7 +60,8 @@ class CollectionTable extends Component {
                   <div style={{flex: 2}}>Name</div>
                   <div style={{flex: 7}}>Description</div>
                   <div style={{flex: 1}}>Price</div>
-                  <div style={{flex: 3}}>Options</div>
+                  <div style={{flex: 2}}>Options</div>
+                  <div style={{flex: 2}}>Download Collection</div>
               </div>
               {/* Render the list of items */}
               {this.state.collectionList.map((item) => {
@@ -72,12 +71,12 @@ class CollectionTable extends Component {
                       <div style={{flex: 2}}>{item.name}</div>
                       <div style={{flex: 7}}>{item.description}</div>
                       <div style={{flex: 1}}>${item.sum}</div>
-                      <div style={{flex: 3}}>
-                          <Link to={`/collections?page=selected&id=${item.id}&name=${encodeURIComponent(item.name)}`}>
-                            <SelectCollectionButton/>
-                          </Link>
-                          <DeleteCollectionButton col_id={item.id} updateState={this.props.updateState}/>
+                      <div style={{flex: 2}}>
+                            <SelectCollectionButton link_url={`/collections?page=selected&id=${item.id}&name=${encodeURIComponent(item.name)}`}/>
+                            <EditCollectionButton link_url={`/collections?page=edit&id=${item.id}&name=${encodeURIComponent(item.name)}`}/>
+                            <DeleteCollectionButton col_id={item.id} updateState={this.props.updateState}/>
                       </div>
+                      <div style={{flex: 2}}></div>
                   </div>)
                 } else {
                   return(null);
@@ -94,4 +93,4 @@ class CollectionTable extends Component {
     }
 }
 
-export default CollectionTable;
+export default CollectionsTable;

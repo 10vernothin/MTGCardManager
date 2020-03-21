@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 /*
 This class handles general download fetch requests
 */
-class Downloads extends Component {
+class DownloadPage extends Component {
 
     constructor(props) {
         super(props);
@@ -54,4 +54,4 @@ class Downloads extends Component {
 
 }
 
-export default Downloads;
+export default DownloadPage;

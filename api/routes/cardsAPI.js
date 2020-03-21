@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var cards = require('../tools/cardFetcher');
-var downloader = require('../tools/fileDownloader');
+var cards = require('../tools/card-fetcher');
+var downloader = require('../tools/file-downloader');
 var fsPromise = require('fs').promises;
 
 
