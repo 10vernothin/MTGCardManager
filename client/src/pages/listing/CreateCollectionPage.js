@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {HomeButton, CollectionListButton} from '../../common/elements/common-buttons'
-import SessionInfo from '../../common/cached_data/session-info';
+import {HomeButton, CollectionListButton} from '../../common/elements/CommonButtons'
+import SessionInfo from '../../common/cached_data/SessionInfo';
 
  class CreateCollectionPage extends Component {
     constructor(props) {

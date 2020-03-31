@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import SessionInfo from '../cached_data/session-info';
+import SessionInfo from '../cached_data/SessionInfo';
 
 class HomeButton extends Component {
   //Button that links to the Home page

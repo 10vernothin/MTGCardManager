@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import {HomeButton, SignoutButton} from '../../common/elements/common-buttons';
+import {HomeButton, SignoutButton} from '../../common/elements/CommonButtons';
 import {CreateCollectionButton} from './elements/Buttons'
 import ListingsTable from './elements/ListingsTable';
-import SessionInfo from '../../common/cached_data/session-info';
+import SessionInfo from '../../common/cached_data/SessionInfo';
 
 class ListingsMainPage extends Component {
   

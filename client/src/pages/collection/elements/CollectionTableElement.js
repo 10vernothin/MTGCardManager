@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import SessionInfo from '../../../common/cached_data/session-info';
+import SessionInfo from '../../../common/cached_data/SessionInfo';
 import replaceManaCostWithSVG from '../../../common/functions/replace-mana-with-symbol'
 
 const AddRemoveButtonCSS = {

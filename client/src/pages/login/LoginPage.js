@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {HomeButton} from '../../common/elements/common-buttons';
-import SessionInfo from '../../common/cached_data/session-info';
+import {HomeButton} from '../../common/elements/CommonButtons';
+import SessionInfo from '../../common/cached_data/SessionInfo';
 import {SignupButton} from './elements/Buttons';
 
 class LoginPage extends Component {

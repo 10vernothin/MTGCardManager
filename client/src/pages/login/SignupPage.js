@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import {HomeButton} from '../../common/elements/common-buttons'
+import {HomeButton} from '../../common/elements/CommonButtons'
 
 
 class SignupPage extends Component {

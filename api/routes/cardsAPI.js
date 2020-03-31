@@ -67,10 +67,7 @@ router.post('/api/cards/retrieve-cached-image', function(req, res, next) {
 
 
 /*
-Lazy image caching,
-This API call receives a request(set, set_id, image_type={type:normal}, image_uris) and
-downloads the .png file to its proper set folder at json/scryfall/cards if it does not exist
-Then sends the img URL, or if the download fails sends the URI
+fetch-list-of-SVG fetches 
 */
 
 router.post('/api/cards/fetch-list-of-SVG', function(req, res, next) {
@@ -92,5 +89,30 @@ router.post('/api/cards/fetch-list-of-SVG', function(req, res, next) {
     }
 });
 
+router.post('/api/cards/fetch-card-attribute', function(req, res, next) {
+    let attributes = req.body.opts.map((item) => {
+        return item
+    })
+    cards.selectCardJSONDataInBulk(req.body.lstOfIds, {type: 'id'}).then((res) => {
+        return Promise.all(res)
+    }).then((ress) =>{
+        let n = []
+        ress.map((obj, index) => {
+            let listObj = {}
+            attributes.forEach((attr) =>{
+                if (!(obj === null)){
+                    listObj[attr] = JSON.parse(JSON.stringify(obj))[attr.toLowerCase()]
+                }
+            })
+            listObj.id = req.body.lstOfIds[index]
+            listObj.is_foil = req.body.is_foil[index]
+            listObj.amt = req.body.amt[index]
+            n.push(listObj)
+        })
+        res.json(n)
+    }).catch((err) => {
+        console.log(err);
+    })
+})
 
 module.exports = router;

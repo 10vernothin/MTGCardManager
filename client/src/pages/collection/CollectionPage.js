@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import SessionInfo from '../../common/cached_data/session-info';
+import SessionInfo from '../../common/cached_data/SessionInfo';
 import readCurrURLParamsAsJSONString from '../../common/functions/read-url-params'
 import SearchBox from './elements/SearchBox'
 import CollectionTable from './elements/CollectionTable'
 import CollectionTableListForm from './elements/CollectionTableListForm'
-import {CollectionListButton} from '../../common/elements/common-buttons'
+import {CollectionListButton} from '../../common/elements/CommonButtons'
 import {SwitchToFullViewButton, SwitchToListViewButton} from './elements/Buttons'
 
 const InlineLeft = {

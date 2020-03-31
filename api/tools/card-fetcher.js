@@ -87,16 +87,6 @@ exports.getDetails = async (nameFragment, opts = {type: 'string'}) => {
     return list;
 }
 
-exports.getPrices = async (nameFragment, opts = {type: 'string'}) => {
-    lst = await Promise.all(await this.selectCardJSONDataInBulk(nameFragment, opts));
-    list = lst.map( (JSONCardObj) => {
-            return JSONCardObj.prices;
-        }
-    )
-    return list;
-}
-
-
 exports.getID = async (set, set_id) => {
     res = await pgdb.any('SELECT id from cards where set_id = $1 and set = $2', [set_id, set]).catch((err) => {
         console.log(err.message);

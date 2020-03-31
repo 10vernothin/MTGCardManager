@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import SessionInfo from '../../../common/cached_data/session-info';
+import SessionInfo from '../../../common/cached_data/SessionInfo';
 import CollectionTableElement from './CollectionTableElement';
 
 //import all images as webkits

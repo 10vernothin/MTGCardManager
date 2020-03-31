@@ -14,7 +14,7 @@ import DownloadPage from './pages/download/DownloadPage';
 import CollectionPage from './pages/collection/CollectionPage';
 
 //importing required common tools
-import SessionInfo from './common/cached_data/session-info';
+import SessionInfo from './common/cached_data/SessionInfo';
 import readCurrURLParamsAsJSON from './common/functions/read-url-params';
 
 /*Initializing local cache*/
