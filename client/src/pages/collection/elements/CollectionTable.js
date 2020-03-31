@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import SessionInfo from '../../../common/cached_data/session-info';
-import CollectionTableElement from './collection-table-elem';
+import CollectionTableElement from './CollectionTableElement';
 
-//import all mana icon a list of svg images
-const listOfSvgs = require.context( '../../../common/images/image_src', true, /\.svg$/ )
+//import all images as webkits
+const listOfManaIcons = require.context( '../../../common/images/image_src', true, /\.svg$/ )
+const imageWebkit = require.context(`../../../../../api/json/scryfall/cards`, true, /\.png$/)
 
 /* These constants define the inline CSS properties of elements in this component*/
 const tableCSS = {
@@ -78,7 +79,7 @@ class CollectionTable extends Component {
     })
   }
 
-  renderPageNav() {
+  renderPageNav = () => {
     return(
       <div style={{margin:'0 auto', width: '100%', 'text-align': 'center'}}>
         <div style={{display: 'inline-block', width: '10%', margin: 'auto 0'}}>
@@ -123,12 +124,13 @@ class CollectionTable extends Component {
           {
           list.map((info, index) => {
             CSSIter === 1? CSSIter = 0: CSSIter = 1
-            if ((index < this.state.page*10) && (index >= (this.state.page-1)*10)) {
+            if ((index < this.state.page*this.state.elemPerPage) && (index >= (this.state.page-1)*this.state.elemPerPage)) {
               //alert(JSON.stringify(info));
               return (<CollectionTableElement 
                 id_key={index+1}
                 cardInfo={info}
-                svgPack = {listOfSvgs}
+                svgPack = {listOfManaIcons}
+                imgPack = {imageWebkit}
                 resBoxCSS={cardResflexboxCSS[CSSIter]} 
                 updateTopmostState={this.props.updateState}/>)
             } else {

@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import SessionInfo from '../../common/cached_data/session-info';
 import readCurrURLParamsAsJSONString from '../../common/functions/read-url-params'
-import SearchBox from './elements/search-box'
-import CollectionTable from './elements/collection-table'
+import SearchBox from './elements/SearchBox'
+import CollectionTable from './elements/CollectionTable'
+import CollectionTableListForm from './elements/CollectionTableListForm'
 import {CollectionListButton} from '../../common/elements/common-buttons'
+import {SwitchToFullViewButton, SwitchToListViewButton} from './elements/Buttons'
 
 const InlineLeft = {
     border: '1px black solid',
@@ -50,11 +52,12 @@ class CollectionPage extends Component {
                 collectionList: [],
                 postResponse: 'Fetching data...'
             },
-            cardTable: ''
+            cardTable: '',
+            asList: false
         }
-        this.updateState = this.updateState.bind(this)
         SessionInfo.setCollectionName(this.state.collection);
         SessionInfo.setCollectionID(this.state.collectionID);
+        this.updateState = this.updateState.bind(this)
     };
 
 
@@ -67,45 +70,69 @@ class CollectionPage extends Component {
         })
         .then(res => res.json())
         .then(list => {
+            let newCardTableProps = {...this.state.cardTableProps}
             if (list.length === 0) {
-                let newCardTableProps = {...this.state.cardTableProps}
                 newCardTableProps.postResponse = 'You have no cards in collection.'
-                newCardTableProps.collectionList = list
-                if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.cardTableProps.collectionList))){
-                    this.setState({
-                        cardTableProps: newCardTableProps,
-                        cardTable: <CollectionTable updateState={this.updateState} collectionList={newCardTableProps.collectionList} postResponse={this.state.cardTableProps.postResponse}/>
-                    })
-                }
-            }  else { 
-                let newCardTableProps = {...this.state.cardTableProps}
+            }
+            else {
                 newCardTableProps.postResponse = ''
-                newCardTableProps.collectionList = list
-                if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.cardTableProps.collectionList))){
-                    this.setState({
-                        cardTableProps: newCardTableProps,
-                        cardTable: <CollectionTable updateState={this.updateState} collectionList={newCardTableProps.collectionList} postResponse={this.state.cardTableProps.postResponse}/>
-                    })
-                }
-        }
+            }
+            newCardTableProps.collectionList = list
+            if(!(JSON.stringify(newCardTableProps.collectionList) === JSON.stringify(this.state.cardTableProps.collectionList))){
+                (!this.state.asList)?
+                this.setState({
+                    cardTableProps: newCardTableProps,
+                    cardTable: <CollectionTable 
+                                    updateState={this.updateState} 
+                                    collectionList={newCardTableProps.collectionList} 
+                                    postResponse={this.state.cardTableProps.postResponse}
+                                />
+                }):
+                this.setState({
+                    cardTableProps: newCardTableProps,
+                    cardTable: <CollectionTableListForm 
+                                    updateState={this.updateState} 
+                                    collectionList={newCardTableProps.collectionList} 
+                                    postResponse={this.state.cardTableProps.postResponse}
+                                />
+                })
+            }
         })
       }
 
-      /*Binding a listener for the child component*/
-      updateState = () => {
-            //alert("Updating top")
-            this.setState({
-                userName: SessionInfo.getSessionUser()
-            })
-      }
+
+    /*Binding a listener to this element*/
+    updateState = () => { this.setState({ userName: SessionInfo.getSessionUser()})}
    
+    switchView = e => {
+        e.preventDefault()
+        this.setState( {
+            asList: !this.state.asList,
+            cardTable: (this.state.asList)? <CollectionTable 
+                updateState={this.updateState} 
+                collectionList={this.state.cardTableProps.collectionList} 
+                postResponse={this.state.postResponse}
+            />: <CollectionTableListForm 
+                updateState={this.updateState} 
+                collectionList={this.state.cardTableProps.collectionList} 
+                postResponse={this.state.postResponse}/>
+        })
+    }
 
     render() {
         this.fetchTable();
         return (
         <div>
             <div>
-                <div style={ExitButtonCSS}><CollectionListButton/></div>
+                <div style={ExitButtonCSS}>
+                <div style={{display: 'inline-block'}}><CollectionListButton/></div>
+                <div style={{display: 'inline-block'}}>{
+                    !(this.state.asList)? 
+                    <SwitchToListViewButton onClick={this.switchView}/>: 
+                    <SwitchToFullViewButton onClick={this.switchView}/>
+                }
+                </div>
+                </div>
                 <div style={InlineLeft}>
                     <SearchBox updateState={this.updateState}/>
                 </div>

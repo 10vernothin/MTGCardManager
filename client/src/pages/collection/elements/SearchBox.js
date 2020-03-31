@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import SearchResultBox from './search-result-box'
+import SearchResultElement from './SearchResultElement'
 
 
 /*Inline CSS Constants*/
@@ -76,7 +76,7 @@ class SearchBox extends Component {
                     {this.renderSearchBox()}
                     <div style={Dropdown}>
                         {this.state.postResponse.map((item) => {
-                            return (<SearchResultBox item = {item} updateTopmostState={this.props.updateState}/>) 
+                            return (<SearchResultElement item = {item} updateTopmostState={this.props.updateState}/>) 
                         })}
                     </div> 
             </div>

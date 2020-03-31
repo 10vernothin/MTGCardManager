@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import SessionInfo from '../../../common/cached_data/session-info'
-import {EditCollectionButton, SelectCollectionButton, DeleteCollectionButton} from './collection-list-buttons'
+import ListingsTableElem from './ListingsTableElem';
+
+const imageWebkit = require.context(`../../../../../api/json/scryfall/cards`, true, /\.png$/)
 
 const collectionTitleCSS = {
   width: '90%',
@@ -11,14 +13,7 @@ const collectionTitleCSS = {
   'font-weight': 'bold'
 }
 
-const collectionCSS = {
-  width: '90%',
-  display: 'flex',
-  margin: '0 auto',
-  'text-align': 'left'
-}
-
-class CollectionsTable extends Component {
+class ListingsTable extends Component {
 
     constructor(props) {
         super(props);
@@ -57,6 +52,7 @@ class CollectionsTable extends Component {
         {list.length ? (
           <div>
               <div style={collectionTitleCSS}>
+                  <div style={{flex: 2}}/>
                   <div style={{flex: 2}}>Name</div>
                   <div style={{flex: 7}}>Description</div>
                   <div style={{flex: 1}}>Price</div>
@@ -67,17 +63,14 @@ class CollectionsTable extends Component {
               {this.state.collectionList.map((item) => {
                 if (!(item.name === '')){
                 return(
-                  <div style={collectionCSS}>
-                      <div style={{flex: 2}}>{item.name}</div>
-                      <div style={{flex: 7}}>{item.description}</div>
-                      <div style={{flex: 1}}>${item.sum}</div>
-                      <div style={{flex: 2}}>
-                            <SelectCollectionButton link_url={`/collections?page=selected&id=${item.id}&name=${encodeURIComponent(item.name)}`}/>
-                            <EditCollectionButton link_url={`/collections?page=edit&id=${item.id}&name=${encodeURIComponent(item.name)}`}/>
-                            <DeleteCollectionButton col_id={item.id} updateState={this.props.updateState}/>
-                      </div>
-                      <div style={{flex: 2}}></div>
-                  </div>)
+                  <ListingsTableElem 
+                            link_url={`/collections?page=selected&id=${item.id}&name=${encodeURIComponent(item.name)}`}
+                            edit_url={`/collections?page=edit&id=${item.id}&name=${encodeURIComponent(item.name)}`}
+                            item = {item}
+                            id_key = {item.id}
+                            imgkit = {imageWebkit}
+                            updateState={this.props.updateState}/>
+                  )
                 } else {
                   return(null);
                 }
@@ -93,4 +86,4 @@ class CollectionsTable extends Component {
     }
 }
 
-export default CollectionsTable;
+export default ListingsTable;

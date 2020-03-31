@@ -44,7 +44,8 @@ class CollectionTableElement extends Component {
     /*
     This function fetches the row data,
     then calls fetchImage to retrieve the cached image url from the callback,
-    and finally sets the whole state*/
+    and finally sets the whole state
+    */
     fetchTableRow = () => {
       fetch('/api/collections/fetch-row', 
       { 
@@ -75,7 +76,10 @@ class CollectionTableElement extends Component {
                     (res) => {return res.json()}
                 ).then((result) =>{
                     if (!(result.uri === this.state.cardImageURI)) {
-                        this.updateManaCost(cardObj, (svgList)=>{callback(result.uri, svgList);})
+                        let uri_list = result.uri.split('/')
+                        let filename = uri_list.slice(uri_list.length-3).join('/')
+                        filename = './'.concat(filename)
+                        this.updateManaCost(cardObj, (svgList)=>{callback(filename, svgList);})
                     }
                 })
         }
@@ -151,7 +155,7 @@ class CollectionTableElement extends Component {
             <div style={this.props.resBoxCSS}>
                 {this.state.cardImageURI === ''? 
                  <div style={ImgNotAvailableCSS}> IMAGE NOT AVAILABLE </div>:
-                <img src={cardObj.image_uris.normal} style={ImageCSS} alt={cardObj.name}/>
+                <img src={this.props.imgPack(this.state.cardImageURI)} style={ImageCSS} alt={cardObj.name}/>
                 }
                 <div style={{flex: 1}}>{this.state.id_key}</div>
                 <div style={{flex: 2}} >{cardObj.name}</div>

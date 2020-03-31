@@ -83,7 +83,7 @@ This api call receives a request:{userID} to fetches all rows in collection_list
 router.post('/api/collections/getList', function(req, res, next) {
     console.log("Getting Collection List for userID: " + req.body.userID);
     pgdb.any(
-            "SELECT id, name, description, CASE WHEN sum is NULL THEN 0 ELSE sum END AS sum from collection_list LEFT OUTER JOIN (SELECT collection.collection_list_id as collection_list_id, SUM((foil_price*collection.amt*(is_foil::int))+(price*collection.amt*((NOT is_foil)::int))) as sum from cards INNER JOIN collection ON cards.id = collection.card_id GROUP BY collection.collection_list_id) AS sum_query ON sum_query.collection_list_id=collection_list.id where collection_list.player_id = $1", 
+            "SELECT id, name, description, CASE WHEN showcase_card_id is NULL THEN 0 ELSE showcase_card_id END AS showcase_card_id, CASE WHEN sum is NULL THEN 0 ELSE sum END AS sum from collection_list LEFT OUTER JOIN (SELECT collection.collection_list_id as collection_list_id, SUM((foil_price*collection.amt*(is_foil::int))+(price*collection.amt*((NOT is_foil)::int))) as sum from cards INNER JOIN collection ON cards.id = collection.card_id GROUP BY collection.collection_list_id) AS sum_query ON sum_query.collection_list_id=collection_list.id where collection_list.player_id = $1", 
             [req.body.userID]
             ).then(
     function(data) {
@@ -186,5 +186,57 @@ router.post('/api/collections/remove-card-from-collection', function(req, res, n
         }).catch((err) => {"DEL Err: ", console.log(err)})
     }).catch((err) => {"getID err: ", console.log(err.message)})
 });
+
+
+router.post('/api/collections/fetch-collection-as-JSON', function(req, res, next) {
+    pgdb.any("SELECT collection.id, cards.set_id, cards.set, collection.card_id, cards.name, collection_list.name as collection_name, collection_list.description, collection_list.id as collection_list_id, collection.amt, collection.is_foil from collection inner join cards on collection.card_id = cards.id inner join collection_list on collection_list.id = collection.collection_list_id where collection_list_id = $1", [req.body.id])
+    .then((data) => {
+        if (data.length == 0) {
+            console.log('No cards in Collection.')
+            res.send([])
+        } else {
+            let json = {}
+            json.name = data[0].collection_name
+            json.type = "list"
+            json.id = data[0].collection_list_id
+            json.description = data[0].description
+            let dataset = []
+            data.forEach((item) => {
+                ds = {};
+                ds.card_name = item.name
+                ds.set = item.set
+                ds.set_id = item.set_id
+                ds.amt = item.amt
+                ds.is_foil = item.is_foil
+                dataset.push(ds)
+            })
+            json.data = dataset
+            res.json(json)
+        }
+    }).catch((err) => {
+        console.log(err.message);
+    })
+})
+
+
+router.post('/api/collections/fetch-collection-as-CSV', function(req, res, next) {
+    pgdb.any("SELECT collection.id, cards.set_id, cards.set, collection.card_id, cards.name, collection_list.name as collection_name, collection_list.description, collection_list.id as collection_list_id, collection.amt, collection.is_foil from collection inner join cards on collection.card_id = cards.id inner join collection_list on collection_list.id = collection.collection_list_id where collection_list_id = $1", [req.body.id])
+    .then((data) => {
+        if (data.length == 0) {
+            console.log('No cards in Collection.')
+            res.send([])
+        } else {
+            ds = `"Collection Name","Collection ID","Description","Card Name", "Card Set", "Collector's Number", "Amount", "Foil"\n`
+            data.forEach((item) => {
+                ds = ds.concat(`"${item.collection_name}","${item.collection_list_id}","${item.description}","${item.name}",`)
+                ds = ds.concat(`"${item.set}","${item.set_id}","${item.amt}","${item.is_foil}"\n`)
+            })
+            ds.substr(0, ds.length-1)
+            res.send(ds)
+        }
+    }).catch((err) => {
+        console.log(err.message);
+    })
+})
 
   module.exports = router

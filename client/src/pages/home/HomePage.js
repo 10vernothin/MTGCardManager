@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import {LoginButton, CollectionListButton} from './../../common/elements/common-buttons';
-import {DownloadBulkDataButton} from './elements/home-buttons'
+import {LoginButton, CollectionListButton} from '../../common/elements/common-buttons';
+import {DownloadBulkDataButton} from './elements/Buttons'
 import SessionInfo from '../../common/cached_data/session-info';
 import PlaneswalkerSymbol from '../../common/images/PlaneswalkerSymbol';
 

@@ -16,7 +16,7 @@ const HiddenImageCSS = {
     display: 'none',
 }
 
-class SearchResultBox extends Component {
+class SearchResultElement extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -193,4 +193,4 @@ class SearchResultBox extends Component {
     }
 } 
 
-export default SearchResultBox;
+export default SearchResultElement;

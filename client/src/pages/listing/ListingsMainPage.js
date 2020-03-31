@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import {HomeButton, SignoutButton} from '../../common/elements/common-buttons';
-import {CreateCollectionButton} from './elements/collection-list-buttons'
-import CollectionTable from './elements/collections-table';
+import {CreateCollectionButton} from './elements/Buttons'
+import ListingsTable from './elements/ListingsTable';
 import SessionInfo from '../../common/cached_data/session-info';
 
-class CollectionListPage extends Component {
+class ListingsMainPage extends Component {
   
   // Retrieves the list of items from the Express app
 
@@ -30,7 +30,7 @@ class CollectionListPage extends Component {
         <div>
           <h1>{SessionInfo.getSessionUser()}'s Collection:</h1>
         </div>
-          <CollectionTable updateState={this.updateState}/>
+          <ListingsTable updateState={this.updateState}/>
         <div>
             <HomeButton/>
             <SignoutButton/>
@@ -41,4 +41,4 @@ class CollectionListPage extends Component {
   }
 }
 
-export default CollectionListPage;
+export default ListingsMainPage;

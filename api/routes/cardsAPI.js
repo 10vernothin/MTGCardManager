@@ -23,7 +23,6 @@ This API call receives a request(set, set_id, image_type={type:normal}, image_ur
 downloads the .png file to its proper set folder at json/scryfall/cards if it does not exist
 Then sends the img URL, or if the download fails sends the URI
 */
-
 router.post('/api/cards/retrieve-cached-image', function(req, res, next) { 
         try{
             let cachedImageBaseURL = "../api/json/scryfall/cards"
@@ -35,10 +34,13 @@ router.post('/api/cards/retrieve-cached-image', function(req, res, next) {
             } else {
             let download_uri = req.body.image_uris[image_type];
             let setPath = cachedImageBaseURL.concat('/').concat(cardset).concat('/images/');
-            let imgPath = setPath.concat(cardset_id.replace('*', '_star')).concat('_').concat(image_type).concat('.png')
+            let filename = cardset_id.replace('*', '_star').concat('_').concat(image_type).concat('.png')
+            let imgPath = setPath.concat(filename)
             fsPromise.readFile(imgPath)
                 .then(
-                    () => {res.json({uri: imgPath})},
+                    () => {
+                        res.json({uri: imgPath})
+                    },
                     (err) => {
                         if (err.code === 'ENOENT') {
                             fsPromise.mkdir(setPath).catch((err)=>{if(!(err.code === 'ENOENT')){console.log(err.message)}}).finally(() => {

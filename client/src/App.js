@@ -3,15 +3,15 @@ import {BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-do
 import './App.css';
 
 //Importing pages
-import HomePage from './pages/home/home-page';
-import UserListingPage from './pages/home/user-listing-page';
-import LoginPage from './pages/login/login-page';
-import SignupPage from './pages/login/signup-page';
-import CollectionListPage from './pages/listing/collection-list-page';
-import CreateCollectionPage from './pages/listing/create-collection-page';
-import EditCollectionPage from './pages/listing/edit-collection-page';
-import DownloadPage from './pages/download/download-page';
-import CollectionPage from './pages/collection/collection-page';
+import HomePage from './pages/home/HomePage';
+import UserListingPage from './pages/home/UserListingPage';
+import LoginPage from './pages/login/LoginPage';
+import SignupPage from './pages/login/SignupPage';
+import ListingsMainPage from './pages/listing/ListingsMainPage';
+import CreateCollectionPage from './pages/listing/CreateCollectionPage';
+import EditCollectionPage from './pages/listing/EditCollectionPage';
+import DownloadPage from './pages/download/DownloadPage';
+import CollectionPage from './pages/collection/CollectionPage';
 
 //importing required common tools
 import SessionInfo from './common/cached_data/session-info';
@@ -33,10 +33,8 @@ class App extends Component {
 				{/*login page will redirect to collections page if logged in*/}
 				<Route path='/login' render = {() =>{
 						if (SessionInfo.getSessionStatus()) {
-							//alert("collections");
 							return(<Redirect to='/collections'/>);
 						} else {
-							//alert("login");
 							return(<Route path= '/login' component = {LoginPage}/>);
 						}
 					}
@@ -46,13 +44,12 @@ class App extends Component {
 				<Route path='/collections' render = {
 					() => {	
 						if (!SessionInfo.getSessionStatus()){
-							//alert("LOGIN");
 							return (<Redirect to='/login'/>)
 						}else {
 								//subrouting
 								switch (readCurrURLParamsAsJSON().page) {
 								case "default":				
-									return (<Route path= '/collections' component = {CollectionListPage}/>);
+									return (<Route path= '/collections' component = {ListingsMainPage}/>);
 								case "create-new-collection":
 									return (<Route path= '/collections' component = {CreateCollectionPage}/>);
 								case "selected":
@@ -60,7 +57,7 @@ class App extends Component {
 								case "edit":
 									return (<Route path= '/collections' component = {EditCollectionPage}/>)
 								default:	
-									return (<Route path= '/collections' component = {CollectionListPage}/>);
+									return (<Route path= '/collections' component = {ListingsMainPage}/>);
 								}
 						}
 					}		

@@ -56,7 +56,7 @@ class EditCollectionPage extends Component {
             } else if (res === -1) {
                 this.setState({postResponse: 'Name cannot be empty.'})
             } else if (res === -3) {
-                this.setState({postResponse: 'Collection not editted. Please go back to your collections or login and try again.'})
+                this.setState({postResponse: 'Collection not editted. Please go back to your collections, or login and try again.'})
             } else {
                 this.props.history.push({
                     pathname: '/collections',
