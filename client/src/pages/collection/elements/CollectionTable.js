@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import SessionInfo from '../../../common/cached_data/SessionInfo';
 import CollectionTableElement from './CollectionTableElement';
 
-//import all images as webkits
+const imageWebkit = []//require.context(`../../../../../api/json/scryfall/cards`, true, /\.png$/)
 const listOfManaIcons = require.context( '../../../common/images/image_src', true, /\.svg$/ )
-const imageWebkit = require.context(`../../../../../api/json/scryfall/cards`, true, /\.png$/)
 
 /* These constants define the inline CSS properties of elements in this component*/
 const tableCSS = {
@@ -51,6 +50,14 @@ class CollectionTable extends Component {
         lastDisabled: true,
         nextDisabled: true
         }
+  }
+
+  componentDidCatch(error, info) {
+    alert("CollectionTable " + error + " " + JSON.stringify(info))
+  }
+ 
+  render(){
+    return(this.renderTableAfterCheck())
   }
 
   handleNextPage = e => {
@@ -101,7 +108,8 @@ class CollectionTable extends Component {
       let list = JSON.stringify(this.props.collectionList).valueOf()
       list = JSON.parse(list)
       list.sort((a,b) => {return (a.name.localeCompare(b.name) || a.set.localeCompare(b.set) || a.is_foil-b.is_foil)})
-     
+      //import all images as webkits
+      
       let CSSIter = 0
       return (
         <div>
@@ -126,13 +134,16 @@ class CollectionTable extends Component {
             CSSIter === 1? CSSIter = 0: CSSIter = 1
             if ((index < this.state.page*this.state.elemPerPage) && (index >= (this.state.page-1)*this.state.elemPerPage)) {
               //alert(JSON.stringify(info));
-              return (<CollectionTableElement 
+              
+              return (
+              <CollectionTableElement 
                 id_key={index+1}
-                cardInfo={info}
+               cardInfo={info}
                 svgPack = {listOfManaIcons}
                 imgPack = {imageWebkit}
                 resBoxCSS={cardResflexboxCSS[CSSIter]} 
-                updateTopmostState={this.props.updateState}/>)
+                updateTopmostState={this.props.updateState}/>
+              )
             } else {
               return (null)
             }
@@ -146,7 +157,7 @@ class CollectionTable extends Component {
   }
 
 
-  renderTableAfterCheck() {
+  renderTableAfterCheck = () => {
     let nextLastDisabled = false;
     let nextNextDisabled = false;
     this.props.collectionList.length > (this.state.page)*(this.state.elemPerPage)? nextNextDisabled = false: nextNextDisabled = true;
@@ -158,13 +169,8 @@ class CollectionTable extends Component {
         lastDisabled: nextLastDisabled,
         nextDisabled: nextNextDisabled
       })
-      return null;
+      return (null)
     }
-  }
-
-  
-  render(){
-    return(this.renderTableAfterCheck())
   }
 
 }

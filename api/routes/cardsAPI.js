@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var cards = require('../tools/card-fetcher');
-var downloader = require('../tools/file-downloader');
+var cards = require('../tools/cardFetcher');
+var downloader = require('../tools/fileDownloader');
 var fsPromise = require('fs').promises;
 
 
@@ -24,43 +24,51 @@ downloads the .png file to its proper set folder at json/scryfall/cards if it do
 Then sends the img URL, or if the download fails sends the URI
 */
 router.post('/api/cards/retrieve-cached-image', function(req, res, next) { 
-        try{
             let cachedImageBaseURL = "../api/json/scryfall/cards"
             let cardset = req.body.set;
             let cardset_id = req.body.set_id;
             let image_type = req.body.image_type.type;
             if (req.body.image_uris === undefined) {
-                res.send({uri:''})
+                res.send({uri:'', cached: false})
             } else {
             let download_uri = req.body.image_uris[image_type];
             let setPath = cachedImageBaseURL.concat('/').concat(cardset).concat('/images/');
-            let filename = cardset_id.replace('*', '_star').concat('_').concat(image_type).concat('.png')
+            let ext = download_uri.split('/').slice(-1)[0].split('.').slice(1)[0].substr(0,3)
+            let filename = cardset_id.replace('*', '_star').concat('_').concat(image_type).concat(`.${ext}`)
             let imgPath = setPath.concat(filename)
             fsPromise.readFile(imgPath)
                 .then(
-                    () => {
-                        res.json({uri: imgPath})
-                    },
+                    (file) => {
+                        console.log("FILE FOUND")
+                        res.json({uri: imgPath, data: file, cached: true})
+                    })
+                .catch(
                     (err) => {
+                        console.log("FILE NOT FOUND. ATTEMPTING TO DOWNLOAD")
                         if (err.code === 'ENOENT') {
-                            fsPromise.mkdir(setPath).catch((err)=>{if(!(err.code === 'ENOENT')){console.log(err.message)}}).finally(() => {
-                                downloader.downloadFile(download_uri,imgPath, (downloader_resp) => {
-                                    if (downloader_resp === 0) {
-                                        console.log(imgPath, " created.")
-                                        res.json({uri: imgPath});
-                                    } else {
-                                        console.log(imgPath, " not created.")
-                                        res.json({uri: download_uri});
+                            fsPromise.mkdir(setPath, {recursive: true})
+                            .catch((err)=>{
+                                if(!(err.code === 'EEXIST')){
+                                    console.log("PING")
+                                    console.log(err.message)
                                 }
                             })
-                        });
-                    } else {
-                        console.log(err.message)
-                    }
-                });
-        }} catch (err) {
-            console.log(err.message)
-            res.json({uri: download_uri});
+                            .finally(() => {
+                                downloader.downloadFile(download_uri, imgPath, (data) => {
+                                    if (!(data === 0)) {
+                                        console.log("FILE NOT DOWNLOADED.")
+                                        res.json({uri: download_uri, cached: false})
+                                    } else {
+                                        console.log("FILE DOWNLOADED.")
+                                        res.json({uri: imgPath, cached: true})
+                                    }
+                                })
+                            });
+                        } else {
+                            console.log(err.message)
+                            res.json({uri: download_uri, cached: false});
+                        }
+                    });
         }
     });
 

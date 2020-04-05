@@ -2,7 +2,8 @@ var https = require('https');
 var fs = require('fs');
 var _db = require('../database/database');
 var pgdb = _db.getConnectionInstance();
-var downloader = require('../tools/file-downloader')
+var downloader = require('./FileDownloader')
+var imageDownloader = require('../tools/ImageDataDownloader')
 /*
 This function fetches the paginated card data from Scryfall and populates each JSON card data object
 into a file sorted into folders by the set where it was released. The name of the file will be its collector
@@ -24,7 +25,7 @@ and all values are accessed byValue() if possible, then the variable is set to n
 Real runtime: ~0.98s/page so about 5% efficient.
 */
 
-exports.downloadScryfallData = (uri, path) => {
+exports.downloadScryfallData = (uri, downloadPath) => {
         uri = uri.valueOf();
         https.get(uri, (resp) =>
         {
@@ -39,31 +40,37 @@ exports.downloadScryfallData = (uri, path) => {
                 let ds = JSON.parse(dataset);
                 ds.data.forEach((item) => {
                         if (item.lang == "en") {
-                            let setPath = path.concat('/').concat(item.set);
-                            fs.mkdir(setPath, (err) => {
+                            let setdownloadPath = downloadPath.concat('/').concat(item.set);
+                            fs.mkdir(setdownloadPath, (err) => {
                                     //console.log(err);
                                     err = null;
                             });
-                            let cardPath = setPath.concat('/').concat(item.collector_number.replace('*','_star')).concat('.json');
+                            let carddownloadPath = setdownloadPath.concat('/').concat(item.collector_number.replace('*','_star')).concat('.json');
                             let stringJSON = JSON.stringify(item).valueOf();
-                            fs.writeFile(cardPath, stringJSON, (err) => {//
+
+                            //writing data to json
+                            fs.writeFile(carddownloadPath, stringJSON, (err) => {
                                     err = null;
                             });
+                            
+                            //inserting relevant data to database
                             pgdb.none("INSERT into cards(name, set, set_id, price, foil_price) values($1, $2, $3, $4, $5) ON CONFLICT ON CONSTRAINT cards_set_key DO UPDATE SET name = EXCLUDED.name, set = EXCLUDED.set, set_id = EXCLUDED.set_id, price = EXCLUDED.price, foil_price = EXCLUDED.foil_price",
                             [item.name, item.set , item.collector_number, (item.prices.usd === null? 0:item.prices.usd),  (item.prices.usd_foil === null? 0:item.prices.usd_foil)])
                             .catch((err) => {
                                 console.log(err.message);
                                 err = null;
                             })
-                            setPath = null;
-                            cardPath = null;
+
+                            //setting nulls
+                            setdownloadPath = null;
+                            carddownloadPath = null;
                             stringJSON = null;
                         }
                     });
                 if (ds.has_more) {
                     console.log(`${uri} logged. Logging next page...`);
                     let next_p = ds.next_page.valueOf();
-                    setTimeout(() => { this.downloadScryfallData(next_p, path);
+                    setTimeout(() => { this.downloadScryfallData(next_p, downloadPath);
                         next_p = null;
                     }, 50);
                     ds = null;
@@ -72,6 +79,7 @@ exports.downloadScryfallData = (uri, path) => {
                     uri = null;
                     return;
                 } else {
+                    imageDownloader.downloadAllCards()
                     return;
                 }
             });
@@ -80,7 +88,7 @@ exports.downloadScryfallData = (uri, path) => {
         return;
 };
 
-exports.downloadSymbology = (uri, path, opts={includeMeta: true, metaDirPath:path}) => {
+exports.downloadSymbology = (uri, downloadPath, opts={includeMeta: true, metaDirdownloadPath:downloadPath}) => {
     uri = uri.valueOf()
     https.get(uri, (resp) => {
         let data = ''
@@ -93,13 +101,13 @@ exports.downloadSymbology = (uri, path, opts={includeMeta: true, metaDirPath:pat
                 let ds = JSON.parse(data).data
                 ds.forEach((item, index)=>{
                         let filename = `symbol_id_${index}`
-                        let imgPath = path.concat(filename).concat('.svg')
-                        item.local_path = imgPath; 
-                        downloader.downloadFile(item.svg_uri, imgPath, (err) => {if(!(err === 0)){console.log(err)}})
+                        let imgdownloadPath = downloadPath.concat(filename).concat('.svg')
+                        item.local_downloadPath = imgdownloadPath; 
+                        downloader.downloadFile(item.svg_uri, imgdownloadPath, (err) => {if(!(err === 0)){console.log(err)}})
                 })
                 if (opts.includeMeta) {
-                    let metaFilePath = opts.metaDirPath.concat('sym_index').concat('.json')
-                    fs.writeFile(metaFilePath, JSON.stringify(ds), (err) => {
+                    let metaFiledownloadPath = opts.metaDirdownloadPath.concat('sym_index').concat('.json')
+                    fs.writeFile(metaFiledownloadPath, JSON.stringify(ds), (err) => {
                         err = null;
                     });
                 }
@@ -108,3 +116,10 @@ exports.downloadSymbology = (uri, path, opts={includeMeta: true, metaDirPath:pat
     })
 
 }
+
+exports.downloadAllImages = (uri, downloadPath) => {
+        uri = uri.valueOf();      
+        return;
+};
+
+

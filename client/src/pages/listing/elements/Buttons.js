@@ -41,6 +41,7 @@ class DeleteCollectionButton extends Component {
       }
     }
     
+
     deleteCollection = e => {
       e.preventDefault()
       fetch('/api/collections/delete-collection',
@@ -51,13 +52,19 @@ class DeleteCollectionButton extends Component {
       }
       ).then(
         ()=> {
-          this.props.updateState()
+          this.props.updateTopmostState()
         }
       )
     }
   
     render() {
-      return (<button type= "button" onClick={this.deleteCollection}>Delete</button>);
+      if (!(this.state.id === this.props.col_id)) {
+        this.setState({id: this.props.col_id})
+        return (null)
+      } else {
+        return (<button type= "button" onClick={this.deleteCollection}>Delete</button>);
+      }
+      
     }
 }
 

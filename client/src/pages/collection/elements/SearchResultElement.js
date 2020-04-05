@@ -17,6 +17,7 @@ const HiddenImageCSS = {
 }
 
 class SearchResultElement extends Component {
+
     constructor(props) {
         super(props)
         this.state = {
@@ -61,6 +62,10 @@ class SearchResultElement extends Component {
         }
     }
 
+    componentDidCatch(err, info) {
+        alert("SearchBoxElement " + err)
+    }
+    
     handleMouseEnter = e => {
         e.preventDefault()
         let newBoxStyle = {...this.state.boxStyle}

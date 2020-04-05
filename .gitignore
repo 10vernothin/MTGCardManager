@@ -111,3 +111,4 @@ dist
 
 api/json/scryfall/cards/**/*.json
 api/json/scryfall/cards/**/images/*.png
+api/json/scryfall/cards/**/images/*.jpg

@@ -35,10 +35,19 @@ class CollectionTableElement extends Component {
     super(props);
     this.state = {
         item: [],
-        cardImageURI: undefined,
+        cardImageURI: '',
         id_key: this.props.id_key,
         svgList: []
         }
+    }
+
+    componentDidCatch(error, info) {
+        alert("CollectionTableElement" + error)
+    }
+
+    render(){  
+        this.fetchTableRow() 
+        return(this.createRow())
     }
 
     /*
@@ -56,9 +65,12 @@ class CollectionTableElement extends Component {
       .then(res => res.json())
       .then(list => {
         if (!(list.length === 0) && !(JSON.stringify(this.state.item) === JSON.stringify(list))) {
-                this.fetchImage(list, {type:"normal"}, (uri, svgList) => {this.setState({cardImageURI: uri, svgList:svgList, item: list,id_key: this.props.id_key})})
+                this.fetchImage(list, {type:"normal"}, (uri, svglist) => {
+                    this.setState({cardImageURI: uri, svgList: svglist, item: list,id_key: this.props.id_key})})
           }
-      })
+      }).catch((err) => {
+        alert(err.message)
+        })
     }
 
     /*
@@ -72,14 +84,25 @@ class CollectionTableElement extends Component {
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json'},
                     body: JSON.stringify({set: cardObj.set, set_id: cardObj.set_id, image_uris: cardObj.image_uris, image_type: image_type})
-                }).then(
-                    (res) => {return res.json()}
-                ).then((result) =>{
+                })
+                .then(
+                    (res) => {
+                        return res.blob()
+                    }
+                )
+                .then((result) =>{
+                    alert(result)
                     if (!(result.uri === this.state.cardImageURI)) {
-                        let uri_list = result.uri.split('/')
-                        let filename = uri_list.slice(uri_list.length-3).join('/')
-                        filename = './'.concat(filename)
-                        this.updateManaCost(cardObj, (svgList)=>{callback(filename, svgList);})
+                        let filename;
+                        if (result.cached) {
+                            let uri_list = result.uri.split('/')
+                            filename = uri_list.slice(uri_list.length-3).join('/')
+                            filename = './'.concat(filename)
+                        } else {
+                            filename = result.uri
+                        }
+                        this.updateManaCost(cardObj, (svgList)=>{
+                            callback(filename, svgList);})
                     }
                 })
         }
@@ -97,6 +120,8 @@ class CollectionTableElement extends Component {
             }
         ).then((res) => {
             this.props.updateTopmostState()
+        }).catch((err) => {
+            alert(err.message)
         })
     }
 
@@ -118,6 +143,8 @@ class CollectionTableElement extends Component {
                 }
             })
             callback(listofSVGs)
+        }).catch((err) => {
+            alert(err.message)
         })
     }
 
@@ -129,10 +156,16 @@ class CollectionTableElement extends Component {
             { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({chosenIsFoil: this.props.cardInfo.is_foil, set: item.set, set_id: item.set_id, collectionID: SessionInfo.getCollectionID()})
+            body: JSON.stringify({
+                chosenIsFoil: this.props.cardInfo.is_foil, 
+                set: item.set, 
+                set_id: item.set_id, 
+                collectionID: SessionInfo.getCollectionID()})
             }
         ).then((res) => {
             this.props.updateTopmostState()
+        }).catch((err) => {
+            alert(err.message)
         })
     }
 
@@ -153,9 +186,10 @@ class CollectionTableElement extends Component {
             return(
             <div>
             <div style={this.props.resBoxCSS}>
-                {this.state.cardImageURI === ''? 
+                {(this.state.cardImageURI === ''//|| (!this.props.imgPack.keys().includes(this.state.cardImageURI))
+                )? 
                  <div style={ImgNotAvailableCSS}> IMAGE NOT AVAILABLE </div>:
-                <img src={this.props.imgPack(this.state.cardImageURI)} style={ImageCSS} alt={cardObj.name}/>
+                <img src={''} style={ImageCSS} alt={cardObj.name}/>
                 }
                 <div style={{flex: 1}}>{this.state.id_key}</div>
                 <div style={{flex: 2}} >{cardObj.name}</div>
@@ -192,17 +226,11 @@ class CollectionTableElement extends Component {
         } else {
             return null;
         }
+    
         
     }
 
-    renderRow() {
-        this.fetchTableRow()
-        return(this.createRow())
-    }
-
-    render(){   
-        return(this.renderRow())
-    }
+    
 }
 
 export default CollectionTableElement

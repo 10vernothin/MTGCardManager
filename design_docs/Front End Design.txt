@@ -18,17 +18,16 @@ page Sign-up {
 	-Implements signup through the backend.
 }
 
-page Collection {
-	-An interface to let the user create, select or delete collections.
+page Listing {
+	-An interface to let the user create, select or delete a user's collections.
 	-Will have a table of collection names, and buttons that will let the user access the collection 
 	-All creation, selection and/or deletion of a collection will be done through the backend.
 	}
-	
-page Collection/?create-new-collection {
-	-An interface that allows the user to create a new collection.
-	-Will implement collection creation through backend.
-}
 
+page Collection {
+	-Will have a search bar and a collection table
+	-Has a List form and a Detailed form
+}
 ...
 
 Other planned functionality in the future:

@@ -12,13 +12,21 @@ class CollectionTableListForm extends Component {
           collectionName: SessionInfo.getCollectionName(),
           page: 1,
           elemPerPage: 50,
-          lastDisabled: true,
+          lastDisabled: true,    
           nextDisabled: true,
           currIndex: 'Name',
           list: []        
           }
         this.sortIndices = ['Name', 'Type', 'CMC', 'Colors', 'Set', 'Price']
         this.sortIndexKeys = ['name', 'type_line', 'cmc', 'colors', 'set', 'prices']
+    }
+
+    componentDidCatch(error, info) {
+      alert("CollectionTableListForm " + error)
+    }
+        
+    render(){
+      return(this.renderTable())
     }
   
     handleNextPage = e => {
@@ -99,9 +107,9 @@ class CollectionTableListForm extends Component {
 
     renderDropdown = () => {
       return(
-        <div>
-        <p style={{display:'inline-block'}}>{`Sort By:`}</p>
-        <select id="sort" style={{display:'inline-block'}} onChange={this.handleSortChange} value={this.state.currIndex}>
+        <div style={{width:'100%'}}>
+        <div style={{display:'inline-block', 'padding-right': '5px', 'padding-left': '10px'}}>{`Sort By: `}</div>
+        <select id="sort" style={{display:'inline-block', width: '200px'}} onChange={this.handleSortChange} value={this.state.currIndex}>
           {this.sortIndices.map((item) => {
             return (<option value={item}>{`${item}`}</option>)
           })
@@ -111,12 +119,10 @@ class CollectionTableListForm extends Component {
       )
     }
     
-    renderListByName = (list, CSSIter) => {
+    renderListByName = (list) => {
       return(
         list.map((info, index) => {
-          CSSIter === 1? CSSIter = 0: CSSIter = 1
           if ((index < this.state.page*this.state.elemPerPage) && (index >= (this.state.page-1)*this.state.elemPerPage)) {
-            //alert(JSON.stringify(info));
             let f = info.is_foil ? '*FOIL*': ''
             return (<div>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</div>)
             } else {
@@ -126,14 +132,24 @@ class CollectionTableListForm extends Component {
       )
     } 
 
-    renderListByCMC = (list, CSSIter) => {
+    renderListByCMC = (list) => {
       list.sort((a,b) => {return (b.cmc - a.cmc)})
+      let prevCMC = -1
       return (
       list.map((info, index) => {
-        CSSIter === 1? CSSIter = 0: CSSIter = 1
         if ((index < this.state.page*this.state.elemPerPage) && (index >= (this.state.page-1)*this.state.elemPerPage)) {
             let f = info.is_foil? '*FOIL*': ''
-            return (<div>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f} (cmc:${info.cmc})`}</div>)
+            if (!(prevCMC === info.cmc)) {
+              prevCMC = info.cmc
+              return(
+                <div>
+                  <div><h3>{`CMC: ${info.cmc}`}</h3></div>
+                  <div>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</div>
+                </div>
+              )
+            } else {
+              return (<div>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</div>)
+            }
           } else {
             return (null)
           }
@@ -141,25 +157,103 @@ class CollectionTableListForm extends Component {
       )
     } 
 
+    renderListByColors = (list) => {
+      let multiList = list.filter((item) => item.colors.length > 1)
+      let colorlessList = list.filter((item) => item.colors.length === 0)
+      let monoList = list.filter((item) => item.colors.length === 1)
+      monoList.sort((a,b)=>{return a.colors[0].localeCompare(b.colors[0])})
+      let ind = ((this.state.page-1)*this.state.elemPerPage)
+      let prevColor = ''
+      let colorKeys = {"W": 'White', "U": 'Blue', "B": 'Black', "R": 'Red', "G": 'Green'}
+      return (
+        <div>
+          <div>
+          {
+            multiList.map((info, index) => {
+            if ((ind < this.state.page*this.state.elemPerPage) && (ind >= (this.state.page-1)*this.state.elemPerPage)) {
+                ind+=1;
+                let f = info.is_foil? '*FOIL*': ''
+                if (index===0) {
+                  return(
+                    <div>
+                      <div><h3>{`Multicolored`}</h3></div>
+                      <div>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</div>
+                    </div>
+                  )
+                } else {
+                  return (<div>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</div>)
+                }
+              } else {
+                return (null)
+              }
+            })
+          }
+          </div>
+          <div>{
+            monoList.map((info) => {
+            if ((ind < this.state.page*this.state.elemPerPage) && (ind >= (this.state.page-1)*this.state.elemPerPage)) {
+                ind+=1;
+                let f = info.is_foil? '*FOIL*': ''
+                if (!(info.colors[0] === prevColor)) {
+                  prevColor = info.colors[0]
+                  return(
+                    <div>
+                      <div><h3>{colorKeys[info.colors[0]]}</h3></div>
+                      <div>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</div>
+                    </div>
+                  )
+                } else {
+                  return (<div>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</div>)
+                }
+              } else {
+                return (null)
+              }
+            })
+          }
+          </div>
+          <div>{
+             colorlessList.map((info, index) => {
+              if ((ind < this.state.page*this.state.elemPerPage) && (ind >= (this.state.page-1)*this.state.elemPerPage)) {
+                  ind+=1;
+                  let f = info.is_foil? '*FOIL*': ''
+                  if (index===0) {
+                    return(
+                      <div>
+                        <div><h3>{`Colorless`}</h3></div>
+                        <div>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</div>
+                      </div>
+                    )
+                  } else {
+                    return (<div>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</div>)
+                  }
+                } else {
+                  return (null)
+                }
+              })
+          }
+          </div>
+        </div>
+      )} 
+
     renderList = () => {
       this.fetchList()
       /*deep copying the prop and sorting it (use fast data-loss copy since everything is JSON)*/
       let list = JSON.stringify(this.state.list).valueOf()
       list = JSON.parse(list)
       list.sort((a,b) => {return (a.name.localeCompare(b.name) || a.set.localeCompare(b.set) || a.is_foil-b.is_foil)})
-      let CSSIter = 0
       switch (this.state.currIndex) {
         case 'CMC':
-          return(this.renderListByCMC(list,CSSIter))
+          return(this.renderListByCMC(list))
+        case 'Colors':
+          return(this.renderListByColors(list))
         default:
-          return(this.renderListByName(list,CSSIter))
+          return(this.renderListByName(list))
       }
     }
   
   
     renderTable = () => {
-      let nextLastDisabled = false;
-      let nextNextDisabled = false;
+      let nextLastDisabled, nextNextDisabled;
       this.props.collectionList.length > (this.state.page)*(this.state.elemPerPage)? nextNextDisabled = false: nextNextDisabled = true;
       this.state.page > 1? nextLastDisabled = false: nextLastDisabled = true;
       if (!(this.state.list === 0)) {
@@ -167,7 +261,12 @@ class CollectionTableListForm extends Component {
             return (
               <div>
                 <div>{this.renderPageNav()}</div>
-                <div>{ this.renderDropdown()}</div>
+                <div style={{width: '100%',
+                            'padding-bottom': '3px', 
+                            margin: '0 auto', 
+                            'border-top': '1px solid black', 
+                            'border-bottom': '1px solid black'}}
+                  >{ this.renderDropdown()}</div>
                 <div>{ this.renderList()}</div>
               </div>
             )
@@ -182,11 +281,7 @@ class CollectionTableListForm extends Component {
         return(<div>You have no cards in collection.</div>)
       }
     }
-  
-    
-    render(){
-      return(this.renderTable())
-    }
+
   
   }
   

@@ -17,10 +17,17 @@ import CollectionPage from './pages/collection/CollectionPage';
 import SessionInfo from './common/cached_data/SessionInfo';
 import readCurrURLParamsAsJSON from './common/functions/read-url-params';
 
-/*Initializing local cache*/
-SessionInfo.initializeSession();
 
 class App extends Component {
+
+	constructor(props) {
+		super(props)
+		SessionInfo.initializeSession();
+	}
+
+	componentDidCatch(err, info) {
+		alert("App Error" + err)
+	} 
 
 	render() {
 		const App = () => (
@@ -75,7 +82,7 @@ class App extends Component {
 				}/>
 
 				{/*Default route goes Home/or ERROR page if it gets to that*/}
-				<Route path="*" render= {() => {return (<Redirect to='/'/>)}}/>
+				{/*<Route path="*" render= {() => {return (<Redirect to='/'/>)}}/>*/}
 
 			</Switch>
 		</Router>

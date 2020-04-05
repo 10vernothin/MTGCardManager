@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {EditCollectionButton, SelectCollectionButton, DeleteCollectionButton} from './Buttons'
-//import {saveAs } from 'file-saver';
 
 const collectionCSS = {
   width: '90%',
@@ -98,6 +97,20 @@ class ListingsTableElement extends Component {
       })
     }
 
+
+    renderImage = () => {
+      let imagePanel = (this.state.cardImageURI === undefined)? 
+                <div style={{width: '150px', height: '100px', border: '1px black solid'}}>IMAGE NOT AVAILABLE</div>:
+                <img 
+                  src={
+                    this.state.cardImageURI
+                  } 
+                  alt={"Showcase Img"} 
+                  style={{width: '150px', border: '1px black solid'}}
+                />
+      return (imagePanel)
+    }
+
     render(){
       this.recordChange();
       let item = this.state.item;
@@ -105,13 +118,7 @@ class ListingsTableElement extends Component {
         return(
           <div style={collectionCSS}>
               <div style={{flex:2}}>
-              {this.state.cardImageURI === undefined? 
-                <div style={{width: '150px', height: '100px', border: '1px black solid'}}>IMAGE NOT AVAILABLE</div>:
-                <img 
-                  src={this.props.imgkit(this.state.cardImageURI)} 
-                  alt={"Showcase Img"} 
-                  style={{width: '150px', border: '1px black solid'}}
-                />
+              {this.renderImage()
               }
               </div>
               <div style={{flex: 2}}>{item.name}</div>
@@ -120,7 +127,7 @@ class ListingsTableElement extends Component {
               <div style={{flex: 2}}>
                     <SelectCollectionButton link_url={this.props.link_url}/>
                     <EditCollectionButton link_url={this.props.edit_url}/>
-                    <DeleteCollectionButton col_id={item.id} updateState={this.props.updateState}/>
+                    <DeleteCollectionButton col_id={item.id} updateTopmostState={this.props.updateTopmostState}/>
               </div>
               <div style={{flex: 1}}>
                 <button onClick={this.downloadJSON}>As JSON</button>

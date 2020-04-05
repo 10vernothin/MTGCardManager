@@ -53,13 +53,16 @@ class CollectionPage extends Component {
                 postResponse: 'Fetching data...'
             },
             cardTable: '',
-            asList: false
+            asList: true
         }
         SessionInfo.setCollectionName(this.state.collection);
         SessionInfo.setCollectionID(this.state.collectionID);
         this.updateState = this.updateState.bind(this)
     };
 
+    componentDidCatch(error, info) {
+        alert("CollectionPage " + error)
+    }
 
     fetchTable = () => {
         fetch('/api/collections/fetch-collection-id', 
@@ -102,7 +105,8 @@ class CollectionPage extends Component {
 
 
     /*Binding a listener to this element*/
-    updateState = () => { this.setState({ userName: SessionInfo.getSessionUser()})}
+    updateState = () => {
+        this.setState({...this.state})}
    
     switchView = e => {
         e.preventDefault()

@@ -38,6 +38,15 @@ class SessionInfo {
         this.#LoginUser = '';
         this.#isAuth = false;
     }
+
+    static getSessionInfo() { 
+        return ({
+            ColName: this.#CollectionName, 
+            LoginID: this.#LoginUserID, 
+            ColID: this.#CollectionID, 
+            LoginName: this.#LoginUser, 
+            isAuth: this.#isAuth})
+    }
     
     static setSessionState(auth) {
         this.#isAuth = auth;

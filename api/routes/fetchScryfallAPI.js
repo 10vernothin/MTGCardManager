@@ -2,7 +2,8 @@
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
-var dpd = require('../tools/Scryfall-data-downloader')
+var dpd = require('../tools/ScryfallDataDownloader')
+
 
 /*This part will require a connection to the internet*/
 
@@ -21,23 +22,26 @@ router.get('/api/fetch-card/download-bulk-data', function(req, res, next) {
         day = dateobj.getDate().toString().padStart(2,'0');
         datestring = ''.concat(year_month).concat('_').concat(day);
         //creating folder and writing date tag file
-        fs.mkdir(path, (err) => {
+        fs.mkdir(path.concat('/'), {recursive: true}, (err) => {
             //console.log(err);
-            err = null;
-        });
-        fs.writeFile(datePath, datestring, (err) => {
             if (err) {
-                console.log(err.message); err = null;}
-        });
-        dpd.downloadScryfallData(uri, path);
-        
-        //creating the symbology folder 
-        fs.mkdir(sympath, (err) => {
-            //console.log(err);
+                console.log(err.message)
+            }
             err = null;
+            fs.writeFile(datePath, datestring, (err) => {
+                if (err) {
+                    console.log(err.message); 
+                    err = null;}
+            });
+            fs.mkdir(sympath, (err) => {
+                //console.log(err);
+            err = null;
+            dpd.downloadSymbology(symuri, clientsympath, {includeMeta: true, metaDirPath:sympath});
+            dpd.downloadScryfallData(uri, path);
+            res.send("Request Sent");
         });
-        dpd.downloadSymbology(symuri, clientsympath, {includeMeta: true, metaDirPath:sympath});
-        res.send("Request Sent");
+            
+        });
 });
 
 
@@ -57,6 +61,9 @@ router.get('/api/fetch-card/check-updateable', function(req, res, next) {
         };
     })
 });
+
+
+
 
 
 module.exports = router;

@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import SessionInfo from '../../../common/cached_data/SessionInfo'
 import ListingsTableElem from './ListingsTableElem';
 
-const imageWebkit = require.context(`../../../../../api/json/scryfall/cards`, true, /\.png$/)
-
 const collectionTitleCSS = {
   width: '90%',
   display: 'flex',
@@ -68,8 +66,7 @@ class ListingsTable extends Component {
                             edit_url={`/collections?page=edit&id=${item.id}&name=${encodeURIComponent(item.name)}`}
                             item = {item}
                             id_key = {item.id}
-                            imgkit = {imageWebkit}
-                            updateState={this.props.updateState}/>
+                            updateTopmostState={this.props.updateState}/>
                   )
                 } else {
                   return(null);
