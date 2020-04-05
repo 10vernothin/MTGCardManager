@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import SessionInfo from '../../../common/cached_data/SessionInfo';
 import CollectionTableElement from './CollectionTableElement';
 
-const imageWebkit = []//require.context(`../../../../../api/json/scryfall/cards`, true, /\.png$/)
 const listOfManaIcons = require.context( '../../../common/images/image_src', true, /\.svg$/ )
 
 /* These constants define the inline CSS properties of elements in this component*/
@@ -140,7 +139,6 @@ class CollectionTable extends Component {
                 id_key={index+1}
                cardInfo={info}
                 svgPack = {listOfManaIcons}
-                imgPack = {imageWebkit}
                 resBoxCSS={cardResflexboxCSS[CSSIter]} 
                 updateTopmostState={this.props.updateState}/>
               )

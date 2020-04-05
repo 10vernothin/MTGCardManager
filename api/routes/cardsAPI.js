@@ -29,45 +29,54 @@ router.post('/api/cards/retrieve-cached-image', function(req, res, next) {
             let cardset_id = req.body.set_id;
             let image_type = req.body.image_type.type;
             if (req.body.image_uris === undefined) {
-                res.send({uri:'', cached: false})
+                console.log("NO IMAGE IN THIS FORMAT")
+                res.json({uri: '', data:'', imgType:'', cached: false})
             } else {
-            let download_uri = req.body.image_uris[image_type];
-            let setPath = cachedImageBaseURL.concat('/').concat(cardset).concat('/images/');
-            let ext = download_uri.split('/').slice(-1)[0].split('.').slice(1)[0].substr(0,3)
-            let filename = cardset_id.replace('*', '_star').concat('_').concat(image_type).concat(`.${ext}`)
-            let imgPath = setPath.concat(filename)
-            fsPromise.readFile(imgPath)
-                .then(
-                    (file) => {
-                        console.log("FILE FOUND")
-                        res.json({uri: imgPath, data: file, cached: true})
-                    })
-                .catch(
-                    (err) => {
-                        console.log("FILE NOT FOUND. ATTEMPTING TO DOWNLOAD")
-                        if (err.code === 'ENOENT') {
-                            fsPromise.mkdir(setPath, {recursive: true})
-                            .catch((err)=>{
-                                if(!(err.code === 'EEXIST')){
-                                    console.log("PING")
-                                    console.log(err.message)
-                                }
-                            })
-                            .finally(() => {
-                                downloader.downloadFile(download_uri, imgPath, (data) => {
-                                    if (!(data === 0)) {
-                                        console.log("FILE NOT DOWNLOADED.")
-                                        res.json({uri: download_uri, cached: false})
-                                    } else {
-                                        console.log("FILE DOWNLOADED.")
-                                        res.json({uri: imgPath, cached: true})
+                let download_uri = req.body.image_uris[image_type];
+                let setPath = cachedImageBaseURL.concat('/').concat(cardset).concat('/images/');
+                let ext = download_uri.split('/').slice(-1)[0].split('.').slice(1)[0].substr(0,3)
+                let filename = cardset_id.replace('*', '_star').concat('_').concat(image_type).concat(`.${ext}`)
+                let imgPath = setPath.concat(filename)
+                fsPromise.readFile(imgPath)
+                    .then(
+                        (file) => {
+                            res.json({uri: imgPath, data: file.toString('base64'), imgType: ext, cached: true})
+                        })
+                    .catch(
+                        (err) => {
+                            console.log("FILE NOT FOUND. ATTEMPTING TO DOWNLOAD")
+                            if (err.code === 'ENOENT') {
+                                fsPromise.mkdir(setPath, {recursive: true})
+                                .catch((err)=>{
+                                    if(!(err.code === 'EEXIST')){
+                                        console.log("PING")
+                                        console.log(err.message)
                                     }
                                 })
-                            });
-                        } else {
-                            console.log(err.message)
-                            res.json({uri: download_uri, cached: false});
-                        }
+                                .finally(() => {
+                                    downloader.downloadFile(download_uri, imgPath, (data) => {
+                                        if (!(data === 0)) {
+                                            console.log("FILE NOT DOWNLOADED.")
+                                            res.json({uri: download_uri, data:'', imgType:'', cached: false})
+                                        } else {
+                                            console.log("FILE DOWNLOADED.")
+                                            fsPromise.readFile(imgPath)
+                                            .then(
+                                                (file) => {
+                                                    res.json({uri: imgPath, data: file.toString('base64'), imgType: ext, cached: true})
+                                                }
+                                            )
+                                            .catch(() =>{
+                                                console.log("ERROR: SOMETHING WENT WRONG")
+                                                res.json({uri: download_uri, data:'', imgType:'', cached: false})
+                                            })
+                                        }
+                                    })
+                                });
+                            } else {
+                                console.log(err.message)
+                                res.json({uri: download_uri, data:'', imgType:'', cached: false})
+                            }
                     });
         }
     });

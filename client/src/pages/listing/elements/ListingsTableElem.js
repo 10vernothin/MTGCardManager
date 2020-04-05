@@ -12,7 +12,13 @@ class ListingsTableElement extends Component {
 
     constructor(props) {
       super(props);
-      this.state = { item: '', cardImageURI: undefined, id_key: this.props.id_key }
+      this.state = { 
+        item: '', 
+        cardImageURI: '', 
+        id_key: this.props.id_key,
+        cardImageObj: '',
+        imageType: ''
+      }
     }
   
     /*
@@ -25,7 +31,16 @@ class ListingsTableElement extends Component {
           if (this.props.item.showcase_card_id === 0) {
             this.setState({item: this.props.item})
           } else {
-            this.fetchImage(this.props.item.showcase_card_id, {type:'art_crop'}, (uri) => {this.setState({cardImageURI:uri, item: this.props.item})})
+            this.fetchImage(this.props.item.showcase_card_id, {type:'art_crop'}, (uri, 
+              data, ext) => {
+                if (ext === 'jpg') {
+                  ext = 'jpeg'
+                }
+                this.setState({
+                cardImageURI:uri, 
+                item: this.props.item, 
+                cardImageObj: data, 
+                imageType: ext})})
           }
       }
     }
@@ -44,16 +59,15 @@ class ListingsTableElement extends Component {
             fetch('/api/cards/retrieve-cached-image', {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify({set: cardObj.set, set_id: cardObj.set_id, image_uris: cardObj.image_uris, image_type: image_type})
+                body: JSON.stringify({
+                  set: cardObj.set, 
+                  set_id: cardObj.set_id, 
+                  image_uris: cardObj.image_uris, 
+                  image_type: image_type})
             }).then(
                 (res) => {return res.json()}
             ).then((result) => {
-                if (!(result.uri === this.state.cardImageURI)) {
-                  let uri_list = result.uri.split('/')
-                  let filename = uri_list.slice(uri_list.length-3).join('/')
-                  filename = './'.concat(filename)
-                  callback(filename);
-                }
+              callback(result.uri, result.data, result.imgType);
             }).catch((err) =>{
               alert(err.message)
             })
@@ -99,14 +113,24 @@ class ListingsTableElement extends Component {
 
 
     renderImage = () => {
-      let imagePanel = (this.state.cardImageURI === undefined)? 
-                <div style={{width: '150px', height: '100px', border: '1px black solid'}}>IMAGE NOT AVAILABLE</div>:
+      let imagePanel =
+        (this.state.cardImageObj === '' || this.state.imageType === '')?
+            (this.state.cardImageURI === '')?
+                  <div style={{width: '150px', height: '100px', border: '1px black solid'}}>IMAGE NOT AVAILABLE</div>:
+                  <img 
+                    src={
+                      this.state.cardImageURI 
+                    } 
+                    alt={"Showcase URI Img"} 
+                    style={{width: '150px', height: '100px', border: '1px black solid'}}
+                  />
+        :
                 <img 
-                  src={
-                    this.state.cardImageURI
-                  } 
-                  alt={"Showcase Img"} 
-                  style={{width: '150px', border: '1px black solid'}}
+                    src={
+                      `data:img/${this.state.imageType};base64,${this.state.cardImageObj.toString('base64')}` 
+                    } 
+                    alt={"Showcase Img"} 
+                    style={{width: '150px', height: '100px', border: '1px black solid'}}
                 />
       return (imagePanel)
     }

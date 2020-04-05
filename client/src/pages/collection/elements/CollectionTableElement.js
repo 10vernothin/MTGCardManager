@@ -37,7 +37,9 @@ class CollectionTableElement extends Component {
         item: [],
         cardImageURI: '',
         id_key: this.props.id_key,
-        svgList: []
+        svgList: [],
+        cardImageObj: '',
+        imageType: ''
         }
     }
 
@@ -65,8 +67,17 @@ class CollectionTableElement extends Component {
       .then(res => res.json())
       .then(list => {
         if (!(list.length === 0) && !(JSON.stringify(this.state.item) === JSON.stringify(list))) {
-                this.fetchImage(list, {type:"normal"}, (uri, svglist) => {
-                    this.setState({cardImageURI: uri, svgList: svglist, item: list,id_key: this.props.id_key})})
+                this.fetchImage(list, {type:'normal'}, (uri, data, ext, svglist) => {
+                    if (ext === 'jpg') {
+                        ext = 'jpeg'
+                    }
+                    this.setState({
+                        cardImageURI: uri, 
+                        cardImageObj: data,
+                        imageType: ext,
+                        svgList: svglist, 
+                        item: list,
+                        id_key: this.props.id_key})})
           }
       }).catch((err) => {
         alert(err.message)
@@ -83,27 +94,20 @@ class CollectionTableElement extends Component {
                 fetch('/api/cards/retrieve-cached-image', {
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json'},
-                    body: JSON.stringify({set: cardObj.set, set_id: cardObj.set_id, image_uris: cardObj.image_uris, image_type: image_type})
+                    body: JSON.stringify({
+                        set: cardObj.set, 
+                        set_id: cardObj.set_id, 
+                        image_uris: cardObj.image_uris, 
+                        image_type: image_type})
                 })
                 .then(
                     (res) => {
-                        return res.blob()
+                        return res.json()
                     }
                 )
-                .then((result) =>{
-                    alert(result)
-                    if (!(result.uri === this.state.cardImageURI)) {
-                        let filename;
-                        if (result.cached) {
-                            let uri_list = result.uri.split('/')
-                            filename = uri_list.slice(uri_list.length-3).join('/')
-                            filename = './'.concat(filename)
-                        } else {
-                            filename = result.uri
-                        }
-                        this.updateManaCost(cardObj, (svgList)=>{
-                            callback(filename, svgList);})
-                    }
+                .then((result) =>{         
+                    this.updateManaCost(cardObj, (svgList)=>{
+                        callback(result.uri, result.data, result.imgType, svgList);})
                 })
         }
     }
@@ -179,6 +183,30 @@ class CollectionTableElement extends Component {
         )
     }
 
+    renderImage = () => {
+        let imagePanel =
+        (this.state.cardImageObj === '' || this.state.imageType === '')?
+            (this.state.cardImageURI === '')?
+                  <div style={ImgNotAvailableCSS}>IMAGE NOT AVAILABLE</div>:
+                  <img 
+                    src={
+                      this.state.cardImageURI 
+                    } 
+                    alt={this.state.cardImageURI} 
+                    style={{width: '150px', border: '1px black solid'}}
+                  />
+        :
+                <img 
+                    src={
+                      `data:img/${this.state.imageType};base64,${this.state.cardImageObj.toString('base64')}` 
+                    } 
+                    alt={this.state.item[0].name} 
+                    style={{width: '150px', border: '1px black solid'}}
+                />
+      return (imagePanel)
+
+    }
+
     /*This function contains the logic that creates the JSX*/
     createRow = () => {
         if (!(JSON.stringify(this.state.item) === '[]') && !(this.state.cardImageURI === undefined)) {
@@ -186,11 +214,7 @@ class CollectionTableElement extends Component {
             return(
             <div>
             <div style={this.props.resBoxCSS}>
-                {(this.state.cardImageURI === ''//|| (!this.props.imgPack.keys().includes(this.state.cardImageURI))
-                )? 
-                 <div style={ImgNotAvailableCSS}> IMAGE NOT AVAILABLE </div>:
-                <img src={''} style={ImageCSS} alt={cardObj.name}/>
-                }
+                {this.renderImage()}
                 <div style={{flex: 1}}>{this.state.id_key}</div>
                 <div style={{flex: 2}} >{cardObj.name}</div>
                 <div style={{flex: 2}}>

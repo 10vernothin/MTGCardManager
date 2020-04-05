@@ -5,6 +5,7 @@ What's new 2.2:
  - List View added for Collection Table
  - You can now download your collection as a JSON file or a CSV file
  - Nomenclature updated. Filenames will have the same name as the default export. Buttons are the exception
+ - Image fetching logic is now different. Instead of storing contexts, now the fetching logic fetches the raw data
 
 What's new 2.1:
  - Collection total cost added
