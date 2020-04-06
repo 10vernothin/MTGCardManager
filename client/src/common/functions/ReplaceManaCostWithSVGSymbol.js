@@ -4,7 +4,7 @@ var replaceManaCostWithSVGSymbol = async (stringRepresentation) => {
     if (stringRepresentation === undefined || stringRepresentation === '') {
         return ([])
     }
-    let listOfCosts = stringRepresentation.split('{').slice(1);
+    let listOfCosts = stringRepresentation.replace(/\s+/g, '').split('{').slice(1);
     listOfCosts = listOfCosts.map((sym) => {
                 let remadeSym = '{'.concat(sym)
                 return remadeSym

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import SessionInfo from '../../common/cached_data/SessionInfo';
-import readCurrURLParamsAsJSONString from '../../common/functions/read-url-params'
+import readCurrURLParamsAsJSONString from '../../common/functions/ReadCurrURLParamsAsJSON'
 import SearchBox from './elements/SearchBox'
 import CollectionTable from './elements/CollectionTable'
 import CollectionTableListForm from './elements/CollectionTableListForm'

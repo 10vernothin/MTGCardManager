@@ -1,11 +1,24 @@
 Latest Version: Alpha 2.2
-Last Update: M03/D30/Y2020
+Last Update: M04/D05/Y2020
 
 What's new 2.2:
  - List View added for Collection Table
  - You can now download your collection as a JSON file or a CSV file
- - Nomenclature updated. Filenames will have the same name as the default export. Buttons are the exception
- - Image fetching logic is now different. Instead of storing contexts, now the fetching logic fetches the raw data
+ - Nomenclature updated. Filenames will be back to having the same name as the default export. Buttons.js are the exception
+ - Storing context was determined to be the root of the slowness. Instead of using require.context, it now fetches raw data
+   from server. Lazy image downloading is still in effect (i.e downloading data to server only when the image is being used.
+   This prevents long update times.) 
+ - Split card costs fixed.
+ - Refactored the Mana Symbols to be in the images/mana_symbols folder
+ - Modularized image panel creation
+ - Modularized mana cost panel creation
+ - Created front-end display for collection preview photo
+ - Created new starting scripts:
+     --> >>npm run api-start 
+      ------> (this starts the server at :5000)
+     --> >>npm run client-start 
+      ------> (this starts the client at :3000, and if there are multiple instances, it will prompt you to 
+                                 listen at port 3001 instead.)
 
 What's new 2.1:
  - Collection total cost added
@@ -28,10 +41,10 @@ What's new 2.0:
  - Documentation
 
 Known bugs:
- - Mana cost for split cards (eg. {B}//{G}) does not work (2.1)
- - Adding cards on detail view is slow and sometimes buggy. Will have to fix (2.2)
+ - Transform cards are not able to be displayed. This will require a design change.
 
 What's to come:
- - Preview photos for collection
+ - Uploading and changing preview photos for collection
+ - Splitting user-client and admin-client
  - Ability to upload your collection
  - CSS splitting

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {EditCollectionButton, SelectCollectionButton, DeleteCollectionButton} from './Buttons'
+import CardImagePanel from '../../../common/images/CardImagePanel';
 
 const collectionCSS = {
   width: '90%',
@@ -14,10 +15,8 @@ class ListingsTableElement extends Component {
       super(props);
       this.state = { 
         item: '', 
-        cardImageURI: '', 
         id_key: this.props.id_key,
-        cardImageObj: '',
-        imageType: ''
+        cardObj: '',
       }
     }
   
@@ -31,46 +30,28 @@ class ListingsTableElement extends Component {
           if (this.props.item.showcase_card_id === 0) {
             this.setState({item: this.props.item})
           } else {
-            this.fetchImage(this.props.item.showcase_card_id, {type:'art_crop'}, (uri, 
-              data, ext) => {
-                if (ext === 'jpg') {
-                  ext = 'jpeg'
-                }
+            this.fetchCardObj(this.props.item.showcase_card_id, (obj) => {
                 this.setState({
-                cardImageURI:uri, 
                 item: this.props.item, 
-                cardImageObj: data, 
-                imageType: ext})})
+                cardObj: obj})
+              })
           }
       }
     }
 
-    fetchImage = (id, image_type, callback) => {
+    fetchCardObj = (id, callback) => {
       fetch('/api/collections/fetch-row', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify({card_id: id})
       })
-      .then((res) => {
-        return res.json()})
+      .then((res) => {return res.json()})
       .then((cardObj) => {
         cardObj = cardObj[0]
         if (!(cardObj === undefined)) {
-            fetch('/api/cards/retrieve-cached-image', {
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                  set: cardObj.set, 
-                  set_id: cardObj.set_id, 
-                  image_uris: cardObj.image_uris, 
-                  image_type: image_type})
-            }).then(
-                (res) => {return res.json()}
-            ).then((result) => {
-              callback(result.uri, result.data, result.imgType);
-            }).catch((err) =>{
-              alert(err.message)
-            })
+              callback(cardObj);
+        } else {
+              callback('')
         }
       })
     }
@@ -111,39 +92,17 @@ class ListingsTableElement extends Component {
       })
     }
 
-
-    renderImage = () => {
-      let imagePanel =
-        (this.state.cardImageObj === '' || this.state.imageType === '')?
-            (this.state.cardImageURI === '')?
-                  <div style={{width: '150px', height: '100px', border: '1px black solid'}}>IMAGE NOT AVAILABLE</div>:
-                  <img 
-                    src={
-                      this.state.cardImageURI 
-                    } 
-                    alt={"Showcase URI Img"} 
-                    style={{width: '150px', height: '100px', border: '1px black solid'}}
-                  />
-        :
-                <img 
-                    src={
-                      `data:img/${this.state.imageType};base64,${this.state.cardImageObj.toString('base64')}` 
-                    } 
-                    alt={"Showcase Img"} 
-                    style={{width: '150px', height: '100px', border: '1px black solid'}}
-                />
-      return (imagePanel)
-    }
-
     render(){
       this.recordChange();
       let item = this.state.item;
       if (!(item.name === '')){
         return(
           <div style={collectionCSS}>
-              <div style={{flex:2}}>
-              {this.renderImage()
-              }
+              <div style={{flex: 2, width: '150px', height: '100px', border: '1px black solid'}}>
+                <CardImagePanel
+                  cardObj={this.state.cardObj}
+                  imgType={{type:'art_crop'}}
+                />
               </div>
               <div style={{flex: 2}}>{item.name}</div>
               <div style={{flex: 7}}>{item.description}</div>

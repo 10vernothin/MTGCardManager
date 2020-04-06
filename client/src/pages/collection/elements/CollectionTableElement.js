@@ -1,7 +1,8 @@
 
 import React, { Component } from 'react';
 import SessionInfo from '../../../common/cached_data/SessionInfo';
-import replaceManaCostWithSVG from '../../../common/functions/replace-mana-with-symbol'
+import CardImagePanel from '../../../common/images/CardImagePanel'
+import ManaCostPanel from '../../../common/images/ManaCostPanel';
 
 const AddRemoveButtonCSS = {
     display: 'block',
@@ -21,30 +22,18 @@ const ImageCSS = {
     flex: 3
 }
 
-const ImgNotAvailableCSS = {
-    padding: '0',
-    height: 'auto',
-    border: '1px black solid',
-    flex: 3
-}
-
 /*This component renders a search box element*/
 class CollectionTableElement extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
         item: [],
-        cardImageURI: '',
         id_key: this.props.id_key,
-        svgList: [],
-        cardImageObj: '',
-        imageType: ''
         }
     }
 
     componentDidCatch(error, info) {
-        alert("CollectionTableElement" + error)
+        alert("CollectionTableElement " + error)
     }
 
     render(){  
@@ -67,49 +56,12 @@ class CollectionTableElement extends Component {
       .then(res => res.json())
       .then(list => {
         if (!(list.length === 0) && !(JSON.stringify(this.state.item) === JSON.stringify(list))) {
-                this.fetchImage(list, {type:'normal'}, (uri, data, ext, svglist) => {
-                    if (ext === 'jpg') {
-                        ext = 'jpeg'
-                    }
                     this.setState({
-                        cardImageURI: uri, 
-                        cardImageObj: data,
-                        imageType: ext,
-                        svgList: svglist, 
                         item: list,
-                        id_key: this.props.id_key})})
-          }
+                        id_key: this.props.id_key})}
       }).catch((err) => {
         alert(err.message)
         })
-    }
-
-    /*
-    This function lazy fetches an image, then updates the URI
-    Sends the URI through the callback
-    */
-    fetchImage = (cardObjList, image_type, callback) => {
-            let cardObj = cardObjList[0];
-            if (!(cardObj === undefined)) {
-                fetch('/api/cards/retrieve-cached-image', {
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        set: cardObj.set, 
-                        set_id: cardObj.set_id, 
-                        image_uris: cardObj.image_uris, 
-                        image_type: image_type})
-                })
-                .then(
-                    (res) => {
-                        return res.json()
-                    }
-                )
-                .then((result) =>{         
-                    this.updateManaCost(cardObj, (svgList)=>{
-                        callback(result.uri, result.data, result.imgType, svgList);})
-                })
-        }
     }
 
     /*Handle Add card button */
@@ -122,31 +74,8 @@ class CollectionTableElement extends Component {
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify({chosenIsFoil: this.props.cardInfo.is_foil, set: item.set, set_id: item.set_id, collectionID: SessionInfo.getCollectionID()})
             }
-        ).then((res) => {
+        ).then(() => {
             this.props.updateTopmostState()
-        }).catch((err) => {
-            alert(err.message)
-        })
-    }
-
-    updateManaCost = (cardObj, callback) => {
-        replaceManaCostWithSVG(cardObj.mana_cost).then((listURL) =>
-        {
-            let listofSVGs=[]
-            let listFileName = listURL.map((url) => {
-                return url.split(/(\\|\/)/g).pop()
-            })
-            let listSVGFiles = this.props.svgPack.keys().map((url) => {
-                return url.split(/(\\|\/)/g).pop()
-            })
-            listFileName.forEach((path) =>{
-                if (listSVGFiles.includes(path))
-                {
-                    let i = this.props.svgPack(this.props.svgPack.keys().filter((key) =>key.includes(path))[0])
-                    listofSVGs.push(i)
-                }
-            })
-            callback(listofSVGs)
         }).catch((err) => {
             alert(err.message)
         })
@@ -183,45 +112,24 @@ class CollectionTableElement extends Component {
         )
     }
 
-    renderImage = () => {
-        let imagePanel =
-        (this.state.cardImageObj === '' || this.state.imageType === '')?
-            (this.state.cardImageURI === '')?
-                  <div style={ImgNotAvailableCSS}>IMAGE NOT AVAILABLE</div>:
-                  <img 
-                    src={
-                      this.state.cardImageURI 
-                    } 
-                    alt={this.state.cardImageURI} 
-                    style={{width: '150px', border: '1px black solid'}}
-                  />
-        :
-                <img 
-                    src={
-                      `data:img/${this.state.imageType};base64,${this.state.cardImageObj.toString('base64')}` 
-                    } 
-                    alt={this.state.item[0].name} 
-                    style={{width: '150px', border: '1px black solid'}}
-                />
-      return (imagePanel)
-
-    }
-
     /*This function contains the logic that creates the JSX*/
     createRow = () => {
-        if (!(JSON.stringify(this.state.item) === '[]') && !(this.state.cardImageURI === undefined)) {
+        if (!(JSON.stringify(this.state.item) === '[]')) {
             let cardObj = this.state.item[0]
             return(
             <div>
             <div style={this.props.resBoxCSS}>
-                {this.renderImage()}
+                <div style={ImageCSS}>
+                <CardImagePanel 
+                    cardObj = {cardObj}
+                    imgType = {{type: "normal"}}
+                />
+                </div>
                 <div style={{flex: 1}}>{this.state.id_key}</div>
                 <div style={{flex: 2}} >{cardObj.name}</div>
                 <div style={{flex: 2}}>
                     <div style={{display: 'flex', justifyContent: 'center', 'flex-wrap':'wrap'}}>
-                        {this.state.svgList.map((item) => {
-                            return this.renderManaSymbol(item)
-                        })}
+                        <ManaCostPanel cardObj = {cardObj} size={{width:'20px', height:'auto'}}/>
                     </div>
                 </div>
                 <div style={{flex: 1}}>{cardObj.rarity.substring(0,1).toUpperCase()}</div>

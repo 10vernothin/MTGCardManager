@@ -15,7 +15,7 @@ Notes:
 Current build requires PostgreSQL tables already built-in, but I will have a create table/database function in the future.
 users -> id (PK), username, password, email
 
-
+Please check version.txt for more updates
 
 References: 
 

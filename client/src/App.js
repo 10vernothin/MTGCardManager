@@ -15,7 +15,7 @@ import CollectionPage from './pages/collection/CollectionPage';
 
 //importing required common tools
 import SessionInfo from './common/cached_data/SessionInfo';
-import readCurrURLParamsAsJSON from './common/functions/read-url-params';
+import readCurrURLParamsAsJSON from './common/functions/ReadCurrURLParamsAsJSON';
 
 
 class App extends Component {
@@ -82,7 +82,7 @@ class App extends Component {
 				}/>
 
 				{/*Default route goes Home/or ERROR page if it gets to that*/}
-				{/*<Route path="*" render= {() => {return (<Redirect to='/'/>)}}/>*/}
+				<Route path="*" render= {() => {return (<Redirect to='/'/>)}}/>
 
 			</Switch>
 		</Router>

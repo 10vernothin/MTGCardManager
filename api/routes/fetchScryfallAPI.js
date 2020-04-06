@@ -13,7 +13,7 @@ path = "../api/json/scryfall/cards"
 datePath = '../api/json/scryfall/last_updated_date.date';
 symuri = 'https://api.scryfall.com/symbology'
 sympath = '../api/json/scryfall/symbols/'
-clientsympath = '../client/src/common/images/image_src/'
+clientsympath = '../client/src/common/images/mana_symbols/'
 
 /*This accesses the scryfall API and downloads the data into the server cache at './api/json/scryfall'*/
 router.get('/api/fetch-card/download-bulk-data', function(req, res, next) {
@@ -36,12 +36,11 @@ router.get('/api/fetch-card/download-bulk-data', function(req, res, next) {
             fs.mkdir(sympath, (err) => {
                 //console.log(err);
             err = null;
-            dpd.downloadSymbology(symuri, clientsympath, {includeMeta: true, metaDirPath:sympath});
+            dpd.downloadSymbology(symuri, clientsympath, {includeMeta: true, metaDirdownloadPath:sympath});
             dpd.downloadScryfallData(uri, path);
             res.send("Request Sent");
         });
-            
-        });
+    });
 });
 
 

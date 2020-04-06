@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import SessionInfo from '../../../common/cached_data/SessionInfo';
 import CollectionTableElement from './CollectionTableElement';
 
-const listOfManaIcons = require.context( '../../../common/images/image_src', true, /\.svg$/ )
-
 /* These constants define the inline CSS properties of elements in this component*/
 const tableCSS = {
   'border-bottom': '1px black solid',
@@ -137,8 +135,7 @@ class CollectionTable extends Component {
               return (
               <CollectionTableElement 
                 id_key={index+1}
-               cardInfo={info}
-                svgPack = {listOfManaIcons}
+                cardInfo={info}
                 resBoxCSS={cardResflexboxCSS[CSSIter]} 
                 updateTopmostState={this.props.updateState}/>
               )

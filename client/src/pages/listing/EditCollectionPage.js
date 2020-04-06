@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {HomeButton, CollectionListButton} from '../../common/elements/CommonButtons'
 import SessionInfo from '../../common/cached_data/SessionInfo'
-import readCurrURLParamsAsJSON from '../../common/functions/read-url-params'
+import readCurrURLParamsAsJSON from '../../common/functions/ReadCurrURLParamsAsJSON'
 
 class EditCollectionPage extends Component {
 

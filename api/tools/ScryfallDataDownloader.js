@@ -3,7 +3,8 @@ var fs = require('fs');
 var _db = require('../database/database');
 var pgdb = _db.getConnectionInstance();
 var downloader = require('./FileDownloader')
-var imageDownloader = require('../tools/ImageDataDownloader')
+//var imageDownloader = require('../tools/ImageDataDownloader')
+
 /*
 This function fetches the paginated card data from Scryfall and populates each JSON card data object
 into a file sorted into folders by the set where it was released. The name of the file will be its collector
@@ -79,7 +80,7 @@ exports.downloadScryfallData = (uri, downloadPath) => {
                     uri = null;
                     return;
                 } else {
-                    imageDownloader.downloadAllCards()
+                    //imageDownloader.downloadAllCards()
                     return;
                 }
             });
