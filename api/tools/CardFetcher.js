@@ -13,41 +13,50 @@ exports.fetchAllCards = async (orderby = 'name', limit = 50) => {
 
 /*Subcontainer so this function can be chained to refine results. E.g. C->Co->Cob->Cobr...*/
 exports.queryCardList = async (nameFragment, orderby = 'name', limit = 100) => {
-    res = await pgdb.any(`SELECT * from cards where name ~* '(\\m${nameFragment})' order by ${orderby} LIMIT ${limit}`).catch((err) => {
+    let res = await pgdb.any(`SELECT * from cards where name ~* '(\\m${nameFragment})' order by ${orderby} LIMIT ${limit}`).catch((err) => {
         console.log("Database Error:", err);
         err = null;
     }).catch((err)=> {console.log(err)});
+    //console.log(res)
     return res
 }
 
 exports.selectCardJSONData = async (set, set_id) => {
-    cardpath = path.concat('/').concat(set).concat('/').concat(set_id.replace('*', '_star')).concat('.json')
+    let cardpath = path.concat('/').concat(set).concat('/').concat(set_id.replace('*', '_star')).concat('.json')
     //console.log(cardpath);
-    return JSON.parse(await fs.readFile(cardpath, "utf-8"));
+    let res = await pgdb.any(`SELECT id from cards where set = $1 and set_id = $2`, [set, set_id]).catch((err) => {
+        console.log(err.message);
+        err = null;
+    });
+    let obj = JSON.parse(await fs.readFile(cardpath, "utf-8"));
+    obj.card_id = res[0].id
+    return (obj)
 }
 
 exports.selectCardJSONDataByCardID = async (id) => {
-    res = await pgdb.any(`SELECT * from cards where id = ${id}`).catch((err) => {
+    let res = await pgdb.any(`SELECT * from cards where id = ${id}`).catch((err) => {
         console.log(err.message);
         err = null;
     });
     if (res.length == 0) {
         return null;
     } else {
-        cardpath = path.concat('/').concat(res[0].set).concat('/').concat(res[0].set_id.replace('*', '_star')).concat('.json')
-        item = JSON.parse(await fs.readFile(cardpath, "utf-8"))
+        let cardpath = path.concat('/').concat(res[0].set).concat('/').concat(res[0].set_id.replace('*', '_star')).concat('.json')
+        let item = JSON.parse(await fs.readFile(cardpath, "utf-8"))
         item.card_id = id;
+        console.log(item)
         return item;
     }
 }
 
 exports.selectCardJSONDataInBulk = async (variable, opts = {type: 'string'}) => {
+    let sets;
     if (opts.type == 'string'){
         sets = await this.queryCardList(variable)
     } else {
         sets = variable
     }
-    lst = []
+    let lst = []
     sets.map((item) => {
         if (opts.type == 'string'){
             obj = this.selectCardJSONData(item.set, item.set_id)
@@ -71,7 +80,8 @@ exports.getPreviews = async (nameFragment, opts = {type: 'string'}) => {
                     prices: JSONCardObj.prices,
                     foil: JSONCardObj.foil,
                     nonfoil: JSONCardObj.nonfoil,
-                    image_uris: JSONCardObj.image_uris
+                    image_uris: JSONCardObj.image_uris,
+                    card_id: JSONCardObj.card_id
                 });
             })
     return list;

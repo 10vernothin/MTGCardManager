@@ -6,9 +6,28 @@ const collectionTitleCSS = {
   width: '90%',
   display: 'flex',
   margin: '0 auto',
+  padding: '0',
   'border-bottom': '1px solid black',
   'text-align': 'left',
   'font-weight': 'bold'
+}
+
+const collectionElemCSSWhite = {
+  width: '90%',
+  display: 'flex',
+  margin: '0 auto',
+  'text-align': 'left',
+  padding: '0',
+  background: 'white'
+}
+
+const collectionElemCSSGray = {
+  width: '90%',
+  display: 'flex',
+  margin: '0 auto',
+  'text-align': 'left',
+  padding: '0',
+  background: 'gray'
 }
 
 class ListingsTable extends Component {
@@ -45,6 +64,7 @@ class ListingsTable extends Component {
     render(){
         this.getList();
         const list = this.state.collectionList;
+        let currCSS = collectionElemCSSGray
         return (
         <div>
         {list.length ? (
@@ -59,6 +79,7 @@ class ListingsTable extends Component {
               </div>
               {/* Render the list of items */}
               {this.state.collectionList.map((item) => {
+                currCSS = (currCSS === collectionElemCSSGray)? collectionElemCSSWhite: collectionElemCSSGray
                 if (!(item.name === '')){
                 return(
                   <ListingsTableElem 
@@ -66,6 +87,7 @@ class ListingsTable extends Component {
                             edit_url={`/collections?page=edit&id=${item.id}&name=${encodeURIComponent(item.name)}`}
                             item = {item}
                             id_key = {item.id}
+                            currCSS = {currCSS}
                             updateTopmostState={this.props.updateState}/>
                   )
                 } else {

@@ -20,8 +20,13 @@ router.post('/api/collections/submit-creation-form', function(req, res, next) {
         res.send('-3'); 
     } else {
         pgdb.any(
-                "INSERT INTO collection_list (player_id, name, description) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING RETURNING name", 
-                [req.body.userID,req.body.formControls.name.value, req.body.formControls.desc.value.replace(/^\s+/, '').replace(/\s+$/, '')]
+                "INSERT INTO collection_list (player_id, name, description, showcase_card_id) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING RETURNING name", 
+                [   
+                    req.body.userID,
+                    req.body.formControls.name.value, 
+                    req.body.formControls.desc.value.replace(/^\s+/, '').replace(/\s+$/, ''),
+                    req.body.formControls.preview.value
+                ]
                 ).then(
         function(data) {
             console.log('Creation query completed.' + data.length);
@@ -63,7 +68,7 @@ router.post('/api/collections/edit-collection', function(req, res, next) {
         console.log("Collection Creation Error: CollectionID is not defined");
         res.send('-3'); 
     } else {
-        pgdb.none("UPDATE collection_list SET name= $2, description = $3 where collection_list.id = $1", [req.body.collectionID, req.body.formControls.name.value, req.body.formControls.desc.value])
+        pgdb.none("UPDATE collection_list SET name= $2, description = $3, showcase_card_id=$4 where collection_list.id = $1", [req.body.collectionID, req.body.formControls.name.value, req.body.formControls.desc.value, req.body.formControls.preview.value])
         .then(() => {
                 console.log('Collection Deleted.')
                 res.send('0')
@@ -128,17 +133,23 @@ router.post('/api/collections/fetch-collection-id', function(req, res, next) {
 This api call receives a request:{card_id} to fetch cardObject data by its unique card_id, and send the cardObject to the client
 */
 router.post('/api/collections/fetch-row', function(req, res, next) {
-    cards.getDetails([req.body.card_id], {type: 'list'})
-    .then((data) => {
-        if (data.length == 0) {
-            console.log('No cards in Collection.')
-            res.send([])
-        } else {
-            res.send(data);
-        }
-    }).catch((err) => {
-        console.log(err.message);
-    })
+    if (req.body.card_id == 0) {
+        console.log('Card has a null ID (0).')
+        res.send([])
+    } else {
+        cards.getDetails([req.body.card_id], {type: 'list'})
+        .then((data) => {
+            if (data.length == 0) {
+                console.log('No such card with this ID: ' + req.body.card_id)
+                res.send([])
+            } else {
+                console.log('Successful Fetch: ' + req.body.card_id)
+                res.send(data);
+            }
+        }).catch((err) => {
+            console.log(err.message);
+        })
+    }
 });
 
 /*
@@ -187,6 +198,10 @@ router.post('/api/collections/remove-card-from-collection', function(req, res, n
     }).catch((err) => {"getID err: ", console.log(err.message)})
 });
 
+
+/*
+These two functions reformats the collection either as a JSON file or a CSV file and sends it to the client 
+*/
 
 router.post('/api/collections/fetch-collection-as-JSON', function(req, res, next) {
     pgdb.any("SELECT collection.id, cards.set_id, cards.set, collection.card_id, cards.name, collection_list.name as collection_name, collection_list.description, collection_list.id as collection_list_id, collection.amt, collection.is_foil from collection inner join cards on collection.card_id = cards.id inner join collection_list on collection_list.id = collection.collection_list_id where collection_list_id = $1", [req.body.id])

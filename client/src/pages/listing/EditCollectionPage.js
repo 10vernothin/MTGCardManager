@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 import {HomeButton, CollectionListButton} from '../../common/elements/CommonButtons'
 import SessionInfo from '../../common/cached_data/SessionInfo'
 import readCurrURLParamsAsJSON from '../../common/functions/ReadCurrURLParamsAsJSON'
+import SearchPopupWindow from './elements/SearchPopupWindow'
+import CardImagePanel from './../../common/images/CardImagePanel'
+
 
 class EditCollectionPage extends Component {
 
@@ -12,17 +15,40 @@ class EditCollectionPage extends Component {
             collectionID: readCurrURLParamsAsJSON().id,
             formControls: {
                 name: {value: ''},
-                desc: {value: ''}
+                desc: {value: ''},
+                preview: {value: ''}
             },
-            postResponse: ''
+            previewCardName: 'NONE',
+            postResponse: '',
+            showPopup: false
         }
     }
 
-    componentDidMount() {
-        this.defaultValue()
+    componentDidCatch(error) {
+        alert("EditCollectionPage " + error)
     }
 
-    defaultValue = () => {
+    render() {
+        return (
+            <div>
+                {this.renderForm()}
+                {this.state.showPopup ? 
+                <SearchPopupWindow 
+                        closePopup={this.togglePopup.bind(this)}
+                        defaultPreview={this.state.formControls.preview}
+                        submitPreviewCardIntoDatabase={this.submitPreviewCardIntoDatabase.bind(this)}
+                />
+                : null}
+            </div>
+            );
+    }
+
+    componentDidMount() {
+        this.loadDefaultValue()
+    }
+
+
+    loadDefaultValue = () => {
         fetch('/api/collections/getList',
         { 
             method: 'POST', 
@@ -36,6 +62,7 @@ class EditCollectionPage extends Component {
             let newFormControls = {...this.state.formControls}
             newFormControls.name.value = obj.name;
             newFormControls.desc.value = obj.description;
+            newFormControls.preview.value = obj.showcase_card_id;
             this.setState({
                 formControls: newFormControls
             })
@@ -80,37 +107,65 @@ class EditCollectionPage extends Component {
         }}});
     }
 
-    render() {
-     return (
-     <form method="post" onSubmit={this.handleSubmit}>
-        <title>Edit Collection</title>
-        <div>Edit Collection</div>
-        <div>
-          Name:
-        </div>
-        <input type="text" 
-                name="name" 
-                value={this.state.formControls.name.value} 
-                onChange={this.changeHandler} 
-        />
-        <div>
-          Description:
-        </div>
-        <textarea type="text" 
-                name="desc" 
-                value={this.state.formControls.desc.value} 
-                onChange={this.changeHandler} 
-                cols="35" 
-                wrap="soft"
-        />
-        <div>
-          <button type="submit">Submit</button>
-          <HomeButton/>
-          <CollectionListButton/>
-        </div>
-    {this.state.postResponse}
-    </form>   );
+    renderForm = () => {
+        return(
+            <div>
+                <form method="post" onSubmit={this.handleSubmit}>
+                    <title>Edit Collection</title>
+                    <div>Edit Collection</div>
+                    <div> Name: </div>
+                    <input type="text" 
+                            name="name" 
+                            value={this.state.formControls.name.value} 
+                            onChange={this.changeHandler} 
+                    />
+                    <div> Description: </div>
+                    <textarea type="text" 
+                            name="desc" 
+                            value={this.state.formControls.desc.value} 
+                            onChange={this.changeHandler} 
+                            cols="35" 
+                            wrap="soft"
+                    />
+                    <div> Add Preview Card: </div>
+                    <div>{`ID: ${this.state.formControls.preview.value}`}</div>
+                    <div style={{width: '270px', height: '190px', border: '1px black solid'}}>
+                        <CardImagePanel id={this.state.formControls.preview.value} paramsType="id" imgType={{type:'art_crop'}}/>
+                    </div>
+                    <button onClick={this.handleCardSearch}>Search Card</button>
+                    <div>
+                    <button type="submit">Submit</button>
+                    <HomeButton/>
+                    <CollectionListButton/>
+                    </div>   
+                    {this.state.postResponse}
+                </form>   
+            </div>
+        )
     }
+
+    handleCardSearch = e =>{
+        e.preventDefault()
+        this.togglePopup()
+    }
+
+    /** Binded Functions **/
+    togglePopup = () => {
+        this.setState({
+          showPopup: !this.state.showPopup
+        });
+    }
+
+    submitPreviewCardIntoDatabase = (id, previewCardName) =>{
+        let newformControls = {...this.state.formControls}
+        newformControls.preview.value = id
+        this.setState({
+                showPopup: !this.state.showPopup,
+                formControls: newformControls,
+                previewCardName: previewCardName
+            })
+        }
+    
 }
 
 

@@ -2,12 +2,6 @@ import React, { Component } from 'react';
 import {EditCollectionButton, SelectCollectionButton, DeleteCollectionButton} from './Buttons'
 import CardImagePanel from '../../../common/images/CardImagePanel';
 
-const collectionCSS = {
-  width: '90%',
-  display: 'flex',
-  margin: '0 auto',
-  'text-align': 'left'
-}
 
 class ListingsTableElement extends Component {
 
@@ -97,8 +91,8 @@ class ListingsTableElement extends Component {
       let item = this.state.item;
       if (!(item.name === '')){
         return(
-          <div style={collectionCSS}>
-              <div style={{flex: 2, width: '150px', height: '100px', border: '1px black solid'}}>
+          <div style={this.props.currCSS}>
+              <div style={{flex: 2, width: '150px', height: '110px', border: '1px black solid', padding:'0', margin:'0'}}>
                 <CardImagePanel
                   cardObj={this.state.cardObj}
                   imgType={{type:'art_crop'}}

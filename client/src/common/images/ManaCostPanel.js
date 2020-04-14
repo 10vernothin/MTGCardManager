@@ -69,6 +69,7 @@ class ManaCostPanel extends Component {
             </div>
         )
     }
+    
     render() {
         this.updateManaCost()
         if (this.state.listofSVGs === []) {
@@ -77,7 +78,7 @@ class ManaCostPanel extends Component {
             return(
                 this.state.listofSVGs.map((item) => {
                     if (item === '//') {
-                        return <div>//</div>
+                        return <div>{`//`}</div>
                 }else {
                     return this.renderManaSymbol(item)
                 }}

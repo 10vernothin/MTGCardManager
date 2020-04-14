@@ -34,8 +34,25 @@ class CardImagePanel extends Component {
     }
   }
 
-    render() {
-        this.fetchImage(this.props.cardObj, this.props.imgType)
+  fetchImageByID = (id, image_type) => {
+    fetch('/api/collections/fetch-row', 
+    { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({card_id: id})
+    })
+    .then((res) => {return res.json()})
+    .then((result) =>{ 
+      this.fetchImage(result[0], image_type)
+    })
+  }
+
+  render() {
+        if (this.props.paramsType === 'id') {
+          this.fetchImageByID(this.props.id, this.props.imgType)
+        } else {
+          this.fetchImage(this.props.cardObj, this.props.imgType)
+        }
         let imagePanel =
         (this.state.cardImageObj === '' || this.state.imageType === '')?
             (this.state.cardImageURI === '')?
