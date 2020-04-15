@@ -1,5 +1,16 @@
-Latest Version: Alpha 2.2
-Last Update: M04/D05/Y2020
+Latest Version: Alpha 2.3
+Last Update: M04/D14/Y2020
+
+What's new 2.3:
+ - Implemented adding and editting preview photos for the collection. (It uses popup design)
+ - Partial CSS Splitting (WIP)
+ - Cleaning up code to have a standardized structure:
+  --> Constructor
+  --> Default React Methods (ComponentWillCatch(), Render(), etc)
+  --> Render Methods
+  --> Loader Methods
+  --> Handler Methods
+  --> Binded Methods
 
 What's new 2.2:
  - List View added for Collection Table
@@ -41,10 +52,9 @@ What's new 2.0:
  - Documentation
 
 Known bugs:
- - Transform cards are not able to be displayed. This will require a design change.
+ - When searching anything with contractions database error will be raised
 
 What's to come:
- - Uploading and changing preview photos for collection
  - Splitting user-client and admin-client
  - Ability to upload your collection
- - CSS splitting
+ - Ability to set up database

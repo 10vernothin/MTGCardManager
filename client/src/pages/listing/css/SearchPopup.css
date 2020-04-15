@@ -1,3 +1,5 @@
+/* SearchPopupWindow CSS */
+
 .popup_outer {
     position: fixed;
     width: 100%;
@@ -20,7 +22,7 @@
     background: white;
 }
 
-.main_panel {
+.popup_main_panel {
     position: relative;
     top: 5%;
     height: 90%;
@@ -30,7 +32,7 @@
     border: black 1px solid;
 }
 
-.result_panel {
+.popup_result_panel {
     height: 90%;
     width: 99.8%;
     margin: 0;
@@ -38,8 +40,9 @@
     border: green 1px solid;
 }
 
+/*SearchPopupBody CSS*/
 
-.search_dropdown {
+.popup_search_dropdown {
     overflow: auto;
     display: fixed;
     position: absolute;
@@ -48,7 +51,7 @@
     z-index: 2;
 }
 
-.hoverable:hover {
+.popup_result_hoverable:hover {
     background-color: blue;
     color: white;
 }

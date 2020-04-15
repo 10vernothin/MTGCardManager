@@ -1,0 +1,53 @@
+/*Shared CSS*/
+
+.preview_panel {
+    width: 270px; 
+    height: 190px;
+    border: 1px black solid;
+    padding: 0;
+    margin: 0;
+}
+
+.shrunk_preview_panel {
+    width: 150px; 
+    height: 110px;
+    border: 1px black solid;
+    padding:0;
+    margin: 0;
+}
+
+/*ListingMainPage CSS*/
+.listing_main_page {
+    text-align: center;
+}
+
+/*ListingTable CSS*/
+
+.listing_title {
+    width: 90%;
+    display: flex;
+    margin: 0 auto;
+    padding: 0;
+    border-bottom: 1px solid black;
+    text-align: left;
+    font-weight: bold;
+}
+
+.listing_elem_white {
+    width: 90%;
+    display: flex;
+    margin: 0 auto;
+    text-align: left;
+    padding: 0;
+    background: white
+}
+
+.listing_elem_gray {
+    width: 90%;
+    display: flex;
+    margin: 0 auto;
+    text-align: left;
+    padding: 0;
+    background:  lightgray
+}
+  

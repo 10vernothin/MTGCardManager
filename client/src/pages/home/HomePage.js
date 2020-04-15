@@ -1,13 +1,30 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import {LoginButton, CollectionListButton} from '../../common/elements/CommonButtons';
-import {DownloadBulkDataButton} from './elements/Buttons'
+import {DownloadBulkDataButton, UserListButton} from './elements/Buttons'
 import SessionInfo from '../../common/cached_data/SessionInfo';
 import PlaneswalkerSymbol from './elements/PlaneswalkerSymbol';
+import './css/Home.css'
 
 class HomePage extends Component {
 
-  WelcomeUser() {
+  render() {
+    return (
+    <div class='home_page'>
+        <div><h1>MTG Card Manager</h1></div>
+        <div>{this.renderWelcomeUser()}</div>
+        <div><PlaneswalkerSymbol/></div>
+        <div>
+          <UserListButton/>
+          {this.renderLoginCollectionButton()}
+          <DownloadBulkDataButton/>
+        </div>
+    </div>
+    );
+  }
+
+  //Render functions
+
+  renderWelcomeUser() {
       //alert(SessionInfo.getSessionUser());
       if (!(SessionInfo.getSessionUser() === '')) {
         return (<h1> Welcome {SessionInfo.getSessionUser()} </h1>)
@@ -16,32 +33,13 @@ class HomePage extends Component {
       }
   }
 
-  SwitchLoginCollectionButtons() {
+  renderLoginCollectionButton() {
     if (SessionInfo.getSessionStatus() === true) {
       return (<CollectionListButton/>)
     } else {
       return <LoginButton/>
     }
   }
-
-
-  render() {
-    return (
-    <div className="App">
-        <div><h1>MTG Card Manager</h1></div>
-        <div>{this.WelcomeUser()}</div>
-        <div><PlaneswalkerSymbol/></div>
-        <div>
-          <Link to={'./userlist'}>
-            <button variant="raised">
-                Users
-            </button>
-          </Link>
-          {this.SwitchLoginCollectionButtons()}
-          <DownloadBulkDataButton/>
-        </div>
-    </div>
-    );
-  }
+  
 }
 export default HomePage;

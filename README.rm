@@ -9,7 +9,10 @@ API uses Express Generator to generate a skeletal MVC shell listening on port ht
 Client uses React-Creator to create a skeletal React shell, listening on port http://localhost:3000/ but proxying backend port http://localhost:5000/
 
 To start:
-type "npm start" at the root folder
+ - For a concurrent single client and server, ">>npm start" at the root folder
+ - For server only ">>npm run api-start" (Singleton only)
+ - For client only ">>npm run client-start" (The first instance will run at 3000, but the second and third will prompt
+   run at 3001, 3002... etc)
 
 Notes:
 Current build requires PostgreSQL tables already built-in, but I will have a create table/database function in the future.

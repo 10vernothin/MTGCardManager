@@ -44,7 +44,7 @@ exports.selectCardJSONDataByCardID = async (id) => {
         let cardpath = path.concat('/').concat(res[0].set).concat('/').concat(res[0].set_id.replace('*', '_star')).concat('.json')
         let item = JSON.parse(await fs.readFile(cardpath, "utf-8"))
         item.card_id = id;
-        console.log(item)
+        //console.log(item)
         return item;
     }
 }
@@ -57,6 +57,9 @@ exports.selectCardJSONDataInBulk = async (variable, opts = {type: 'string'}) => 
         sets = variable
     }
     let lst = []
+    if (sets === undefined) {
+        return lst;
+    }
     sets.map((item) => {
         if (opts.type == 'string'){
             obj = this.selectCardJSONData(item.set, item.set_id)

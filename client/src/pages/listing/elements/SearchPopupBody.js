@@ -17,23 +17,60 @@ class SearchPopupBody extends Component {
         alert("SearchPopupBody " + error+ info)
     }
 
-    //Render SearchPopupBody
-    render(){
+    render() {
         return(
             <div>
-                    {this.renderSearchBox()}
-                    <div class='search_dropdown'>
-                        {this.state.postResponse.map((item) => {
-                            return(
-                            <SearchPopupElement 
-                            handleSelectClick={this.handleSelectClick.bind(this)}
-                            item = {item}
-                            />)
-                        })}
-                    </div> 
+                {this.renderSearchBox()}
+                {this.renderResults()}      
             </div>
-    );}
+        );
+    }
+    
+    //Render methods
 
+    renderSearchBox = () => {
+        return(
+            <div>
+            <div style={{backgroundColor: 'gray'}}>
+                        <div style={{display:'inline'}}>
+                            {"Search Card:  "}
+                            <input  type="text" 
+                                    name="cardName" 
+                                    value={this.state.formControls.cardName.value} 
+                                    onChange={this.changeHandler} 
+                                    style= {{width: '70%', right: 0}}
+                            />
+                            <input  type="text" 
+                                    name="cardID" 
+                                    value={this.state.cardID} 
+                                    disabled="true"
+                                    style= {{width: '6%', right: 0}}
+                            />
+                        </div>
+                        <div style={{display:'inline'}}>
+                            <button onClick={this.handleSubmit} disabled={!this.state.submittable}>Submit</button>
+                        </div>
+            </div>
+            <div style={{backgroundColor: 'gray', height: '2px'}}/>
+            </div>
+        )
+    }
+
+    renderResults = () => {
+        return(
+            <div class='popup_search_dropdown'>
+                {this.state.postResponse.map((item) => {
+                    return(
+                    <SearchPopupElement 
+                        setChosenCard={this.setChosenCard.bind(this)}
+                        item = {item}
+                    />)
+                })}
+            </div> 
+        )
+    }
+
+    //Handler methods
 
     changeHandler = event => {
         event.preventDefault()
@@ -71,7 +108,14 @@ class SearchPopupBody extends Component {
         })});  
     }
 
-    handleSelectClick = (name, id) => {
+    handleSubmit = event => {
+        event.preventDefault()
+        this.props.setPreviewThenTogglePopup(this.state.cardID, this.state.formControls.cardName.value)
+    }
+
+    //Binded methods
+
+    setChosenCard = (name, id) => {
         this.setState({
             formControls: {
               cardName: {value: name}
@@ -96,50 +140,19 @@ class SearchPopupBody extends Component {
         })});  
     }
 
-    handleSubmit = event => {
-        event.preventDefault()
-        this.props.submitPreviewCardIntoDatabase(this.state.cardID, this.state.formControls.cardName.value)
-    }
-
-    renderSearchBox = () => {
-        return(
-            <div>
-            <div style={{backgroundColor: 'gray'}}>
-                        <div style={{display:'inline'}}>
-                            {"Search Card:  "}
-                            <input  type="text" 
-                                    name="cardName" 
-                                    value={this.state.formControls.cardName.value} 
-                                    onChange={this.changeHandler} 
-                                    style= {{width: '70%', right: 0}}
-                            />
-                            <input  type="text" 
-                                    name="cardID" 
-                                    value={this.state.cardID} 
-                                    disabled="true"
-                                    style= {{width: '6%', right: 0}}
-                            />
-                        </div>
-                        <div style={{display:'inline'}}>
-                            <button onClick={this.handleSubmit} disabled={!this.state.submittable}>Submit</button>
-                        </div>
-            </div>
-            <div style={{backgroundColor: 'gray', height: '2px'}}/>
-            </div>
-        )
-    }
-
 }
+
+//Subclass
 
 class SearchPopupElement extends Component {
     
     handleSelect = e => {
-        this.props.handleSelectClick(this.props.item.name, this.props.item.card_id)
+        this.props.setChosenCard(this.props.item.name, this.props.item.card_id)
     }
 
     render() {
         return (
-            <div class='hoverable' onClick={this.handleSelect}>
+            <div class='popup_result_hoverable' onClick={this.handleSelect}>
                 {`ID: ${this.props.item.card_id} -- ${this.props.item.name} [${this.props.item.set.toUpperCase()}]` }
             </div>
         ) 

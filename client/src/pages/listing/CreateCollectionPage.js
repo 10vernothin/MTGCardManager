@@ -3,8 +3,10 @@ import {HomeButton, CollectionListButton} from '../../common/elements/CommonButt
 import SessionInfo from '../../common/cached_data/SessionInfo'
 import CardImagePanel from '../../common/images/CardImagePanel'
 import SearchPopupWindow from './elements/SearchPopupWindow'
+import './css/Listing.css'
 
 class CreateCollectionPage extends Component {
+
   constructor(props) {
       super(props);
       this.state = {
@@ -12,7 +14,10 @@ class CreateCollectionPage extends Component {
         postResponse: '',
         userID: SessionInfo.getSessionUserID(),
         showPopup: false
-      }
+  }}
+
+  componentDidCatch(error, info) {
+    alert("CreateCollectionPage " + error + info)
   }
 
   render() {
@@ -23,13 +28,50 @@ class CreateCollectionPage extends Component {
         <SearchPopupWindow 
                 closePopup={this.togglePopup.bind(this)}
                 defaultPreview={this.state.formControls.preview}
-                submitPreviewCardIntoDatabase={this.submitPreviewCardIntoDatabase.bind(this)}
+                setPreviewThenTogglePopup={this.setPreviewThenTogglePopup.bind(this)}
         />
         : null
       }
       </div>
-    )
-  }
+  )}
+
+  //Render Methods
+
+  renderForm() {
+    return (
+      <form method="post" onSubmit={this.handleSubmit}>
+        <title>Create Collection</title>
+        <div>Create a New Collection</div>
+        <div>Name:</div>
+        <input type="text" 
+          name="name" 
+          value={this.state.formControls.name.value} 
+          onChange={this.handleChange} 
+        />
+        <div>Description:</div>
+        <textarea type="text" 
+          name="desc" 
+          value={this.state.formControls.desc.value} 
+          onChange={this.handleChange} 
+          cols="35" 
+          wrap="soft"
+        />
+        <div> Add Preview Card: </div>
+        <div>{`ID: ${this.state.formControls.preview.value}`}</div>
+        <div class='preview_panel'>
+          <CardImagePanel id={this.state.formControls.preview.value} paramsType="id" imgType={{type:'art_crop'}}/>
+        </div>
+        <button onClick={this.handleCardSearch}>Search Card</button>
+        <div>
+          <button type="submit">Submit</button>
+          <HomeButton/>
+          <CollectionListButton/>
+        </div>
+    {this.state.postResponse}
+  </form>   
+  );}
+
+  //Handler Methods
 
   handleSubmit = e => {
       e.preventDefault();
@@ -53,10 +95,9 @@ class CreateCollectionPage extends Component {
                   pathname: '/collections',
                   search: '?page=default',
                   state: {page: "default"}
-              })
-      }})}
+  })}})}
 
-  changeHandler = event => {
+  handleChange = event => {
     const name = event.target.name;
     const value = event.target.value;
     this.setState({
@@ -66,61 +107,27 @@ class CreateCollectionPage extends Component {
           ...this.state.formControls[name],
           value
   }}})}
-
-  renderForm() {
-      return (
-        <form method="post" onSubmit={this.handleSubmit}>
-          <title>Create Collection</title>
-            <div>Create a New Collection</div>
-            <div>Name:</div>
-            <input type="text" 
-              name="name" 
-              value={this.state.formControls.name.value} 
-              onChange={this.changeHandler} 
-            />
-            <div>Description:</div>
-            <textarea type="text" 
-              name="desc" 
-              value={this.state.formControls.desc.value} 
-              onChange={this.changeHandler} 
-              cols="35" 
-              wrap="soft"
-            />
-            <div> Add Preview Card: </div>
-            <div>{`ID: ${this.state.formControls.preview.value}`}</div>
-            <div style={{width: '270px', height: '190px', border: '1px black solid'}}>
-              <CardImagePanel id={this.state.formControls.preview.value} paramsType="id" imgType={{type:'art_crop'}}/>
-            </div>
-            <button onClick={this.handleCardSearch}>Search Card</button>
-            <div>
-              <button type="submit">Submit</button>
-              <HomeButton/>
-              <CollectionListButton/>
-            </div>
-      {this.state.postResponse}
-    </form>   
-  );}
     
   handleCardSearch = e =>{
       e.preventDefault()
       this.togglePopup()
   }
 
+  //Binded Methods
+
   togglePopup = () => {
       this.setState({
         showPopup: !this.state.showPopup
-      });
-  }
+  });}
 
-  submitPreviewCardIntoDatabase = (id, previewCardName) =>{
+  setPreviewThenTogglePopup = (id, previewCardName) =>{
       let newformControls = {...this.state.formControls}
       newformControls.preview.value = id
       this.setState({
               showPopup: !this.state.showPopup,
               formControls: newformControls,
               previewCardName: previewCardName
-          })
-  }
+  })}
   
  };
 

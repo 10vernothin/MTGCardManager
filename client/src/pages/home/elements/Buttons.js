@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 class DownloadBulkDataButton extends Component {
   //Button that downloads Scryfall data. Should only be accessed at most once per day, and will be disabled otherwise
 
-  /*Constructor*/
   constructor(props) {
     super(props);
     this.state = {
@@ -39,7 +38,19 @@ class DownloadBulkDataButton extends Component {
     return (<Link to={'./downloads?func=fetch-card%2Fdownload-bulk-data'}><button type= "button" disabled= {this.state.disabled} >{this.ButtonTextChange()}{this.state.disabled}</button></Link>);
   }
 }
+class UserListButton extends Component {
+  render() {
+    return(
+      <Link to={'./userlist'}>
+            <button variant="raised">
+                Users
+            </button>
+      </Link>
+    )
+  }
+}
 
 export {  
-  DownloadBulkDataButton
+  DownloadBulkDataButton,
+  UserListButton
 };

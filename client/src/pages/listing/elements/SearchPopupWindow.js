@@ -9,11 +9,10 @@ class SearchPopupWindow extends Component {
         return(
             <div class='popup_outer'>
                 <div class='popup_body'>
-                    <div class='main_panel'>
-                        <div class='result_panel'>
+                    <div class='popup_main_panel'>
+                        <div class='popup_result_panel'>
                             <SearchPopupBody 
-                            submitPreviewCardIntoDatabase={this.props.submitPreviewCardIntoDatabase}
-                            togglePopup={this.props.togglePopup}/>
+                            setPreviewThenTogglePopup={this.props.setPreviewThenTogglePopup}/>
                         </div>
                     <button onClick={this.props.closePopup}>Back</button>
                     </div>

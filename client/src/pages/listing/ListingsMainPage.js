@@ -3,6 +3,7 @@ import {HomeButton, SignoutButton} from '../../common/elements/CommonButtons';
 import {CreateCollectionButton} from './elements/Buttons'
 import ListingsTable from './elements/ListingsTable';
 import SessionInfo from '../../common/cached_data/SessionInfo';
+import './css/Listing.css'
 
 class ListingsMainPage extends Component {
   
@@ -16,17 +17,13 @@ class ListingsMainPage extends Component {
     this.updateState.bind(this)
   }
 
-  
-  updateState = () => {
-    //alert("Updating top")
-    this.setState({
-      loading: "..."
-    })
+  componentDidCatch(error) {
+    alert("ListingsMainPage " + error)
   }
 
   render() {
     return (
-      <div className="App">
+      <div class='listing_main_page'>
         <div>
           <h1>{SessionInfo.getSessionUser()}'s Collection:</h1>
         </div>
@@ -39,6 +36,16 @@ class ListingsMainPage extends Component {
       </div>
     );
   }
+
+  //Binded Methods
+
+  updateState = () => {
+    //alert("Updating top")
+    this.setState({
+      loading: "..."
+    })
+  }
+
 }
 
 export default ListingsMainPage;

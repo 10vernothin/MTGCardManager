@@ -19,7 +19,7 @@ class ListingsTableElement extends Component {
       return(this.renderTableElem())
     }
 
-    //Render Functions
+    //Render Methods
     
     renderTableElem = () => {
       let item = this.state.item;
@@ -53,7 +53,7 @@ class ListingsTableElement extends Component {
       }
     }
 
-    //Loader Functions
+    //Loader Methods
 
     loadChanges = () => {
       if (!(JSON.stringify(this.state.item) === JSON.stringify(this.props.item))) {
