@@ -60,6 +60,9 @@ router.post('/api/collections/delete-collection', function(req, res, next) {
     })
 });
 
+/*
+This api receives a request({collectionID, formControls{name.value, desc.value, prev.value}}) and edit the collection
+*/
 router.post('/api/collections/edit-collection', function(req, res, next) {
     if (req.body.formControls.name.value.replace(/^\s+$/, '').length === 0) {
         console.log("Collection Creation Error: Name is not defined");
@@ -68,18 +71,19 @@ router.post('/api/collections/edit-collection', function(req, res, next) {
         console.log("Collection Creation Error: CollectionID is not defined");
         res.send('-3'); 
     } else {
-        pgdb.none("UPDATE collection_list SET name= $2, description = $3, showcase_card_id=$4 where collection_list.id = $1", [req.body.collectionID, req.body.formControls.name.value, req.body.formControls.desc.value, req.body.formControls.preview.value])
+        pgdb.none("UPDATE collection_list SET name= $2, description = $3, showcase_card_id=$4 where collection_list.id = $1", [
+            req.body.collectionID, 
+            req.body.formControls.name.value, 
+            req.body.formControls.desc.value, 
+            req.body.formControls.preview.value])
         .then(() => {
-                console.log('Collection Deleted.')
-                res.send('0')
-    }
-        ).catch((err) => {
+            console.log('Collection Deleted.')
+            res.send('0')
+    })
+    .catch((err) => {
         console.log(err);
         res.send('-2')
-        })
-    }
-});
-
+})}});
 
 
 /*
@@ -125,9 +129,6 @@ router.post('/api/collections/fetch-collection-id', function(req, res, next) {
         console.log(err.message);
     })
 });
-
-
-
 
 /*
 This api call receives a request:{card_id} to fetch cardObject data by its unique card_id, and send the cardObject to the client
@@ -198,11 +199,9 @@ router.post('/api/collections/remove-card-from-collection', function(req, res, n
     }).catch((err) => {"getID err: ", console.log(err.message)})
 });
 
-
 /*
 These two functions reformats the collection either as a JSON file or a CSV file and sends it to the client 
 */
-
 router.post('/api/collections/fetch-collection-as-JSON', function(req, res, next) {
     pgdb.any("SELECT collection.id, cards.set_id, cards.set, collection.card_id, cards.name, collection_list.name as collection_name, collection_list.description, collection_list.id as collection_list_id, collection.amt, collection.is_foil from collection inner join cards on collection.card_id = cards.id inner join collection_list on collection_list.id = collection.collection_list_id where collection_list_id = $1", [req.body.id])
     .then((data) => {
@@ -233,7 +232,6 @@ router.post('/api/collections/fetch-collection-as-JSON', function(req, res, next
     })
 })
 
-
 router.post('/api/collections/fetch-collection-as-CSV', function(req, res, next) {
     pgdb.any("SELECT collection.id, cards.set_id, cards.set, collection.card_id, cards.name, collection_list.name as collection_name, collection_list.description, collection_list.id as collection_list_id, collection.amt, collection.is_foil from collection inner join cards on collection.card_id = cards.id inner join collection_list on collection_list.id = collection.collection_list_id where collection_list_id = $1", [req.body.id])
     .then((data) => {
@@ -254,4 +252,4 @@ router.post('/api/collections/fetch-collection-as-CSV', function(req, res, next)
     })
 })
 
-  module.exports = router
+module.exports = router
