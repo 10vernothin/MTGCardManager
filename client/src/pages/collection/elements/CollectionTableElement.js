@@ -14,112 +14,34 @@ const AddRemoveButtonCSS = {
     'font-weight': 'bold',
 }
 
-const ImageCSS = {
-    padding: '0',
-    height: 'auto',
-    width: '150px',
-    border: '1px black solid',
-    flex: 3
-}
-
-/*This component renders a search box element*/
+/*This component renders a Collection Table element*/
 class CollectionTableElement extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-        item: [],
-        id_key: this.props.id_key,
+    constructor(props) {
+        super(props);
+        this.state = {
+            item: [],
+            id_key: this.props.id_key,
         }
     }
 
-    componentDidCatch(error, info) {
+    componentDidCatch(error) {
         alert("CollectionTableElement " + error)
     }
 
     render(){  
-        this.fetchTableRow() 
-        return(this.createRow())
+        this.loadRowObjs() 
+        return(this.renderRowElement())
     }
 
-    /*
-    This function fetches the row data,
-    then calls fetchImage to retrieve the cached image url from the callback,
-    and finally sets the whole state
-    */
-    fetchTableRow = () => {
-      fetch('/api/collections/fetch-row', 
-      { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({card_id: this.props.cardInfo.card_id})
-      })
-      .then(res => res.json())
-      .then(list => {
-        if (!(list.length === 0) && !(JSON.stringify(this.state.item) === JSON.stringify(list))) {
-                    this.setState({
-                        item: list,
-                        id_key: this.props.id_key})}
-      }).catch((err) => {
-        alert(err.message)
-        })
-    }
+    //Render Methods
 
-    /*Handle Add card button */
-    addCard = e => {
-        e.preventDefault()
-        let item = this.state.item[0]
-        fetch('/api/collections/add-card-to-collection', 
-            { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({chosenIsFoil: this.props.cardInfo.is_foil, set: item.set, set_id: item.set_id, collectionID: SessionInfo.getCollectionID()})
-            }
-        ).then(() => {
-            this.props.updateTopmostState()
-        }).catch((err) => {
-            alert(err.message)
-        })
-    }
-
-    /*Handle remove card button */
-    removeCard = e => {
-        e.preventDefault()
-        let item = this.state.item[0]
-        fetch('/api/collections/remove-card-from-collection', 
-            { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                chosenIsFoil: this.props.cardInfo.is_foil, 
-                set: item.set, 
-                set_id: item.set_id, 
-                collectionID: SessionInfo.getCollectionID()})
-            }
-        ).then((res) => {
-            this.props.updateTopmostState()
-        }).catch((err) => {
-            alert(err.message)
-        })
-    }
-
-    renderManaSymbol = (item) => {
-        return (
-            <div>
-                <object data={item} type="image/svg+xml" style={{width:'20px', height:'auto'}}>
-                    <img src={item} alt="imgSym" style={{width:'20px', height:'auto'}}></img>
-                </object>
-            </div>
-        )
-    }
-
-    /*This function contains the logic that creates the JSX*/
-    createRow = () => {
+    renderRowElement = () => {
         if (!(JSON.stringify(this.state.item) === '[]')) {
             let cardObj = this.state.item[0]
             return(
             <div>
-            <div style={this.props.resBoxCSS}>
-                <div style={ImageCSS}>
+            <div class={this.props.resBoxCSS}>
+                <div class='collection_elem_image_panel'>
                 <CardImagePanel 
                     cardObj = {cardObj}
                     imgType = {{type: "normal"}}
@@ -143,12 +65,12 @@ class CollectionTableElement extends Component {
                 </div>
                 <div style={{flex: 1}}>{this.props.cardInfo.amt}</div>
                 <div style={{flex: 1, 'text-align': 'center'}}>
-                    <button style={AddRemoveButtonCSS} onClick={this.addCard}>
+                    <button style={AddRemoveButtonCSS} onClick={this.handleAddCard}>
                                 <div>Add Card</div>
                         </button>
                 </div>
                 <div style={{flex: 1, 'text-align': 'center'}}>
-                            <button style={AddRemoveButtonCSS} onClick={this.removeCard}>
+                            <button style={AddRemoveButtonCSS} onClick={this.handleRemoveCard}>
                                 <div>Remove Card</div>
                             </button>
                 </div>
@@ -157,12 +79,76 @@ class CollectionTableElement extends Component {
             );
         } else {
             return null;
-        }
+        }        
+    }
     
-        
+    renderManaSymbol = (item) => {
+        return (
+            <div>
+                <object data={item} type="image/svg+xml" style={{width:'20px', height:'auto'}}>
+                    <img src={item} alt="imgSym" style={{width:'20px', height:'auto'}}></img>
+                </object>
+            </div>
+        )
     }
 
+    //Loader Methods
+
+    loadRowObjs = () => {
+      fetch('/api/collections/fetch-row', 
+      { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({card_id: this.props.cardInfo.card_id})
+      })
+      .then(res => res.json())
+      .then(list => {
+        if (!(list.length === 0) && !(JSON.stringify(this.state.item) === JSON.stringify(list))) {
+                    this.setState({
+                        item: list,
+                        id_key: this.props.id_key})}
+      }).catch((err) => {
+        alert(err.message)
+        })
+    }
+
+    //Handler Methods
+
+    handleAddCard = e => {
+        e.preventDefault()
+        let item = this.state.item[0]
+        fetch('/api/collections/add-card-to-collection', 
+            { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({chosenIsFoil: this.props.cardInfo.is_foil, set: item.set, set_id: item.set_id, collectionID: SessionInfo.getCollectionID()})
+            }
+        ).then(() => {
+            this.props.updateTopmostState()
+        }).catch((err) => {
+            alert(err.message)
+        })
+    }
     
+    handleRemoveCard = e => {
+        e.preventDefault()
+        let item = this.state.item[0]
+        fetch('/api/collections/remove-card-from-collection', 
+            { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                chosenIsFoil: this.props.cardInfo.is_foil, 
+                set: item.set, 
+                set_id: item.set_id, 
+                collectionID: SessionInfo.getCollectionID()})
+            }
+        ).then((res) => {
+            this.props.updateTopmostState()
+        }).catch((err) => {
+            alert(err.message)
+        })
+    }
 }
 
 export default CollectionTableElement

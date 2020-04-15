@@ -6,38 +6,8 @@ import CollectionTable from './elements/CollectionTable'
 import CollectionTableListForm from './elements/CollectionTableListForm'
 import {CollectionListButton} from '../../common/elements/CommonButtons'
 import {SwitchToFullViewButton, SwitchToListViewButton} from './elements/Buttons'
+import './css/Collection.css'
 
-const InlineLeft = {
-    border: '1px black solid',
-    display: 'inline-block',
-    right: '75%',
-    position: 'fixed',
-    top: '0',
-    left: '0',
-    bottom: '0',
-    padding: '0',
-    margin: '0',
-    'z-index': '1'
-};
-const InlineRight = {
-    overflow: 'auto',
-    border: '1px black solid',
-    display: 'inline-block',
-    position: 'fixed',
-    top: '0',
-    right: '0',
-    bottom: '0',
-    left: '25%',
-    padding: '0',
-    margin: '0',
-    'z-index': '1'
-};
-
-const ExitButtonCSS = {
-    position: 'fixed',
-    right: '20px',
-    'z-index': '3'
-}
 
 class CollectionPage extends Component {
     
@@ -64,7 +34,50 @@ class CollectionPage extends Component {
         alert("CollectionPage " + error)
     }
 
-    fetchTable = () => {
+    render() {
+        this.loadTable();
+        return (<div>
+            {this.renderToolbar()}
+            {this.renderSearchBar()}
+            {this.renderCollectionBar()}
+        </div>);
+    }
+
+    //Render Methods
+
+    renderToolbar = () => {
+        return(
+            <div class='toolbar_buttons'>
+                <div style={{display: 'inline-block'}}><CollectionListButton/></div>
+                <div style={{display: 'inline-block'}}>{
+                        !(this.state.asList)? 
+                        <SwitchToListViewButton onClick={this.handleViewSwitch}/>: 
+                        <SwitchToFullViewButton onClick={this.handleViewSwitch}/>
+                    }
+                </div>
+            </div>
+        )
+    }
+
+    renderSearchBar = () => {
+        return(<div class='search_bar_main'><SearchBox updateState={this.updateState}/></div>)
+    }
+
+    renderCollectionBar = () => {
+        return(
+            <div class='collection_bar_main'>
+                    <div class='collection_title'>
+                        <h1>{this.state.collectionName}</h1>
+                        <p>{this.state.cardTableProps.collectionList[0] ? this.state.cardTableProps.collectionList[0].description: null}</p>
+                    </div>
+                    <p>{/*JSON.stringify(this.state.cardTableProps.collectionList)*/}</p>
+                    {this.state.cardTable}
+            </div>
+    )}
+
+    //Loader Methods
+
+    loadTable = () => {
         fetch('/api/collections/fetch-collection-id', 
         { 
           method: 'POST', 
@@ -103,12 +116,9 @@ class CollectionPage extends Component {
         })
       }
 
-
-    /*Binding a listener to this element*/
-    updateState = () => {
-        this.setState({...this.state})}
-   
-    switchView = e => {
+    //Handler Methods
+    
+    handleViewSwitch = e => {
         e.preventDefault()
         this.setState( {
             asList: !this.state.asList,
@@ -123,34 +133,9 @@ class CollectionPage extends Component {
         })
     }
 
-    render() {
-        this.fetchTable();
-        return (
-        <div>
-            <div>
-                <div style={ExitButtonCSS}>
-                <div style={{display: 'inline-block'}}><CollectionListButton/></div>
-                <div style={{display: 'inline-block'}}>{
-                    !(this.state.asList)? 
-                    <SwitchToListViewButton onClick={this.switchView}/>: 
-                    <SwitchToFullViewButton onClick={this.switchView}/>
-                }
-                </div>
-                </div>
-                <div style={InlineLeft}>
-                    <SearchBox updateState={this.updateState}/>
-                </div>
-                <div style={InlineRight}>
-                    <div style={{margin: '0 auto', width: '100%', 'text-align': 'center'}}>
-                        <h1>{this.state.collectionName}</h1>
-                        <p>{this.state.cardTableProps.collectionList[0] ? this.state.cardTableProps.collectionList[0].description: null}</p>
-                        </div>
-                    <p>{/*JSON.stringify(this.state.cardTableProps.collectionList)*/}</p>
-                    {this.state.cardTable}
-                </div>
-            </div>  
-        </div>);
-    }
+    // Binded Methods
+
+    updateState = () => {this.setState({...this.state})}
 
 }
 

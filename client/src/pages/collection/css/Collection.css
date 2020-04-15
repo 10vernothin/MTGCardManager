@@ -1,0 +1,97 @@
+/*CollectionPage CSS*/
+
+.search_bar_main {
+    border: 1px black solid;
+    display: inline-block;
+    right: 75%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    padding: 0;
+    margin: 0;
+    z-index: 1;
+}
+
+.collection_bar_main {
+    overflow: auto;
+    border: 1px black solid;
+    display: inline-block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 25%;
+    padding: 0;
+    margin: 0;
+    z-index: 1;
+}
+
+.collection_title {
+    margin: 0 auto; 
+    width: 100%; 
+    text-align: center;
+}
+
+.toolbar_buttons  {
+    position: fixed;
+    right: 20px;
+    z-index: 3;
+}
+
+/*CollectionTable CSS*/
+
+.collection_table {
+    border-bottom: 1px black solid;
+    border-top: 1px black solid;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    text-align: center;
+    padding: 0
+}
+
+.collection_result_gray {
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    text-align: center; 
+    background-color: gray; 
+    padding: 0
+}
+
+.collection_result_white {
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    text-align: center; 
+    background-color: white; 
+    padding: 0
+}
+
+/*CollectionPageNavPanel CSS*/
+
+.nav_panel_elements {
+    display: inline-block;
+    margin: auto 0;
+}
+
+/*CollectionTableElement CSS*/
+
+.collection_elem_image_panel {
+    padding: 0;
+    height: auto;
+    width: 150px;
+    border: 1px black solid;
+    flex: 3
+}
+
+/*CollectionTableListForm CSS*/
+
+.dropdown_panel {
+    width: 100%;
+    padding-bottom: 3px; 
+    margin: 0 auto; 
+    border-top: 1px solid black; 
+    border-bottom: 1px solid black;
+}

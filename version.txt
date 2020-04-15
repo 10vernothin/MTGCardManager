@@ -11,6 +11,7 @@ What's new 2.3:
   --> Loader Methods
   --> Handler Methods
   --> Binded Methods
+ - Fixed List view sort
 
 What's new 2.2:
  - List View added for Collection Table
