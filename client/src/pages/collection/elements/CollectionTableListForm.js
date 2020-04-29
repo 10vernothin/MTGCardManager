@@ -16,8 +16,8 @@ class CollectionTableListForm extends Component {
       currIndex: 'Name',
       list: []
     }
-    this.sortIndices = ['Name', 'Type', 'CMC', 'Colors', 'Set', 'Price']
-    this.sortIndexKeys = ['name', 'type_line', 'cmc', 'colors', 'set', 'prices']
+    this.sortIndices = ['Name', 'Type', 'CMC', 'Colors', 'Set', 'Price', 'Amount']
+    this.sortIndexKeys = ['name', 'type_line', 'cmc', 'colors', 'set', 'prices', 'amt']
   }
 
   componentDidCatch(error, info) {
@@ -84,19 +84,21 @@ class CollectionTableListForm extends Component {
         ((price === null) ?
           ' N/A> '
           : (info.amt > 1 ?
-            ` $${price * info.amt} (${info.amt}x $${price})> `
-            : ` $${price}> `))
+            ` $${Number.parseFloat(price * info.amt).toFixed(2)} (${info.amt}x $${Number.parseFloat(price).toFixed(2)})> `
+            : ` $${Number.parseFloat(price).toFixed(2)}> `))
         : ''
-    return (<div>
-      <p>{`${priceStr}${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</p>
+    return (
+    <div >
+      <div style={{fontWeight: 'bold', display:'inline-block' }}>{`${priceStr}`}</div>
+      <div style={{display:'inline-block' }}>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</div>
     </div>
     )
   }
 
   renderDropdownPanel = () => {
     return (
-      <div class={'dropdown_panel'}>
-        <div style={{ display: 'inline-block', 'padding-right': '5px', 'padding-left': '10px' }}>{`Sort By: `}</div>
+      <div id='dropdown_panel'>
+        <div id='sortby_position'>{`Sort By: `}</div>
         <select id="sort"
           style={{ display: 'inline-block', width: '200px' }}
           onChange={this.handleSortMethodChange}
@@ -116,7 +118,7 @@ class CollectionTableListForm extends Component {
     newlist.sort((a, b) => {
       let a_price = a.is_foil ? a.prices['usd_foil'] : a.prices['usd']
       let b_price = b.is_foil ? b.prices['usd_foil'] : b.prices['usd']
-      return (b_price - a_price)
+      return (b_price*b.amt - a_price*a.amt)
     })
     return (this.renderListDefaultSort(newlist, true))
   }

@@ -4,6 +4,11 @@ var cards = require('../tools/cardFetcher');
 var downloader = require('../tools/fileDownloader');
 var fsPromise = require('fs').promises;
 
+
+/*
+This api call receives a request(formControls(cardName.value)) and sends a list of card previews (card objects with limited 
+attributes) that corresponds to the name
+ */
 router.post('/api/cards/query-card', function(req, res, next) { 
     cardName = req.body.formControls.cardName.value
     if (cardName === '') {
@@ -82,9 +87,8 @@ router.post('/api/cards/retrieve-cached-image', function(req, res, next) {
 
 
 /*
-fetch-list-of-SVG fetches 
+This api call receives a request(list(formatted_string)) and fetches the URIs of mana symbols according to the list
 */
-
 router.post('/api/cards/fetch-list-of-SVG', function(req, res, next) {
     let SymFolderPath = "../api/json/scryfall/symbols/"
     let metafile = SymFolderPath.concat('sym_index.json')
@@ -109,6 +113,10 @@ router.post('/api/cards/fetch-list-of-SVG', function(req, res, next) {
     }
 });
 
+/*
+This api call receives a request(list_of_card_id, opts{attributes}) and sends a list of JSON cardObjs that has the 
+contains the attributes of the corresponding card_id
+*/
 router.post('/api/cards/fetch-card-attribute', function(req, res, next) {
     let attributes = req.body.opts.map((item) => {
         return item

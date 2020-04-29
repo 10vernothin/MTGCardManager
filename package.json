@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "client-start": "cd client && npm start",
-    "api-start": "cd api && npm start",
-    "start": "concurrently \"cd api &&  npm start\" \"cd client && npm start\""
+    "create-build": "cd client && npm run build && cd ../ && MOVE /Y client/build api && cd api && RMDIR public /S /Q && MOVE /Y build public",
+    "start": "cd api && npm start",
+    "client-dev-start": "cd client && npm start",
+    "api-dev-start": "cd api && npm start",
+    "dev-start": "concurrently \"cd api &&  npm start\" \"cd client && npm start\""
   },
   "keywords": [],
   "author": "",

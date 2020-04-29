@@ -92,18 +92,34 @@ This api call receives a request:{userID} to fetches all rows in collection_list
 router.post('/api/collections/getList', function(req, res, next) {
     console.log("Getting Collection List for userID: " + req.body.userID);
     pgdb.any(
-            "SELECT id, name, description, CASE WHEN showcase_card_id is NULL THEN 0 ELSE showcase_card_id END AS showcase_card_id, CASE WHEN sum is NULL THEN 0 ELSE sum END AS sum from collection_list LEFT OUTER JOIN (SELECT collection.collection_list_id as collection_list_id, SUM((foil_price*collection.amt*(is_foil::int))+(price*collection.amt*((NOT is_foil)::int))) as sum from cards INNER JOIN collection ON cards.id = collection.card_id GROUP BY collection.collection_list_id) AS sum_query ON sum_query.collection_list_id=collection_list.id where collection_list.player_id = $1", 
+            `SELECT 
+                id, 
+                name, 
+                description, 
+                CASE WHEN showcase_card_id is NULL THEN 0 ELSE showcase_card_id END AS showcase_card_id,
+                CASE WHEN card_count is NULL THEN 0 ELSE card_count END AS card_count,
+                CASE WHEN sum is NULL THEN 0 ELSE sum END AS sum 
+            from collection_list 
+            LEFT OUTER JOIN 
+                (SELECT 
+                    collection.collection_list_id as collection_list_id,
+                    SUM(collection.amt) as card_count,
+                    SUM((foil_price*collection.amt*(is_foil::int))+(price*collection.amt*((NOT is_foil)::int))) as sum 
+                FROM cards
+                INNER JOIN collection ON cards.id = collection.card_id 
+                GROUP BY collection.collection_list_id
+                ) AS sum_query 
+            ON sum_query.collection_list_id=collection_list.id where collection_list.player_id = $1`
+            , 
             [req.body.userID]
-            ).then(
-    function(data) {
-        console.log('Collection list query completed.' + data.length);
-        if (data.length == 0) {
-            console.log("No collection found.")
-            res.send([]);
-        } else {
-            //console.log(data);
-            res.json(data);
-        }
+            ).then((data) => {console.log('Collection list query completed.' + data.length);
+                if (data.length == 0) {
+                    console.log("No collection found.")
+                res.send([]);
+            } else {
+                //console.log(data);
+                res.json(data);
+            }
     }
     ).catch (
     error => {

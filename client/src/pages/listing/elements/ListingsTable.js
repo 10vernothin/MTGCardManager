@@ -42,6 +42,7 @@ class ListingsTable extends Component {
       <div style={{flex: 2}}/>
       <div style={{flex: 2}}>Name</div>
       <div style={{flex: 7}}>Description</div>
+      <div style={{flex: 1}}>Cards</div>
       <div style={{flex: 1}}>Price</div>
       <div style={{flex: 2}}>Options</div>
       <div style={{flex: 2}}>Download Collection</div>

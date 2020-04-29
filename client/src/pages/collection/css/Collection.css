@@ -88,10 +88,16 @@
 
 /*CollectionTableListForm CSS*/
 
-.dropdown_panel {
+#dropdown_panel {
     width: 100%;
     padding-bottom: 3px; 
     margin: 0 auto; 
     border-top: 1px solid black; 
     border-bottom: 1px solid black;
+}
+
+#sortby_position {
+    display: inline-block; 
+    padding-right: 5px; 
+    padding-left: 10px;
 }

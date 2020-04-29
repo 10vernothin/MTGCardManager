@@ -1,5 +1,17 @@
-Latest Version: Alpha 2.3
-Last Update: M04/D14/Y2020
+Latest Version: Alpha 2.4
+Last Update: M04/D28/Y2020
+
+What's new 2.4:
+ -Created static production build 
+   --> The production build has a 1-to-1 client/server relationship on localhost:5000 (Maybe proxies soon)
+   --> It is embedded statically in the api/public folder, and is run using api --> npm start
+ -Created new scripts to accomadate the new design:
+   --> ">> npm run create-build": creates the build
+   --> ">> npm start": starts the production build
+   --> ">> npm run client-dev-start": what used to be client-start
+   --> ">> npm run api-dev-start": what used to be api-stsart
+   --> ">> npm run dev-start": runs api and client concurrently in a dev environment
+ -Updated the collection listing to include number of cards
 
 What's new 2.3:
  - Implemented adding and editting preview photos for the collection. (It uses popup design)
@@ -30,7 +42,7 @@ What's new 2.2:
       ------> (this starts the server at :5000)
      --> >>npm run client-start 
       ------> (this starts the client at :3000, and if there are multiple instances, it will prompt you to 
-                                 listen at port 3001 instead.)
+                                 listen at port 300X instead.)
 
 What's new 2.1:
  - Collection total cost added
@@ -56,6 +68,7 @@ Known bugs:
  - When searching anything with contractions database error will be raised
 
 What's to come:
- - Splitting user-client and admin-client
+ - Splitting of user-build and admin-build (default is admin build)
+ - Confirmation popup screens
  - Ability to upload your collection
  - Ability to set up database

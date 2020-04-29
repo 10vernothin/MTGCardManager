@@ -25,7 +25,7 @@ class App extends Component {
 		SessionInfo.initializeSession();
 	}
 
-	componentDidCatch(err, info) {
+	componentDidCatch(err) {
 		alert("App Error" + err)
 	} 
 

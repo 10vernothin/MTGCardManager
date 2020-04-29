@@ -34,6 +34,7 @@ class ListingsTableElement extends Component {
               </div>
               <div style={{flex: 2}}>{item.name}</div>
               <div style={{flex: 7}}>{item.description}</div>
+              <div style={{flex: 1}}>{item.card_count}</div>
               <div style={{flex: 1}}>${item.sum}</div>
               <div style={{flex: 2}}>
                     <SelectCollectionButton link_url={this.props.link_url}/>
