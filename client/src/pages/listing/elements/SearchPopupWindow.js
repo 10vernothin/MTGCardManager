@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import '../css/SearchPopup.css'
-import SearchPopupBody from './SearchPopupBody'
+
 
 
 class SearchPopupWindow extends Component {
@@ -11,8 +11,7 @@ class SearchPopupWindow extends Component {
                 <div class='popup_body'>
                     <div class='popup_main_panel'>
                         <div class='popup_result_panel'>
-                            <SearchPopupBody 
-                            setPreviewThenTogglePopup={this.props.setPreviewThenTogglePopup}/>
+                            {this.props.content}
                         </div>
                     <button onClick={this.props.closePopup}>Back</button>
                     </div>

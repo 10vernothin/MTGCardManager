@@ -4,6 +4,8 @@ import SessionInfo from '../../common/cached_data/SessionInfo'
 import readCurrURLParamsAsJSON from '../../common/functions/ReadCurrURLParamsAsJSON'
 import SearchPopupWindow from './elements/SearchPopupWindow'
 import CardImagePanel from './../../common/images/CardImagePanel'
+import SearchPopupBody from './elements/SearchPopupBody'
+import {PopupButton} from './elements/Buttons'
 import './css/Listing.css'
 
 class EditCollectionPage extends Component {
@@ -67,7 +69,9 @@ class EditCollectionPage extends Component {
                     <div class='preview_panel'>
                         <CardImagePanel id={this.state.formControls.preview.value} paramsType="id" imgType={{type:'art_crop'}}/>
                     </div>
-                    <button onClick={this.handleCardSearch}>Search Card</button>
+                    <PopupButton 
+                        popup={this.handleCardSearch.bind(this)}
+                        text="Search Card"/>
                     <div>
                     <button type="submit">Submit</button>
                     <HomeButton/>
@@ -85,6 +89,8 @@ class EditCollectionPage extends Component {
                     closePopup={this.togglePopup.bind(this)}
                     defaultPreview={this.state.formControls.preview}
                     setPreviewThenTogglePopup={this.setPreviewThenTogglePopup.bind(this)}
+                    content={<SearchPopupBody 
+                        setPreviewThenTogglePopup={this.setPreviewThenTogglePopup.bind(this)}/>}
             />
             : null)
     }
@@ -172,8 +178,8 @@ class EditCollectionPage extends Component {
                 showPopup: !this.state.showPopup,
                 formControls: newformControls,
                 previewCardName: previewCardName
-            })
-        }
+        })
+    }
     
 }
 

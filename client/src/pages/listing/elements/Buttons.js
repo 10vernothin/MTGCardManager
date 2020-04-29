@@ -32,6 +32,13 @@ class EditCollectionButton extends Component {
     }
 }
 
+class PopupButton extends Component {
+  render() {
+    let button = <button type= "button" onClick={this.props.popup}>{this.props.text}</button>
+    return (button);
+  }
+}
+
 class DeleteCollectionButton extends Component {
     //Button that deletes the chosen collection 
     constructor(props) {
@@ -70,6 +77,7 @@ class DeleteCollectionButton extends Component {
 
 export {
     CreateCollectionButton,
+    PopupButton,
     SelectCollectionButton,
     DeleteCollectionButton,
     EditCollectionButton
