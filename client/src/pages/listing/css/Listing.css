@@ -50,4 +50,21 @@
     padding: 0;
     background:  lightgray
 }
+
+
+/*SearchPopupBody CSS*/
+
+.popup_search_dropdown {
+    overflow: auto;
+    display: fixed;
+    position: absolute;
+    height: 82%;
+    width: 99.8%;
+    z-index: 2;
+}
+
+.popup_result_hoverable:hover {
+    background-color: blue;
+    color: white;
+}
   

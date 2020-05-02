@@ -3,13 +3,15 @@ var express = require('express');
 var router = express.Router();
 var _db = require('../database/database');
 var pgdb = _db.getConnectionInstance();
+var encryptor = require('../tools/Encryptor')
 
 /* login handling */
 router.post('/api/login/submit-form', function(req, res, next) {
+  encryptedPassword = encryptor.EncryptString256(req.body.formControls.password.value)
   console.log("Login Form Submitted");
   pgdb.any(
             "SELECT * from users where username = $1 AND pwd = $2", 
-            [req.body.formControls.name.value, req.body.formControls.password.value]
+            [req.body.formControls.name.value, encryptedPassword]
           ).then(
     function(data) {
       console.log('Login query completed.' + data.length);
@@ -30,7 +32,7 @@ router.post('/api/login/submit-form', function(req, res, next) {
 /* new user handling */
 router.post('/api/create-new-user', function(req, res, next) {
   name = req.body.formControls.name.value;
-  pwd = req.body.formControls.password.value;
+  pwd = encryptor.EncryptString256(req.body.formControls.password.value);
   email = req.body.formControls.email.value;
   response = ''
   validity = 0

@@ -5,18 +5,21 @@ This is an project extension of the React.JS/Express.JS/PostgreSQL shell that I 
 
 It is an ongoing project.
 
-API uses Express Generator to generate a skeletal MVC shell listening on port http://localhost:3000/
+API uses Express Generator to generate a skeletal MVC shell listening on port http://localhost:5000/
 Client uses React-Creator to create a skeletal React shell, listening on port http://localhost:3000/ but proxying backend port http://localhost:5000/
 
+Viable static Build currently uses a single port on  http://localhost:5000/.
+
 To start:
- - For a concurrent single client and server, ">>npm start" at the root folder
- - For server only ">>npm run api-start" (Singleton only)
- - For client only ">>npm run client-start" (The first instance will run at 3000, but the second and third will prompt
+ - To start a valid build, ">>npm start" on root folder
+ - To create/fix build ">>npm run create-build"
+ - For server only on dev server ">>npm run api-dev-start" (Singleton only)
+ - For client only on dev server ">>npm run client-dev-start" (The first instance will run at 3000, but the second and third will prompt
    run at 3001, 3002... etc)
+ - For concurrent server-client, ">>npm run dev-start"
 
 Notes:
 Current build requires PostgreSQL tables already built-in, but I will have a create table/database function in the future.
-users -> id (PK), username, password, email
 
 Please check version.txt for more updates
 

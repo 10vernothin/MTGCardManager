@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {HomeButton, CollectionListButton} from '../../common/elements/CommonButtons'
 import SessionInfo from '../../common/cached_data/SessionInfo'
 import readCurrURLParamsAsJSON from '../../common/functions/ReadCurrURLParamsAsJSON'
-import SearchPopupWindow from './elements/SearchPopupWindow'
+import PopupWindow from '../../common/elements/PopupWindow'
 import CardImagePanel from './../../common/images/CardImagePanel'
 import SearchPopupBody from './elements/SearchPopupBody'
 import {PopupButton} from './elements/Buttons'
@@ -84,15 +84,21 @@ class EditCollectionPage extends Component {
     }
 
     renderPopupWindow = () => {
-        return(this.state.showPopup ? 
-            <SearchPopupWindow 
-                    closePopup={this.togglePopup.bind(this)}
-                    defaultPreview={this.state.formControls.preview}
-                    setPreviewThenTogglePopup={this.setPreviewThenTogglePopup.bind(this)}
-                    content={<SearchPopupBody 
-                        setPreviewThenTogglePopup={this.setPreviewThenTogglePopup.bind(this)}/>}
-            />
-            : null)
+        var Popup;
+        switch (this.state.showPopup) {
+            case 1:
+                Popup = <PopupWindow 
+                  closePopup={this.togglePopup.bind(this)}
+                  content={<SearchPopupBody 
+                                defaultPreview={this.state.formControls.preview}
+                                setPreviewThenTogglePopup={this.setPreviewThenTogglePopup.bind(this)}
+                            />} 
+                />
+            break;
+        default:
+        Popup = null
+        }
+    return(Popup)
     }
 
     //Loader Methods
@@ -160,14 +166,14 @@ class EditCollectionPage extends Component {
 
     handleCardSearch = e =>{
         e.preventDefault()
-        this.togglePopup()
+        this.togglePopup(1)
     }
 
     // Binded Methods
     
-    togglePopup = () => {
+    togglePopup = (flag = false) => {
         this.setState({
-          showPopup: !this.state.showPopup
+          showPopup: flag
         });
     }
 

@@ -1,17 +1,20 @@
 Latest Version: Alpha 2.4
-Last Update: M04/D28/Y2020
+Last Update: M05/D03/Y2020
 
 What's new 2.4:
- -Created static production build 
+ - Created static production build 
    --> The production build has a 1-to-1 client/server relationship on localhost:5000 (Maybe proxies soon)
    --> It is embedded statically in the api/public folder, and is run using api --> npm start
- -Created new scripts to accomadate the new design:
+ - Created new scripts to accomadate the new design:
    --> ">> npm run create-build": creates the build
    --> ">> npm start": starts the production build
    --> ">> npm run client-dev-start": what used to be client-start
    --> ">> npm run api-dev-start": what used to be api-stsart
    --> ">> npm run dev-start": runs api and client concurrently in a dev environment
- -Updated the collection listing to include number of cards
+ - Updated the collection listing to include number of cards
+ - Implemented SHA-256 encryption for passwords (references in the files). The hash is in hexadecimal form, though it's also
+   useable in binary string form. Password field in TABLE users now updated to store varChar(256) to reflect that change.
+ - Fixed the apostrophe problem when searching for cards. The fix will encompass other query strings.
 
 What's new 2.3:
  - Implemented adding and editting preview photos for the collection. (It uses popup design)
@@ -65,7 +68,6 @@ What's new 2.0:
  - Documentation
 
 Known bugs:
- - When searching anything with contractions database error will be raised
 
 What's to come:
  - Splitting of user-build and admin-build (default is admin build)

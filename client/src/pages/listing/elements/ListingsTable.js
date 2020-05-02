@@ -80,7 +80,7 @@ class ListingsTable extends Component {
       body: JSON.stringify(this.state)
     })
     .then(res => res.json())
-    .then(list => {if (list.length === 0) {
+    .then(list => {if (list.length === 0 && !(this.state.postresponse === 'You have no collections. =(')) {
       this.setState({postresponse: 'You have no collections. =('})
     } else { 
       if (!(JSON.stringify(this.state.collectionList) === JSON.stringify(list))) {

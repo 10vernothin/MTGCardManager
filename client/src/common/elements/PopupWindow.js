@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
-import '../css/SearchPopup.css'
+import '../css/PopupWindow.css'
 
 
 
-class SearchPopupWindow extends Component {
+class PopupWindow extends Component {
 
     render() {
         return(
@@ -13,7 +13,7 @@ class SearchPopupWindow extends Component {
                         <div class='popup_result_panel'>
                             {this.props.content}
                         </div>
-                    <button onClick={this.props.closePopup}>Back</button>
+                    <button onClick={this.props.closePopup}>Close</button>
                     </div>
                 </div>
             </div>
@@ -22,4 +22,4 @@ class SearchPopupWindow extends Component {
 
 }
 
-export default SearchPopupWindow
+export default PopupWindow

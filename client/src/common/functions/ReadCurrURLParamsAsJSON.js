@@ -1,4 +1,6 @@
-var readCurrURLParamsAsJSON = () => {
+/*This function is a custom-made function that parses URL params*/
+
+const readCurrURLParamsAsJSON = () => {
     var params = '';
     (window.location.href).split('?')[1].split('&').forEach((item) =>
     {

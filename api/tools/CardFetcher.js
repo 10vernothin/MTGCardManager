@@ -5,18 +5,20 @@ var path = "../api/json/scryfall/cards"
 
 /*This now uses postgreSQL*/
 exports.fetchAllCards = async (orderby = 'name', limit = 50) => {
-        return await pgdb.any(`SELECT * from cards order by ${orderby} LIMIT ${limit}`).catch((err) => {
-            console.log(err.message);
-            err = null;
-        });
+    return await pgdb.any(`SELECT * from cards order by ${orderby} LIMIT ${limit}`).catch((err) => {
+        console.log(err.message);
+        err = null;
+    });
 }
 
 /*Subcontainer so this function can be chained to refine results. E.g. C->Co->Cob->Cobr...*/
 exports.queryCardList = async (nameFragment, orderby = 'name', limit = 100) => {
+    nameFragment = nameFragment.replace("'", "''");
+    //console.log(nameFragment)
     let res = await pgdb.any(`SELECT * from cards where name ~* '(\\m${nameFragment})' order by ${orderby} LIMIT ${limit}`).catch((err) => {
         console.log("Database Error:", err);
         err = null;
-    }).catch((err)=> {console.log(err)});
+    }).catch((err) => { console.log(err) });
     //console.log(res)
     return res
 }
@@ -49,9 +51,9 @@ exports.selectCardJSONDataByCardID = async (id) => {
     }
 }
 
-exports.selectCardJSONDataInBulk = async (variable, opts = {type: 'string'}) => {
+exports.selectCardJSONDataInBulk = async (variable, opts = { type: 'string' }) => {
     let sets;
-    if (opts.type == 'string'){
+    if (opts.type == 'string') {
         sets = await this.queryCardList(variable)
     } else {
         sets = variable
@@ -61,7 +63,7 @@ exports.selectCardJSONDataInBulk = async (variable, opts = {type: 'string'}) => 
         return lst;
     }
     sets.map((item) => {
-        if (opts.type == 'string'){
+        if (opts.type == 'string') {
             obj = this.selectCardJSONData(item.set, item.set_id)
         } else {
             obj = this.selectCardJSONDataByCardID(item)
@@ -72,30 +74,30 @@ exports.selectCardJSONDataInBulk = async (variable, opts = {type: 'string'}) => 
 }
 
 
-exports.getPreviews = async (nameFragment, opts = {type: 'string'}) => {
+exports.getPreviews = async (nameFragment, opts = { type: 'string' }) => {
     lst = await Promise.all(await this.selectCardJSONDataInBulk(nameFragment, opts));
-    list = lst.map( (JSONCardObj) => {
-            return ({
-                    name: JSONCardObj.name,
-                    set_id: JSONCardObj.collector_number,
-                    set: JSONCardObj.set,
-                    set_name: JSONCardObj.set_name,
-                    prices: JSONCardObj.prices,
-                    foil: JSONCardObj.foil,
-                    nonfoil: JSONCardObj.nonfoil,
-                    image_uris: JSONCardObj.image_uris,
-                    card_id: JSONCardObj.card_id
-                });
-            })
+    list = lst.map((JSONCardObj) => {
+        return ({
+            name: JSONCardObj.name,
+            set_id: JSONCardObj.collector_number,
+            set: JSONCardObj.set,
+            set_name: JSONCardObj.set_name,
+            prices: JSONCardObj.prices,
+            foil: JSONCardObj.foil,
+            nonfoil: JSONCardObj.nonfoil,
+            image_uris: JSONCardObj.image_uris,
+            card_id: JSONCardObj.card_id
+        });
+    })
     return list;
 }
 
-exports.getDetails = async (nameFragment, opts = {type: 'string'}) => {
+exports.getDetails = async (nameFragment, opts = { type: 'string' }) => {
     lst = await Promise.all(await this.selectCardJSONDataInBulk(nameFragment, opts));
-    list = lst.map( (JSONCardObj) => {
-            JSONCardObj.set_id = JSONCardObj.collector_number;
-            return JSONCardObj
-        }
+    list = lst.map((JSONCardObj) => {
+        JSONCardObj.set_id = JSONCardObj.collector_number;
+        return JSONCardObj
+    }
     )
     return list;
 }

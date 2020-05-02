@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-
+import '../css/Listing.css'
 
 class SearchPopupBody extends Component {
 

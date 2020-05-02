@@ -1,6 +1,6 @@
 
-/*This function replaces a mana cost with its SVG equivalents*/
-var replaceManaCostWithSVGSymbol = async (stringRepresentation) => {
+/*This function replaces a mana cost symbol with its SVG equivalent*/
+const replaceManaCostWithSVGSymbol = async (stringRepresentation) => {
     if (stringRepresentation === undefined || stringRepresentation === '') {
         return ([])
     }
