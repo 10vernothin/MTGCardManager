@@ -17,7 +17,7 @@ router.post('/api/login/submit-form', function(req, res, next) {
       console.log('Login query completed.' + data.length);
       if (data.length == 0) {
         console.log("Login Not found.")
-        res.send("Username or Password incorrect.");
+        res.status(400).json("Login Failed.");
       } else {
         res.json(data[0]);
       }
@@ -66,5 +66,6 @@ router.post('/api/create-new-user', function(req, res, next) {
     res.send(response);
   }
 });
+
 
 module.exports = router;

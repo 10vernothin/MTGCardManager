@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {LoginButton, CollectionListButton} from '../../common/elements/CommonButtons';
-import {DownloadBulkDataButton, UserListButton} from './elements/Buttons'
+import {DownloadBulkDataButton, UserListButton, SetupDBButton} from './elements/Buttons'
 import SessionInfo from '../../common/cached_data/SessionInfo';
 import PlaneswalkerSymbol from './elements/PlaneswalkerSymbol';
 import './css/Home.css'
@@ -16,6 +16,7 @@ class HomePage extends Component {
         <div>
           <UserListButton/>
           {this.renderLoginCollectionButton()}
+          {this.renderDBButton()}
           <DownloadBulkDataButton/>
         </div>
     </div>
@@ -34,11 +35,11 @@ class HomePage extends Component {
   }
 
   renderLoginCollectionButton() {
-    if (SessionInfo.getSessionStatus() === true) {
-      return (<CollectionListButton/>)
-    } else {
-      return <LoginButton/>
-    }
+    return (SessionInfo.getSessionStatus() === true ? <CollectionListButton/>: <LoginButton/>)
+  }
+
+  renderDBButton() {
+    return (SessionInfo.getSessionStatus() === true ? null: <SetupDBButton/>)
   }
   
 }

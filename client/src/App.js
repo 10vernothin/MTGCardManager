@@ -12,11 +12,11 @@ import CreateCollectionPage from './pages/listing/CreateCollectionPage';
 import EditCollectionPage from './pages/listing/EditCollectionPage';
 import DownloadPage from './pages/download/DownloadPage';
 import CollectionPage from './pages/collection/CollectionPage';
+import SetupPage from './pages/home/SetupPage';
 
 //importing required common tools
 import SessionInfo from './common/cached_data/SessionInfo';
 import readCurrURLParamsAsJSON from './common/functions/ReadCurrURLParamsAsJSON';
-
 
 class App extends Component {
 
@@ -47,6 +47,7 @@ class App extends Component {
 					}
 				}/>
 				<Route path='/signup' component={SignupPage}/>	
+				<Route path='/setup' component={SetupPage}/>	
 				{/*collections pages will redirect to login page if logged out*/}	
 				<Route path='/collections' render = {
 					() => {	

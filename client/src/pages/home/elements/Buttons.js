@@ -16,13 +16,14 @@ class DownloadBulkDataButton extends Component {
   //Checks if the data needs updating. The button will be enabled only if it does needs updating.
   componentDidMount() {
     fetch('/api/fetch-card/check-updateable')
-    .then((res) =>{return res.json()})
-    .then((ress) => 
-      {if (ress === -1) { 
-        this.setState({disabled: false});
-      } else {
-        this.setState({disabled: true});
-      }});
+      .then((res) => { return res.json() })
+      .then((ress) => {
+        if (ress === -1) {
+          this.setState({ disabled: false });
+        } else {
+          this.setState({ disabled: true });
+        }
+      });
   }
 
   //Changes the button text to reflect status of data
@@ -34,23 +35,35 @@ class DownloadBulkDataButton extends Component {
     }
   }
 
-  render (){
-    return (<Link to={'./downloads?func=fetch-card%2Fdownload-bulk-data'}><button type= "button" disabled= {this.state.disabled} >{this.ButtonTextChange()}{this.state.disabled}</button></Link>);
+  render() {
+    return (<Link to={'./downloads?func=fetch-card%2Fdownload-bulk-data'}><button type="button" disabled={this.state.disabled} >{this.ButtonTextChange()}{this.state.disabled}</button></Link>);
   }
 }
 class UserListButton extends Component {
   render() {
-    return(
+    return (
       <Link to={'./userlist'}>
-            <button variant="raised">
-                Users
-            </button>
+        <button variant="raised">
+          Users
+        </button>
       </Link>
     )
   }
 }
 
-export {  
+class SetupDBButton extends Component {
+  render() {
+    return (
+      <Link to={'./setup'}>
+        <button variant="raised">
+          Set up Database
+        </button>
+      </Link>)
+  }
+}
+
+export {
   DownloadBulkDataButton,
-  UserListButton
+  UserListButton,
+  SetupDBButton
 };

@@ -49,7 +49,7 @@ exports.EncryptString256 = (str, options) => {
 
 }
 
-/*Defined SHA-256 Functions*/
+/*Defined SHA-256 Logic Functions*/
 
 //Circular Right bit Shift value x by n. i.e. ROTR^n(x)
 const ROTR = (n, x) => {
