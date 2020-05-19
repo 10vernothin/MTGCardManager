@@ -1,31 +1,39 @@
 //Defining a database
-var pgp = require('pg-promise') (/*options*/);
+var pgp = require('pg-promise')(/*options*/);
 var connected = false;
-var pgdb = null;
 var fs = require('fs')
-const defaultDbDets = {"host":"_UNSET","port":0,"database":"_UNSET","user":"_UNSET","password":""};
+const defaultDbDets = { "host": "_UNSET", "port": 0, "database": "_UNSET", "user": "_UNSET", "password": "" };
+var pgdb = pgp(defaultDbDets);
 var dbDets;
 
 
 //singleton connection
-exports.getConnectionInstance = () => {
+exports.getConnectionInstance = (tries=0) => {
     if (!connected) {
         try {
-            dbDets = JSON.parse(fs.readFileSync('./database/db-info.dat', {encoding: "utf8"}))
-        } catch(err) {
+            newdbDets = JSON.parse(fs.readFileSync('./database/db-info.dat', { encoding: "utf8" }))
+        } catch (err) {
             if (err.code === 'ENOENT') {
-                fs.writeFileSync('./database/db-info.dat', JSON.stringify(defaultDbDets))
-                dbDets = JSON.parse(fs.readFileSync('./database/db-info.dat', {encoding: "utf8"}))
+                try {
+                    fs.writeFileSync('./database/db-info.dat', JSON.stringify(defaultDbDets))
+                    newdbDets = JSON.parse(fs.readFileSync('./database/db-info.dat', { encoding: "utf8" }))
+                } catch (err) {
+                    console.log("ERROR: WRITING FILE FAILED.")
+                    return null
+                }
+            } else {
+                console.log("ERROR: SOMETHING WENT WRONG")
+                console.log(err)
+                return null
             }
         }
-        if (this.testConnection(dbDets)){
+        if (!(JSON.stringify(newdbDets) === JSON.stringify(dbDets))){
+            dbDets = newdbDets;
             pgdb = pgp(dbDets);
-            connected = true;
         }
-        return pgdb;
-        
     }
-   
+    this.testConnection(dbDets)
+    return pgdb;
 }
 
 exports.refreshConnection = () => {
@@ -35,18 +43,41 @@ exports.refreshConnection = () => {
 }
 
 exports.testConnection = async (newDetObj = dbDets) => {
-    pgtest = pgp(newDetObj);
+    let pgtest;
+    let isSelf = false;
+    if (JSON.stringify(dbDets) === JSON.stringify(newDetObj)) {
+        isSelf = true;
+        pgtest = pgdb
+        if (connected) {
+            return true
+        }
+    } else {
+        pgtest = pgp(newDetObj);
+    }
+
     return (pgtest.connect()
-    .then((obj) => {
-        obj.done(); // success, release connection;
-        pgtest = null
-        return true
-    })
-    .catch((error) => {
-        pgtest = null
-        return false
-    }));
-    
+        .then((obj) => {
+            if (isSelf) {
+                if (!connected) {
+                    console.log("DATABASE CONNECTED.")
+                    connected = true
+                }
+            }
+            obj.done(); // success, release connection;
+            pgtest = null
+            return true
+        })
+        .catch((error) => {
+            pgtest = null
+            if (isSelf) {
+                if (connected) {
+                    console.log("WARNING: DATABASE DISCONNECTED")
+                    connected = false
+                }
+            }
+            return false
+        }));
+
 }
 
 exports.updateDatabaseDetails = async (newDetObj) => {
