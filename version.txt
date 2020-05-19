@@ -1,5 +1,23 @@
-Latest Version: Alpha 2.4
-Last Update: M05/D03/Y2020
+Latest Version: Alpha 2.5.2
+Static Build: Alpha 1.1
+Last Update: M05/D19/Y2020
+
+What's new 2.5:
+  -> Added alternate hooked implementation for some classes (mostly as an exercise).
+     They will not be used until the project is complete and will probably be part of a new split project. All used assets
+     will be in class form.
+  -> Added confirmation dialogs for logging out and deleting collection so no accidental deletions
+  -> Added routing and fixed missing history objects for some classes.
+  -> Created a Database Setup page. It is currently nonfunctional, and only will show your current settings
+  -> Database Setup page now functional. The UI checks for connectivity before the host/database can be changed.
+    -Added some formatting
+    -Password can be shown be mousedowning the "show password" button
+    -The Database Setup page will not tell you whether your database is correctly configured. That will be implemented soon.
+    -Your sensative data will be stored in db-info.dat, and will be excluded from git
+    -db-info.dat will now be auto-generated with dummy default values if it is missing (Note: reading/writing db-info.dat uses Sync.),
+     and one can go into the setup menu to set the info 
+  -> Due to some concerns, this is a disclaimer that 
+     my implementation of SHA-2 is a strict implementation in accordance to the official documents. 
 
 What's new 2.4:
  - Created static production build 
@@ -71,6 +89,5 @@ Known bugs:
 
 What's to come:
  - Splitting of user-build and admin-build (default is admin build)
- - Confirmation popup screens
  - Ability to upload your collection
  - Ability to set up database

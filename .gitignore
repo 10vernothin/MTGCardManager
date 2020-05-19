@@ -112,3 +112,6 @@ dist
 api/json/scryfall/cards/**/*.json
 api/json/scryfall/cards/**/images/*.png
 api/json/scryfall/cards/**/images/*.jpg
+
+#db-info.dat, since it contains sensative details. It will instead be generated if not exist
+api\database\db-info.dat

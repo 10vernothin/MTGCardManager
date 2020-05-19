@@ -12,13 +12,16 @@ class HomeButton extends Component {
 class SignoutButton extends Component {
   //Button that Signs out and returns to Home page
 
-  signout = () => {
-      alert("Signing out");
-      SessionInfo.resetSession();
+  signout = e => {
+      e.preventDefault();
+      if (window.confirm("Are you sure you want to log out?")){
+        SessionInfo.resetSession();
+        this.props.history.push('./')
+      }
   }
 
   render() {
-    return(<Link to={'./'}><button type= "button" onClick = {() => this.signout()}>Sign Out</button></Link>);
+  return(<button type= "button" onClick = {this.signout}>Sign Out</button>);
   } 
 }
 

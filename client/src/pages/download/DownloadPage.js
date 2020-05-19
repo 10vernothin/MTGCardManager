@@ -27,7 +27,7 @@ class DownloadPage extends Component {
         );
 
         //automatically pushes back into homepage (will be goback() if that is implementable)
-        this.props.history.push('./');      
+        this.props.history.goBack();      
     }
 
     readURLAsJSONAPIString() {

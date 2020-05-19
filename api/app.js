@@ -10,6 +10,7 @@ var userListRouter = require('./routes/userlistAPI')
 var collectionRouter = require('./routes/collectionAPI')
 var scryfallFetcherRouter = require('./routes/fetchScryfallAPI')
 var cardFetcherRouter = require('./routes/cardsAPI')
+var DBSetupRouter = require('./routes/DBSetupAPI')
 
 var app = express();
 
@@ -34,6 +35,7 @@ app.use('/', userListRouter);
 app.use('/', collectionRouter);
 app.use('/', scryfallFetcherRouter);
 app.use('/', cardFetcherRouter);
+app.use('/', DBSetupRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,0 +1,56 @@
+/* SetupPage.js CSS*/
+
+#setup_current_settings_table {
+    display: grid; /* establish a grid container */
+    grid-template-columns: repeat(5, 1fr); /* 20 columns */
+  }
+
+#setup_current_settings_table div {
+    border: 1px solid;
+    grid-column: span 1; /* span two columns */ 
+    /* flexbox to center content*/
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+#setup_current_settings_table .cell {
+    grid-row: span 1;
+}
+
+#setup_current_settings_table .title_cell {
+    grid-row: span 1;
+    font-weight: bold;
+}
+  
+.setup_page_default_padding {
+    padding-top: 10px;
+}
+
+.change_setup_border_success {
+    border: 2px green solid;
+}
+
+.change_setup_border_untested {
+    border: 1.5px orange solid;
+}
+
+.change_setup_border_failed {
+    border: 2px red solid;
+}
+
+.setup_page_default_left_padding {
+    padding-left: 10px;
+}
+
+.font_green {
+    color: green
+}
+
+.font_red {
+    color: red
+}
+
+.bold {
+    font-weight: bold
+}

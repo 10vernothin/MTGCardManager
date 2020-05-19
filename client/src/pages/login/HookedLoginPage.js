@@ -1,25 +1,25 @@
 import React, { useReducer } from 'react';
-import { Redirect } from 'react-dom';
+import {Redirect, useHistory} from 'react-router-dom';
 import { HomeButton } from '../../common/elements/CommonButtons';
 import SessionInfo from '../../common/cached_data/SessionInfo';
 import { SignupButton } from './elements/Buttons';
 import callAPI from './../../common/functions/CallAPI';
 
 export default function HookedLoginPage() {
-
+  
   const initState = {
     formControls: { name: { value: '' }, password: { value: '' } },
     postResponse: '',
     redirect: false
   }
   const [state, setState] = useReducer((state, newstate) => ({ ...state, ...newstate }), initState)
-
+  const history = useHistory()
+  
   //Render Methods
 
   const renderLoginForm = () => {
     return (
       <form method="post" onSubmit={handleSubmit}>
-
         <title>Login Form</title>
         <div>Login</div>
         <div>Name:</div>
@@ -57,7 +57,6 @@ export default function HookedLoginPage() {
       })
   }
 
-
   const handleFormChange = e => {
     e.preventDefault()
     const name = e.target.name;
@@ -81,16 +80,14 @@ export default function HookedLoginPage() {
       SessionInfo.setLoginUser(data.username);
       SessionInfo.setLoginUserID(data.id);
       setState({ redirect: true });
+      history.push('/collections')
     }
   }
 
   const Page = () => {
     return (renderLoginForm())
   }
+   
+  return(state.redirect ? <Redirect to='/collections'/>:Page )
 
-  if (state.redirect) {
-    return (<Redirect to='/collections?page=default'/>)
-  } else {
-    return (Page)
-  }
 }

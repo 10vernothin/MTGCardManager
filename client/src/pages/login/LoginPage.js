@@ -84,7 +84,6 @@ class LoginPage extends Component {
             ...this.state.formControls[name],
             value
   }}})}
-
 }
 
 export default LoginPage;

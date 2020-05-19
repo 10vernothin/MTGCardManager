@@ -12,22 +12,27 @@ class SessionInfo {
         }
     }
     static getSessionUser() {
+        SessionInfo.initializeSession()
         return this.#LoginUser;
     };
 
     static getSessionUserID() {
+        SessionInfo.initializeSession()
         return this.#LoginUserID;
     };
 
     static getCollectionName() {
+        SessionInfo.initializeSession()
         return this.#CollectionName;
     };
 
     static getCollectionID() {
+        SessionInfo.initializeSession()
         return this.#CollectionID;
     };
 
     static getSessionStatus() {
+        SessionInfo.initializeSession()
         return this.#isAuth;
     }
 
@@ -40,6 +45,7 @@ class SessionInfo {
     }
 
     static getSessionInfo() { 
+        SessionInfo.initializeSession()
         return ({
             ColName: this.#CollectionName, 
             LoginID: this.#LoginUserID, 
@@ -49,22 +55,27 @@ class SessionInfo {
     }
     
     static setSessionState(auth) {
+        SessionInfo.initializeSession()
         this.#isAuth = auth;
     }
 
     static setLoginUser(LoginUser) {
+        SessionInfo.initializeSession()
         this.#LoginUser = LoginUser;
     }
 
     static setCollectionName(CollectionName) {
+        SessionInfo.initializeSession()
         this.#CollectionName = CollectionName;
     }
 
     static setCollectionID(CollectionID) {
+        SessionInfo.initializeSession()
         this.#CollectionID = CollectionID;
     }
 
     static setLoginUserID(UserID) {
+        SessionInfo.initializeSession()
         this.#LoginUserID = UserID;
     }
 

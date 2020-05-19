@@ -1,12 +1,15 @@
 Magic the Gathering Collections Manager
+Creater: Andy Rei Kou
+Version: 2.5.1
 
+Disclaimer: All cards and images displayed are not mine.
 
 This is an project extension of the React.JS/Express.JS/PostgreSQL shell that I created last time.
 
 It is an ongoing project.
 
-API uses Express Generator to generate a skeletal MVC shell listening on port http://localhost:5000/
-Client uses React-Creator to create a skeletal React shell, listening on port http://localhost:3000/ but proxying backend port http://localhost:5000/
+API uses express-generator to generate a skeletal MVC shell listening on port http://localhost:5000/
+Client uses react-creator to create a skeletal React shell, listening on port http://localhost:3000/ but proxying backend port http://localhost:5000/
 
 Viable static Build currently uses a single port on  http://localhost:5000/.
 

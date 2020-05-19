@@ -30,7 +30,7 @@ class ListingsMainPage extends Component {
           <ListingsTable updateState={this.updateState}/>
         <div>
             <HomeButton/>
-            <SignoutButton/>
+            <SignoutButton history={this.props.history}/>
             <CreateCollectionButton/>
         </div>
       </div>

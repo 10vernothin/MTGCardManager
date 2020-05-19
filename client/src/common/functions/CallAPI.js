@@ -2,6 +2,7 @@
  * @param {string} uri - The API uri
  * @param {any} options - the options given to fetch API, most likely form data
  * @param {(data,err) =>{}} dataHandlerFunction - Callback function
+ * callAPI(uri, options, {}) Returns (data, err) for callback
  */
 export default async function callAPI (uri, dataHandlerFunction, opts = undefined) {
     const response = await fetch(uri, opts)

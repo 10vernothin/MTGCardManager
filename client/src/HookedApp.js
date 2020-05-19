@@ -1,11 +1,10 @@
-import React, { useRoutes, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import './App.css';
 
 //Importing pages
 import HomePage from './pages/home/HomePage';
 import UserListingPage from './pages/home/UserListingPage';
-import LoginPage from './pages/login/LoginPage';
 import SignupPage from './pages/login/SignupPage';
 import ListingsMainPage from './pages/listing/ListingsMainPage';
 import CreateCollectionPage from './pages/listing/CreateCollectionPage';
@@ -20,52 +19,49 @@ import SessionInfo from './common/cached_data/SessionInfo';
 import readCurrURLParamsAsJSON from './common/functions/ReadCurrURLParamsAsJSON';
 
 
-const routes = {
-	"/": () => <HomePage />,
-	"/userList": () => <UserListingPage />
-};
-
 export default function HookedApp() {
 
-	const routeResult = useRoutes(routes);
+	const chooseCollection = () => {
+		if (!SessionInfo.getSessionStatus()) {
+			return <Redirect to='/login'/>
+		} else {
+			switch (readCurrURLParamsAsJSON().page) {
+				case "default":
+					return (<ListingsMainPage/>);
+				case "create-new-collection":
+					return (<CreateCollectionPage />);
+				case "selected":
+					return (<CollectionPage />)
+				case "edit":
+					return (<EditCollectionPage />)
+				default:
+					return (<ListingsMainPage />);
+			}
+		}
+	}
 
-	useEffect(() => { SessionInfo.initializeSession() }, [])
+	const loginRedir = () => {return !SessionInfo.getSessionStatus()? HookedLoginPage():<Redirect to='/collections'/>}
 
 	const App = () => (
 		<div>
-			{/*
 			<Router>
 				<Switch>
 					<Route exact path='/' component={HomePage} />
 					<Route path='/userlist' component={UserListingPage} />
 
-					{/*login page will redirect to collections page if logged in}
+					{/*login page will redirect to collections page if logged in*/}
 
-					<Route path='/login' render={HookedLoginPage()} />
-					<Route path='/signup' component={SignupPage} />
-					<Route path='/setup' render={HookedSetupPage()} />
-					{/*collections pages will redirect to login page if logged out}
-					<Route path='/collections' render={
-						() => {
-							if (!SessionInfo.getSessionStatus()) {
-								return (<Redirect to='/login' />)
-							} else {
-								//subrouting
-								switch (readCurrURLParamsAsJSON().page) {
-									case "default":
-										return (<Route path='/collections' component={ListingsMainPage} />);
-									case "create-new-collection":
-										return (<Route path='/collections' component={CreateCollectionPage} />);
-									case "selected":
-										return (<Route path='/collections' component={CollectionPage} />)
-									case "edit":
-										return (<Route path='/collections' component={EditCollectionPage} />)
-									default:
-										return (<Route path='/collections' component={ListingsMainPage} />);
-								}
-							}
-						}
-					} />
+					<Route path='/login'>
+						{loginRedir()}
+					</Route>
+					<Route path='/signup'>
+						<SignupPage/>
+					</Route>
+					<Route path='/setup' render={<HookedSetupPage/>} />
+					{/*collections pages will redirect to login page if logged out*/}
+					<Route path='/collections'>
+						{chooseCollection()}
+					</Route>
 					<Route path='/downloads' render={
 						() => {
 							switch (readCurrURLParamsAsJSON().func) {
@@ -78,21 +74,18 @@ export default function HookedApp() {
 						}
 					} />
 
-					{/*Default route goes Home/or ERROR page if it gets to that}
+					{/*Default route goes Home/or ERROR page if it gets to that*/}
 					<Route path="*" render={() => { return (<Redirect to='/' />) }} />
 
 				</Switch>
 			</Router>
-				*/}
-		</div>
-	)
+		</div>)
+
 	return (
 		<Router>
 			<Switch>
-				<App />
+				<App/>
 			</Switch>
 		</Router>
 	);
 }
-}
-export default App;
