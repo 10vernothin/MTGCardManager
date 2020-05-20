@@ -8,7 +8,7 @@ var dbDets;
 
 
 //singleton connection
-exports.getConnectionInstance = (tries=0) => {
+exports.getConnectionInstance = (tries = 0) => {
     if (!connected) {
         try {
             newdbDets = JSON.parse(fs.readFileSync('./database/db-info.dat', { encoding: "utf8" }))
@@ -27,7 +27,7 @@ exports.getConnectionInstance = (tries=0) => {
                 return null
             }
         }
-        if (!(JSON.stringify(newdbDets) === JSON.stringify(dbDets))){
+        if (!(JSON.stringify(newdbDets) === JSON.stringify(dbDets))) {
             dbDets = newdbDets;
             pgdb = pgp(dbDets);
         }
@@ -42,42 +42,44 @@ exports.refreshConnection = () => {
     return exports.getConnectionInstance()
 }
 
-exports.testConnection = async (newDetObj = dbDets) => {
+exports.testConnection = async (newDetObj = dbDets, check_database = false) => {
     let pgtest;
     let isSelf = false;
     if (JSON.stringify(dbDets) === JSON.stringify(newDetObj)) {
         isSelf = true;
         pgtest = pgdb
         if (connected) {
-            return true
+            return (!check_database) && true
         }
     } else {
         pgtest = pgp(newDetObj);
     }
-
-    return (pgtest.connect()
-        .then((obj) => {
-            if (isSelf) {
-                if (!connected) {
-                    console.log("DATABASE CONNECTED.")
-                    connected = true
-                }
+    try {
+        connection = await pgtest.any("select 1")
+        if (isSelf) {
+            if (!connected) {
+                console.log(dbDets)
+                console.log("DATABASE CONNECTED.")
+                connected = true
             }
-            obj.done(); // success, release connection;
+        } else {
+            pgtest.$pool.end(); //destroys the database singleton object
             pgtest = null
-            return true
-        })
-        .catch((error) => {
-            pgtest = null
-            if (isSelf) {
-                if (connected) {
-                    console.log("WARNING: DATABASE DISCONNECTED")
-                    connected = false
-                }
+        }
+        return (!check_database) && true
+    } catch (error) {
+        console.log(error)
+        if (isSelf) {
+            if (connected) {
+                console.log("WARNING: DATABASE DISCONNECTED")
+                connected = false
             }
-            return false
-        }));
-
+        } else {
+            pgtest.$pool.end(); //destroys the database singleton object
+            pgtest = null
+        }
+        return (error.code === '3D000' && check_database) || false
+    }
 }
 
 exports.updateDatabaseDetails = async (newDetObj) => {
@@ -107,3 +109,28 @@ exports.loggedUser = () => {
         return null;
     }
 }
+
+exports.testDatabaseAvailability = async (dbName) => {
+    newdbDets = JSON.parse(JSON.stringify(dbDets).valueOf())
+    newdbDets.database = dbName
+    console.log(newdbDets)
+    return this.testConnection(newdbDets, true)
+}
+
+exports.createNewDatabase = async (dbName) => {
+    if (dbName) {
+        try {
+            res = await pgdb.any(`CREATE DATABASE "${dbName}"`)
+            newdbDets = { ...dbDets };
+            newdbDets.database = dbName
+            res = await this.updateDatabaseDetails(newdbDets)
+            this.refreshConnection()
+            return (true)
+        } catch (err) {
+            console.log(err)
+            return (false)
+        }
+    }
+}
+
+
