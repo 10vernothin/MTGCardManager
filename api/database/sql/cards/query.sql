@@ -1,0 +1,1 @@
+SELECT * from cards where card_name ~* $1^ order by $2~ LIMIT $3

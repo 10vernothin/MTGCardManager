@@ -51,14 +51,15 @@ class ListingsTable extends Component {
 
   renderListingItems = () => {
     let currCSS = 'listing_elem_gray'
+    //alert(JSON.stringify(this.state))
     return(
       this.state.collectionList.map((item) => {
         currCSS = (currCSS === 'listing_elem_gray')? 'listing_elem_white': 'listing_elem_gray'
         if (!(item.name === '')){
         return(
           <ListingsTableElem 
-            link_url={`/collections?page=selected&id=${item.id}&name=${encodeURIComponent(item.name)}`}
-            edit_url={`/collections?page=edit&id=${item.id}&name=${encodeURIComponent(item.name)}`}
+            link_url={`/collections?page=selected&id=${item.id}&name=${encodeURIComponent(item.collection_name)}`}
+            edit_url={`/collections?page=edit&id=${item.id}&name=${encodeURIComponent(item.collection_name)}`}
             item = {item}
             id_key = {item.id}
             currCSS = {currCSS}
@@ -73,7 +74,7 @@ class ListingsTable extends Component {
   //Loader Methods
   
   loadList = () => {
-    fetch('/api/collections/getList', 
+    fetch('/api/collections/get-list-of-collections-by-id', 
     { 
       method: 'POST', 
       headers: { 'Content-Type': 'application/json'},

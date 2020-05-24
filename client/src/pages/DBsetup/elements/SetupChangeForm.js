@@ -35,6 +35,7 @@ class SetupChangeForm extends Component {
         const form =
             <div class="setup_page_default_padding">
                 <div class="setup_page_default_padding">--- Change Database Setup ---</div>
+                <div class="setup_page_default_padding"></div>
                 <form method="post" onSubmit={this.handleSubmit} class={`change_setup_border_${this.state.correctBoxCSS}`}>
                     <div class="setup_page_default_padding">
                         <button onClick={this.handleTestConnection} disabled={this.state.disableAll}>Test Database Connection</button>
@@ -84,7 +85,7 @@ class SetupChangeForm extends Component {
                         </button>
                     </div>
                     <div class="setup_page_default_padding">
-                        <button type="submit" disabled={(!(this.state.correctBoxCSS === "success"))||this.state.disableAll}>
+                        <button type="submit" disabled={(!(this.state.correctBoxCSS === "success")) || this.state.disableAll}>
                             {!(this.state.correctBoxCSS === "success") ? "Please Test Connection..." : "Submit"}
                         </button>
                         <button onClick={this.handleCancel}>Cancel</button>
@@ -98,21 +99,12 @@ class SetupChangeForm extends Component {
     //Loader Methods
 
     loadDefault = () => {
-        callAPI(
-            '/api/DBSetup/get-DB-details',
-            (result, err) => {
-                if (!err) {
-                    if (
-                        !(JSON.stringify(result) === JSON.stringify(this.state.formControls))) {
-                        this.setState({
-                            formControls: result
-                        })
-                    }
-                } else {
-                    console.log(err)
-                }
-            }
-        )
+        if (
+            !(JSON.stringify(this.state.formControls) === JSON.stringify(this.props.defaultResult))) {
+            this.setState({
+                formControls: this.props.defaultResult
+            })
+        }
     }
 
     //Handler Methods
@@ -148,7 +140,7 @@ class SetupChangeForm extends Component {
                     (data, err) => {
                         if (!err) {
                             if (data) {
-                                this.setState({ correctBoxCSS: "success", testResponse: "Test Success!", disableAll:false})
+                                this.setState({ correctBoxCSS: "success", testResponse: "Test Success!", disableAll: false })
                             } else {
                                 this.setState({ correctBoxCSS: "failed", testResponse: "Test Failure.", disableAll: false })
                             }

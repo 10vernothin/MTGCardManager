@@ -1,0 +1,1 @@
+SELECT * from collection where card_id = $1 AND listing_id = $2 AND is_foil = $3

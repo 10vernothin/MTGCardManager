@@ -82,20 +82,10 @@ class CollectionTableElement extends Component {
         }        
     }
     
-    renderManaSymbol = (item) => {
-        return (
-            <div>
-                <object data={item} type="image/svg+xml" style={{width:'20px', height:'auto'}}>
-                    <img src={item} alt="imgSym" style={{width:'20px', height:'auto'}}></img>
-                </object>
-            </div>
-        )
-    }
-
     //Loader Methods
 
     loadRowObjs = () => {
-      fetch('/api/collections/fetch-row', 
+      fetch('/api/collections/fetch-card-object', 
       { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json'},

@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var _db = require('../database/database.js')
-var fs = require('fs')
+var _db = require('../database/database')
+var dbDiagnostics = require('../database/diagnostics')
 
 router.get('/api/DBSetup/get-DB-details', function (req, res, next) {
   let details = _db.getDetails()
@@ -15,10 +15,22 @@ router.get('/api/DBSetup/get-DB-details', function (req, res, next) {
   _db.testConnection(details)
     .then((data) => {
       if (data) {
-        testCurrentDBIntegrity()
+        testCurrentDBIntegrity().then((result) => {
+          if (result.passed) {
+            newForm.status = {value: 'working'}
+            newForm.report = {value: result.report}
+            res.send(newForm)
+          } else {
+            newForm.status = {value: 'not working'}
+            newForm.report = {value: result.report}
+            res.send(newForm)
+          }
+        })
+      } else {
+        newForm.status = {value: 'offline'}
+        newForm.report = {value: ''}
+        res.send(newForm)
       }
-      newForm.status = { value: data };
-      res.send(newForm)
     })
     ;
 });
@@ -34,20 +46,25 @@ router.post('/api/DBSetup/test-connection', function (req, res, next) {
   _db.testConnection(newDetObj)
     .then((data) => { res.send(data) })
     .catch((err) => { res.status(400); console.log(err) });
-
 })
 
 
 router.post('/api/DBSetup/test-db-availability', function (req, res, next) {
-  _db.testDatabaseAvailability(req.body.formControls.database.value)
+  dbDiagnostics.testDatabaseAvailability(req.body.formControls.database.value)
     .then((data) => { res.send(data) })
     .catch((err) => { res.status(400); console.log(err) });
 })
 
 router.post('/api/DBSetup/create-database', function (req, res, next) {
   _db.createNewDatabase(req.body.formControls.database.value)
-    .then((data) => { res.send(data) })
+    .then((data) => {
+        res.send(data)
+    })
     .catch((err) => { res.status(400); console.log(err) });
+})
+
+router.get('/api/DBSetup/recreate-all-tables', function (req, res, next) { 
+  _db.createAllTables().then((result) => {res.send(result)})
 })
 
 router.post('/api/DBSetup/update-db-info', function (req, res, next) {
@@ -61,33 +78,15 @@ router.post('/api/DBSetup/update-db-info', function (req, res, next) {
   _db.testConnection(newDetObj)
     .then((data) => {
       if (data) {
-        _db.updateDatabaseDetails(newDetObj).then((err) => { res.send(true) })
+        _db.updateDatabaseDetails(newDetObj).then(() => { res.send(true) })
       }
     })
     .catch((err) => { res.status(400); console.log(err) });
 
 })
 
-const testCurrentDBIntegrity = () => {
-  let report = {
-    users: 'untested',
-    cards: 'untested',
-    collection: 'untested',
-    collection_list: 'untested',
-  }
-  Object.keys(report).forEach((key) => {
-    _db.getConnectionInstance().any(`select * from information_schema.COLUMNS where TABLE_NAME = '${key}'`).then((data) => {
-      data = data.map((column) => {
-          column.table_catalog = undefined
-          column.table_schema = undefined
-          return column
-      })
-      fs.writeFile(`./database/metadata/db_table_${key}.meta`, JSON.stringify(data), () => {})
-    }).catch((err) => { console.log(err) })
-  })
-
-  return report
+const testCurrentDBIntegrity = async (opts) => {
+  return (await dbDiagnostics.testDatabaseIntegrity(opts))
 }
-
 
 module.exports = router;

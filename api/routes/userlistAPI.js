@@ -1,16 +1,13 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
 //Connect to database
-var _db = require('../database/database');
-var pgdb = _db.getConnectionInstance();
-
+const dbModule = require('../database/database');
+var pgdb = dbModule.getConnectionInstance();
 
 /* GET users listing. */
 router.get('/api/getList', function(req, res, next) {
-    pgdb.any(
-      "SELECT username from users"
-    ).then(
+    pgdb.users.list(['username']).then(
           function(data) {  
             JSON.stringify(data);
             lst = []

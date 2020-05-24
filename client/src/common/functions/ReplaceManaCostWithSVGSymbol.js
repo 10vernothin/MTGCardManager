@@ -9,7 +9,7 @@ const replaceManaCostWithSVGSymbol = async (stringRepresentation) => {
                 let remadeSym = '{'.concat(sym)
                 return remadeSym
         })
-    let list = await fetch('/api/cards/fetch-list-of-SVG',
+    let list = await fetch('/api/cards/fetch-list-of-mana-symbols',
     {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json'},

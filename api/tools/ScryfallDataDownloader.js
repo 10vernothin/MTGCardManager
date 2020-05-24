@@ -54,9 +54,14 @@ exports.downloadScryfallData = (uri, downloadPath) => {
                                     err = null;
                             });
                             
-                            //inserting relevant data to database
-                            pgdb.none("INSERT into cards(name, set, set_id, price, foil_price) values($1, $2, $3, $4, $5) ON CONFLICT ON CONSTRAINT cards_set_key DO UPDATE SET name = EXCLUDED.name, set = EXCLUDED.set, set_id = EXCLUDED.set_id, price = EXCLUDED.price, foil_price = EXCLUDED.foil_price",
-                            [item.name, item.set , item.collector_number, (item.prices.usd === null? 0:item.prices.usd),  (item.prices.usd_foil === null? 0:item.prices.usd_foil)])
+                            //upserting relevant data to database
+                            pgdb.cards.upsert({
+                                card_name: item.name, 
+                                set_code: item.set , 
+                                collector_number: item.collector_number, 
+                                price: (item.prices.usd === null? 0.00:item.prices.usd),  
+                                foil_price: (item.prices.usd_foil === null? 0.00:item.prices.usd_foil)
+                            })
                             .catch((err) => {
                                 console.log(err.message);
                                 err = null;
@@ -81,6 +86,7 @@ exports.downloadScryfallData = (uri, downloadPath) => {
                     return;
                 } else {
                     //imageDownloader.downloadAllCards()
+                    console.log("UPDATE ALL DONE!")
                     return;
                 }
             });

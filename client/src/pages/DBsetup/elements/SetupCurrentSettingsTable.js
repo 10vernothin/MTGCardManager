@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import callAPI from '../../../common/functions/CallAPI'
 /*
 {
     "host": ,
@@ -16,7 +15,8 @@ class SetupCurrentSettingsTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentSetting: ''
+            currentSetting: '',
+            report: ''
         }
     }
 
@@ -43,8 +43,15 @@ class SetupCurrentSettingsTable extends Component {
                     <div class="cell">{this.state.currentSetting.PORT}</div>
                     <div class="cell">{this.state.currentSetting.DB}</div>
                     <div class="cell">{this.state.currentSetting.USER}</div>
-                    <div class={`cell ${this.state.currentSetting.STATUS? "font_green" : "font_red"} bold`}>
-                        {this.state.currentSetting.STATUS ? "WORKING" : "NOT WORKING"}
+                    <div
+                        class={
+                            `cell ${this.state.currentSetting.STATUS === 'working' ?
+                                "font_green" : this.state.currentSetting.STATUS === 'not working' ?
+                                    'font_orange' : "font_red"} bold`}
+                    >
+                        {this.state.currentSetting.STATUS === 'working' ?
+                            "ONLINE, WORKING" : this.state.currentSetting.STATUS === 'not working' ?
+                                "ONLINE, FAILED TABLE INTEGRITY TEST" : "OFFLINE"}
                     </div>
                 </div>
             </div>
@@ -56,27 +63,21 @@ class SetupCurrentSettingsTable extends Component {
     //Loader Methods
 
     loadDefault = () => {
-        callAPI(
-            '/api/DBSetup/get-DB-details',
-            (result, err) => {
-                if (!err) {
-                    let newcurrentSetting = {
-                        HOST: result.host.value,
-                        PORT: result.port.value,
-                        DB: result.database.value,
-                        USER: result.user.value,
-                        STATUS: result.status.value
-                    }
-                    if (!(JSON.stringify(newcurrentSetting) === JSON.stringify(this.state.currentSetting))) {
-                        this.setState({
-                            currentSetting: newcurrentSetting
-                        })
-                    }
-                } else {
-                    console.log(err)
-                }
+        if (this.props.defaultResult) {
+            let newcurrentSetting = {
+                HOST: this.props.defaultResult.host.value,
+                PORT: this.props.defaultResult.port.value,
+                DB: this.props.defaultResult.database.value,
+                USER: this.props.defaultResult.user.value,
+                STATUS: this.props.defaultResult.status.value
             }
-        )
+            if (!(JSON.stringify(newcurrentSetting) === JSON.stringify(this.state.currentSetting))) {
+                this.setState({
+                    currentSetting: newcurrentSetting,
+                    report: this.props.defaultResult.report.value
+                })
+            }
+        }
     }
 
     //Handler Methods

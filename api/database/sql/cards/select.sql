@@ -1,0 +1,1 @@
+SELECT * from cards where (id = $1) OR (set_code = $2 AND collector_number = $3)

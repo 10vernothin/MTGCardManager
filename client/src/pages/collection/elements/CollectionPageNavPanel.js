@@ -24,7 +24,9 @@ class CollectionPageNavPanel extends Component {
                     <button onClick={this.props.handleLastPage} disabled={this.state.lastDisabled}>Previous Page</button>
                 </div>
                 <div style={{width: '80%'}} class='nav_panel_elements'>
-                    <p>Page {this.props.currPage}/{Math.ceil(this.props.totalElems/this.props.elemPerPage)}</p>
+                    <div>Page</div>
+                    <div>{this.props.currPage}</div>
+                    <div>/{Math.ceil(Math.max(1, this.props.totalElems/this.props.elemPerPage))}</div>
                 </div>
                 <div style={{width: '10%'}} class='nav_panel_elements'>
                     <button onClick={this.props.handleNextPage} disabled={this.state.nextDisabled}>Next Page</button>
@@ -32,6 +34,19 @@ class CollectionPageNavPanel extends Component {
             </div>)
     }
 
+    renderPageNavigator = () => {
+        return(
+            <input
+                type="range"
+                min = "1"
+                name="desc"
+                value={this.props.currPage}
+                onChange={this.handleChange}
+                max = {Math.max(1, this.props.totalElems/this.props.elemPerPage)}
+            />
+        )
+
+    }
     //Loader Methods
 
     loadDisabled = () => {

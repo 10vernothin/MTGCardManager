@@ -25,39 +25,29 @@ class CollectionTable extends Component {
   }
  
   render() {
-    return(this.renderTable())
+    return(
+      <div>
+        {this.renderNavPanel()}
+        {this.renderTableTitle()}
+        {this.renderTableBody()}
+      </div>
+    )
   }
 
   //Render Methods
 
-  renderTable = () => {
-    if (!(this.props.collectionList.length === 0)) {
-      /*deep copying the prop and sorting it (use fast data-loss copy since everything is JSON)*/
-      let list = this.loadSortedList()
-      return (
-        <div>
-          <CollectionPageNavPanel 
-            handleLastPage={this.handleLastPage.bind(this)}
-            handleNextPage={this.handleNextPage.bind(this)}
-            currPage={this.state.page}
-            elemPerPage={this.state.elemPerPage}
-            totalElems={this.props.collectionList.length}
-          />
-          {this.renderTableTitle()}
-          {this.renderTableElems(list)}
-          <CollectionPageNavPanel 
-            handleLastPage={this.handleLastPage.bind(this)}
-            handleNextPage={this.handleNextPage.bind(this)}
-            currPage={this.state.page}
-            elemPerPage={this.state.elemPerPage}
-            totalElems={this.props.collectionList.length}
-          />
-        </div>
-        )
-    } else {
-      return(<div>You have no cards in collection.</div>)
-    }
-  }
+  renderNavPanel = () => {
+    return(<div>
+      <CollectionPageNavPanel 
+        handleLastPage={this.handleLastPage.bind(this)}
+        handleNextPage={this.handleNextPage.bind(this)}
+        currPage={this.state.page}
+        elemPerPage={this.state.elemPerPage}
+        totalElems={this.props.collectionList.length}
+      />
+      </div>
+      )
+  } 
 
   renderTableTitle = () => {
     return(
@@ -77,6 +67,22 @@ class CollectionTable extends Component {
       <div style={{flex: 1}}></div>
     </div>
   )}
+
+  renderTableBody = () => {
+    if (!(this.props.collectionList.length === 0)) {
+      /*deep copying the prop and sorting it (use fast data-loss copy since everything is JSON)*/
+      var list = this.loadSortedList()
+
+      return (
+        <div>
+          {this.renderTableElems(list)}
+          {this.renderNavPanel()}
+        </div>
+        )
+    } else {
+      return(<div>You have no cards in collection.</div>)
+    }
+  }
 
   renderTableElems = (list) => {
     let currCSS = 'collection_result_gray'
@@ -102,7 +108,7 @@ class CollectionTable extends Component {
   loadSortedList = () => {
     let list = JSON.stringify(this.props.collectionList).valueOf()
     list = JSON.parse(list)
-    list.sort((a,b) => {return (a.name.localeCompare(b.name) || a.set.localeCompare(b.set) || a.is_foil-b.is_foil)})
+    list.sort((a,b) => {return (a.card_name.localeCompare(b.card_name) || a.set_code.localeCompare(b.set_code) || a.is_foil-b.is_foil)})
     return list
   }
 

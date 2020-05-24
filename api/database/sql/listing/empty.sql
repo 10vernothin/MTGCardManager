@@ -1,0 +1,1 @@
+TRUNCATE TABLE listing CASCADE

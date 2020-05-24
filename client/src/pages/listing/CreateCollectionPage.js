@@ -117,7 +117,7 @@ class CreateCollectionPage extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    fetch('/api/collections/submit-creation-form',
+    fetch('/api/collections/create-collection',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

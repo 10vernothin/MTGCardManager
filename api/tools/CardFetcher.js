@@ -1,72 +1,64 @@
 var fs = require('fs').promises;
-var _db = require('../database/database');
-var pgdb = _db.getConnectionInstance();
+var dbModule = require('../database/database');
 var path = "../api/json/scryfall/cards"
 
-/*This now uses postgreSQL*/
-exports.fetchAllCards = async (orderby = 'name', limit = 50) => {
-    return await pgdb.any(`SELECT * from cards order by ${orderby} LIMIT ${limit}`).catch((err) => {
-        console.log(err.message);
-        err = null;
-    });
-}
-
 /*Subcontainer so this function can be chained to refine results. E.g. C->Co->Cob->Cobr...*/
-exports.queryCardList = async (nameFragment, orderby = 'name', limit = 100) => {
-    nameFragment = nameFragment.replace("'", "''");
+exports.queryCardList = async (nameFragment, orderby = 'card_name', limit = 100) => {
+
     //console.log(nameFragment)
-    let res = await pgdb.any(`SELECT * from cards where name ~* '(\\m${nameFragment})' order by ${orderby} LIMIT ${limit}`).catch((err) => {
+    try {
+        var res = await dbModule.getConnectionInstance().cards.query(nameFragment, { orderBy: orderby, limit: limit })
+        return res
+    } catch (err) {
         console.log("Database Error:", err);
         err = null;
-    }).catch((err) => { console.log(err) });
-    //console.log(res)
-    return res
+    }
 }
 
-exports.selectCardJSONData = async (set, set_id) => {
-    let cardpath = path.concat('/').concat(set).concat('/').concat(set_id.replace('*', '_star')).concat('.json')
+exports.fetchCardObjectData = async (set, set_id) => {
+    var cardpath = path.concat('/').concat(set).concat('/').concat(set_id.replace('*', '_star')).concat('.json')
     //console.log(cardpath);
-    let res = await pgdb.any(`SELECT id from cards where set = $1 and set_id = $2`, [set, set_id]).catch((err) => {
+    var res = await dbModule.getConnectionInstance().cards.select({set_code:set, collector_number: set_id}).catch((err) => {
         console.log(err.message);
         err = null;
     });
-    let obj = JSON.parse(await fs.readFile(cardpath, "utf-8"));
+    var obj = JSON.parse(await fs.readFile(cardpath, "utf-8"));
     obj.card_id = res[0].id
     return (obj)
 }
 
-exports.selectCardJSONDataByCardID = async (id) => {
-    let res = await pgdb.any(`SELECT * from cards where id = ${id}`).catch((err) => {
+exports.fetchCardObjectDataByID = async (id) => {
+    var res = await dbModule.getConnectionInstance().cards.select({id:id}).catch((err) => {
         console.log(err.message);
         err = null;
     });
     if (res.length == 0) {
         return null;
     } else {
-        let cardpath = path.concat('/').concat(res[0].set).concat('/').concat(res[0].set_id.replace('*', '_star')).concat('.json')
-        let item = JSON.parse(await fs.readFile(cardpath, "utf-8"))
+        var cardpath = path.concat('/').concat(res[0].set_code).concat('/').concat(res[0].collector_number.replace('*', '_star')).concat('.json')
+        var item = JSON.parse(await fs.readFile(cardpath, "utf-8"))
         item.card_id = id;
         //console.log(item)
         return item;
     }
 }
 
-exports.selectCardJSONDataInBulk = async (variable, opts = { type: 'string' }) => {
-    let sets;
+exports.fetchCardObjectDataInBulk = async (variable, opts = { type: 'string' }) => {
+    var sets;
     if (opts.type == 'string') {
         sets = await this.queryCardList(variable)
     } else {
         sets = variable
     }
-    let lst = []
+    var lst = []
     if (sets === undefined) {
         return lst;
     }
     sets.map((item) => {
         if (opts.type == 'string') {
-            obj = this.selectCardJSONData(item.set, item.set_id)
+            obj = this.fetchCardObjectData(item.set_code, item.collector_number)
         } else {
-            obj = this.selectCardJSONDataByCardID(item)
+            obj = this.fetchCardObjectDataByID(item)
         }
         lst.push(obj)
     })
@@ -75,12 +67,14 @@ exports.selectCardJSONDataInBulk = async (variable, opts = { type: 'string' }) =
 
 
 exports.getPreviews = async (nameFragment, opts = { type: 'string' }) => {
-    lst = await Promise.all(await this.selectCardJSONDataInBulk(nameFragment, opts));
+    lst = await Promise.all(await this.fetchCardObjectDataInBulk(nameFragment, opts));
     list = lst.map((JSONCardObj) => {
         return ({
             name: JSONCardObj.name,
+            collector_number: JSONCardObj.collector_number,
             set_id: JSONCardObj.collector_number,
             set: JSONCardObj.set,
+            set_code: JSONCardObj.set,
             set_name: JSONCardObj.set_name,
             prices: JSONCardObj.prices,
             foil: JSONCardObj.foil,
@@ -92,8 +86,8 @@ exports.getPreviews = async (nameFragment, opts = { type: 'string' }) => {
     return list;
 }
 
-exports.getDetails = async (nameFragment, opts = { type: 'string' }) => {
-    lst = await Promise.all(await this.selectCardJSONDataInBulk(nameFragment, opts));
+exports.getDetailedList = async (nameFragment, opts = { type: 'string' }) => {
+    lst = await Promise.all(await this.fetchCardObjectDataInBulk(nameFragment, opts));
     list = lst.map((JSONCardObj) => {
         JSONCardObj.set_id = JSONCardObj.collector_number;
         return JSONCardObj
@@ -102,8 +96,8 @@ exports.getDetails = async (nameFragment, opts = { type: 'string' }) => {
     return list;
 }
 
-exports.getID = async (set, set_id) => {
-    res = await pgdb.any('SELECT id from cards where set_id = $1 and set = $2', [set_id, set]).catch((err) => {
+exports.getID = async (set_code, collector_number) => {
+    res = await dbModule.getConnectionInstance().cards.select({set_code: set_code, collector_number: collector_number}).catch((err) => {
         console.log(err.message);
         err = null;
     });

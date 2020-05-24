@@ -9,12 +9,9 @@ var encryptor = require('../tools/Encryptor')
 router.post('/api/login/submit-form', function(req, res, next) {
   encryptedPassword = encryptor.EncryptString256(req.body.formControls.password.value)
   console.log("Login Form Submitted");
-  pgdb.any(
-            "SELECT * from users where username = $1 AND pwd = $2", 
-            [req.body.formControls.name.value, encryptedPassword]
-          ).then(
+  pgdb.users.select({username: req.body.formControls.name.value, pwd:encryptedPassword}).then(
     function(data) {
-      console.log('Login query completed.' + data.length);
+      console.log('Login query completed.');
       if (data.length == 0) {
         console.log("Login Not found.")
         res.status(400).json("Login Failed.");
@@ -49,7 +46,7 @@ router.post('/api/create-new-user', function(req, res, next) {
     validity = 1;
   }
   if (validity == 0) {
-    pgdb.any( "INSERT INTO users (username, pwd, email) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING RETURNING username" ,[name,pwd,email])
+    pgdb.users.add({username:name,email:email,pwd:pwd})
     .then(function(data) {
         if (data.length == 0) {
           console.log("Account not made.")

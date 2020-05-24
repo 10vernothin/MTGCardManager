@@ -69,6 +69,10 @@
     padding: 0
 }
 
+.nav_panel_wrapper {
+    border-bottom: 1px gray dashed
+}
+
 /*CollectionPageNavPanel CSS*/
 
 .nav_panel_elements {
@@ -102,3 +106,17 @@
     padding-left: 10px;
 }
 
+/*SearchBox CSS*/
+
+
+.searchbox_dropdown {
+    overflow: auto;
+    display: fixed;
+    position: absolute;
+    height: 100%;
+    left: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    z-index: 2
+}

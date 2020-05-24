@@ -16,7 +16,9 @@ router.post('/api/cards/query-card', function(req, res, next) {
     } else {
         cards.getPreviews(req.body.formControls.cardName.value).then((list) => {
             //console.log(list[0])
-            console.log(list.length+" Results Queried.");
+            console.log(
+                `Query: "${req.body.formControls.cardName.value}"` +
+                " -- " +list.length + `${list.length === 100? '+':''}` + " Results Found.");
             res.send(list)})
     }
 });
@@ -89,7 +91,7 @@ router.post('/api/cards/retrieve-cached-image', function(req, res, next) {
 /*
 This api call receives a request(list(formatted_string)) and fetches the URIs of mana symbols according to the list
 */
-router.post('/api/cards/fetch-list-of-SVG', function(req, res, next) {
+router.post('/api/cards/fetch-list-of-mana-symbols', function(req, res, next) {
     let SymFolderPath = "../api/json/scryfall/symbols/"
     let metafile = SymFolderPath.concat('sym_index.json')
     try{
