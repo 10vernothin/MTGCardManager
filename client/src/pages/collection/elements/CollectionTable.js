@@ -16,7 +16,8 @@ class CollectionTable extends Component {
         collectionID: SessionInfo.getCollectionID(),
         collectionName: SessionInfo.getCollectionName(),
         page: 1,
-        elemPerPage: 10
+        elemPerPage: 10,
+        disableAll: false
         }
   }
 
@@ -39,11 +40,12 @@ class CollectionTable extends Component {
   renderNavPanel = () => {
     return(<div>
       <CollectionPageNavPanel 
-        handleLastPage={this.handleLastPage.bind(this)}
-        handleNextPage={this.handleNextPage.bind(this)}
+        handleChangeAnyPage = {this.handleChangeAnyPage.bind(this)}
         currPage={this.state.page}
         elemPerPage={this.state.elemPerPage}
         totalElems={this.props.collectionList.length}
+        disableAll= {this.state.disableAll}
+
       />
       </div>
       )
@@ -51,7 +53,7 @@ class CollectionTable extends Component {
 
   renderTableTitle = () => {
     return(
-    <div class='collection_table'>
+    <div class='collection_table_title'>
       <div style={{flex: 3}}></div>
       <div style={{flex: 1}}>NO.</div>
       <div style={{flex: 2}}>CARD NAME</div>
@@ -85,7 +87,7 @@ class CollectionTable extends Component {
   }
 
   renderTableElems = (list) => {
-    let currCSS = 'collection_result_gray'
+    var currCSS = 'collection_result_gray'
     return(
         list.map((info, index) => {
           currCSS = (currCSS === 'collection_result_gray')? 'collection_result_white': 'collection_result_gray'
@@ -106,7 +108,7 @@ class CollectionTable extends Component {
   //Loader Methods
 
   loadSortedList = () => {
-    let list = JSON.stringify(this.props.collectionList).valueOf()
+    var list = JSON.stringify(this.props.collectionList).valueOf()
     list = JSON.parse(list)
     list.sort((a,b) => {return (a.card_name.localeCompare(b.card_name) || a.set_code.localeCompare(b.set_code) || a.is_foil-b.is_foil)})
     return list
@@ -114,24 +116,10 @@ class CollectionTable extends Component {
 
   //Binded Methods
 
-  handleNextPage = e => {
-    e.preventDefault()
-    let nextPage = this.state.page+1;
-    if (!((nextPage) > Math.ceil(this.props.collectionList.length/this.state.elemPerPage))) {
-      this.setState({
-        page: nextPage,
-      })
-    }
-  }
-
-  handleLastPage = e => {
-    e.preventDefault()
-    let nextPage = this.state.page-1;
-    if (nextPage >= 1) {
-      this.setState({
-        page: nextPage
-      })
-    }
+  handleChangeAnyPage = (pageNumber) => {
+    this.setState({
+      page: pageNumber
+    })
   }
 
 }

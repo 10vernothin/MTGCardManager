@@ -50,7 +50,7 @@ class CollectionTableElement extends Component {
                 <div style={{flex: 1}}>{this.state.id_key}</div>
                 <div style={{flex: 2}} >{cardObj.name}</div>
                 <div style={{flex: 2}}>
-                    <div style={{display: 'flex', justifyContent: 'center', 'flex-wrap':'wrap'}}>
+                    <div class='collection_table_mana_cost'>
                         <ManaCostPanel cardObj = {cardObj} size={{width:'20px', height:'auto'}}/>
                     </div>
                 </div>

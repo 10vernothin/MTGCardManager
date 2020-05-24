@@ -14,6 +14,7 @@ class CollectionTableListForm extends Component {
       page: 1,
       elemPerPage: 50,
       currIndex: 'Name',
+      disableAll: false,
       list: []
     }
     this.sortIndices = ['Name', 'Type', 'CMC', 'Colors', 'Set', 'Price', 'Amount']
@@ -26,38 +27,42 @@ class CollectionTableListForm extends Component {
 
   render() {
     this.loadList()
-    return (this.renderTable())
+    return (
+      <div>
+        {this.renderNavigationPanel()}
+        {this.renderDropdownPanel()}
+        {this.renderTable()}
+
+      </div>
+    )
   }
 
   //Render Methods
 
-  renderTable = () => {
-    if (!(this.state.list.length === 0)) {
-      return (
-        <div>
-          <CollectionPageNavPanel
-            handleLastPage={this.handleLastPage.bind(this)}
-            handleNextPage={this.handleNextPage.bind(this)}
-            currPage={this.state.page}
-            elemPerPage={this.state.elemPerPage}
-            totalElems={this.props.collectionList.length}
-          />
-          {this.renderDropdownPanel()}
-          {this.renderListPanel()}
-          <CollectionPageNavPanel
-            handleLastPage={this.handleLastPage.bind(this)}
-            handleNextPage={this.handleNextPage.bind(this)}
-            currPage={this.state.page}
-            elemPerPage={this.state.elemPerPage}
-            totalElems={this.props.collectionList.length}
-          />
-        </div>
-      )
-    } else {
-      return (<div>You have no cards in collection.</div>)
-    }
-  }
+  renderNavigationPanel = () => {
+    return (
+      <CollectionPageNavPanel
+        handleChangeAnyPage={this.handleChangeAnyPage.bind(this)}
+        currPage={this.state.page}
+        elemPerPage={this.state.elemPerPage}
+        totalElems={this.props.collectionList.length}
+        disableAll={this.state.disableAll}
 
+      />)
+  }
+  renderTable = () => {
+    return (
+      <div>
+        {
+          (this.state.list.length === 0) ?
+            null:
+            <div>
+              {this.renderListPanel()}
+              {this.renderNavigationPanel()}
+            </div>
+        }
+      </div>)
+  }
 
   renderListPanel = () => {
     let list = this.loadDefaultSortedList()
@@ -88,16 +93,16 @@ class CollectionTableListForm extends Component {
             : ` $${Number.parseFloat(price).toFixed(2)}> `))
         : ''
     return (
-    <div >
-      <div style={{fontWeight: 'bold', display:'inline-block' }}>{`${priceStr}`}</div>
-      <div style={{display:'inline-block' }}>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</div>
-    </div>
+      <div >
+        <div style={{ fontWeight: 'bold', display: 'inline-block' }}>{`${priceStr}`}</div>
+        <div style={{ display: 'inline-block' }}>{`${info.amt}x ${info.name} [${info.set.toUpperCase()}] ${f}`}</div>
+      </div>
     )
   }
 
   renderDropdownPanel = () => {
     return (
-      <div id='dropdown_panel'>
+      <div id='list_sort_panel'>
         <div id='sortby_position'>{`Sort By: `}</div>
         <select id="sort"
           style={{ display: 'inline-block', width: '200px' }}
@@ -118,7 +123,7 @@ class CollectionTableListForm extends Component {
     newlist.sort((a, b) => {
       let a_price = a.is_foil ? a.prices['usd_foil'] : a.prices['usd']
       let b_price = b.is_foil ? b.prices['usd_foil'] : b.prices['usd']
-      return (b_price*b.amt - a_price*a.amt)
+      return (b_price * b.amt - a_price * a.amt)
     })
     return (this.renderListDefaultSort(newlist, true))
   }
@@ -172,8 +177,8 @@ class CollectionTableListForm extends Component {
     let multiList = list.filter((item) => item.colors.length > 1)
     let colorlessList = list.filter((item) => item.colors.length === 0)
     let monoList = list.filter((item) => item.colors.length === 1)
-    monoList.sort((a, b) => { return a.colors[0].localeCompare(b.colors[0] || a.name.localeCompare(b.name) || a.set.localeCompare(b.set) || a.is_foil - b.is_foil)})
-    let ind = {index: 0}
+    monoList.sort((a, b) => { return a.colors[0].localeCompare(b.colors[0] || a.name.localeCompare(b.name) || a.set.localeCompare(b.set) || a.is_foil - b.is_foil) })
+    let ind = { index: 0 }
     return (
       <div>
         {this.renderMulticolorSublist(multiList, ind)}
@@ -185,7 +190,7 @@ class CollectionTableListForm extends Component {
 
   renderMulticolorSublist = (multiList, ind) => {
     let newPageTrigger = false
-    return(multiList.map((info, index) => {
+    return (multiList.map((info, index) => {
       if ((ind.index < this.state.page * this.state.elemPerPage) && (ind.index >= (this.state.page - 1) * this.state.elemPerPage)) {
         ind.index += 1;
         if (index === 0 || !newPageTrigger) {
@@ -196,8 +201,8 @@ class CollectionTableListForm extends Component {
               <div>{this.renderListElement(info)}</div>
             </div>
           )
-        } else {return (<div>{this.renderListElement(info)}</div>) }
-      } else {ind.index += 1; return (null) }
+        } else { return (<div>{this.renderListElement(info)}</div>) }
+      } else { ind.index += 1; return (null) }
     }))
   }
 
@@ -205,18 +210,18 @@ class CollectionTableListForm extends Component {
     let newPageTrigger = false
     let prevColor = ''
     let colorKeys = { "W": 'White', "U": 'Blue', "B": 'Black', "R": 'Red', "G": 'Green' }
-    return(monoList.map((info) => {
+    return (monoList.map((info) => {
       if ((ind.index < this.state.page * this.state.elemPerPage) && (ind.index >= (this.state.page - 1) * this.state.elemPerPage)) {
         ind.index += 1;
         if (!(info.colors[0] === prevColor) || !newPageTrigger) {
           prevColor = info.colors[0]
-          newPageTrigger=true
+          newPageTrigger = true
           return (
             <div>
               <div><h3>{colorKeys[info.colors[0]]}</h3></div>
               <div>{this.renderListElement(info)}</div>
             </div>
-          ) 
+          )
         } else { return (<div>{this.renderListElement(info)}</div>) }
       } else { ind.index += 1; return (null) }
     }))
@@ -235,8 +240,8 @@ class CollectionTableListForm extends Component {
               <div>{this.renderListElement(info)}</div>
             </div>
           )
-        } else {return (<div>{this.renderListElement(info)}</div>) }
-      } else {ind.index += 1; return (null) }
+        } else { return (<div>{this.renderListElement(info)}</div>) }
+      } else { ind.index += 1; return (null) }
     }))
   }
 
@@ -287,24 +292,10 @@ class CollectionTableListForm extends Component {
 
   //Binded Methods
 
-  handleNextPage = e => {
-    e.preventDefault()
-    let nextPage = this.state.page + 1;
-    if (!((nextPage) > Math.ceil(this.props.collectionList.length/this.state.elemPerPage))) {
-      this.setState({
-        page: nextPage
-      })
-    }
-  }
-
-  handleLastPage = e => {
-    e.preventDefault()
-    let nextPage = this.state.page - 1;
-    if (nextPage >= 1) {
-      this.setState({
-        page: nextPage
-      })
-    }
+  handleChangeAnyPage = (pageNumber) => {
+    this.setState({
+      page: pageNumber
+    })
   }
 
 }

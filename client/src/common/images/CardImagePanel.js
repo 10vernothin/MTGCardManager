@@ -58,7 +58,7 @@ class CardImagePanel extends Component {
   })}})}}
 
   loadImageByID = (id, image_type) => {
-    fetch('/api/collections/fetch-row', 
+    fetch('/api/collections/fetch-card-object', 
     { 
       method: 'POST', 
       headers: { 'Content-Type': 'application/json'},

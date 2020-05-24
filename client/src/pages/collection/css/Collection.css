@@ -11,6 +11,7 @@
     padding: 0;
     margin: 0;
     z-index: 1;
+    background-color: lightgray;
 }
 
 .collection_bar_main {
@@ -28,9 +29,14 @@
 }
 
 .collection_title {
-    margin: 0 auto; 
-    width: 100%; 
+    padding: 0 auto; 
+    width: 99.9%;
+    height: 20%;
+    margin: 0 0;
     text-align: center;
+    background-color: gray;
+    z-index: 2;
+    border: 0.5px gray dashed;
 }
 
 .toolbar_buttons  {
@@ -41,14 +47,15 @@
 
 /*CollectionTable CSS*/
 
-.collection_table {
+.collection_table_title {
     border-bottom: 1px black solid;
     border-top: 1px black solid;
     margin: 0 auto;
     width: 100%;
     display: flex;
     text-align: center;
-    padding: 0
+    padding: 0;
+    background-color: gray;
 }
 
 .collection_result_gray {
@@ -56,7 +63,8 @@
     width: 100%;
     display: flex;
     text-align: center; 
-    background-color: gray; 
+    background-color: darkslategray;
+    color: white; 
     padding: 0
 }
 
@@ -65,19 +73,45 @@
     width: 100%;
     display: flex;
     text-align: center; 
-    background-color: white; 
+    background-color: lightslategray; 
     padding: 0
 }
 
-.nav_panel_wrapper {
-    border-bottom: 1px gray dashed
-}
 
 /*CollectionPageNavPanel CSS*/
 
+
+.nav_panel_wrapper {
+    padding: 0 auto; 
+    width: 100%;
+    height: 20%;
+    margin: 0 auto;
+    text-align: center;
+    background-color: lightgray;
+    z-index: 2;
+    border-top: 1px black solid;
+}
+
 .nav_panel_elements {
     display: inline-block;
-    margin: auto 0;
+    margin: auto;
+    padding: 10px 10px;
+}
+
+.page_nav_text_input {
+    height: 25px;
+    width: 35px;
+    text-align: center;
+}
+
+
+.nav_inline {
+    display: inline;
+    font-weight: bold;
+}
+
+.nav_horizontal_padding {
+    padding-right: 10px;
 }
 
 /*CollectionTableElement CSS*/
@@ -86,18 +120,25 @@
     padding: 0;
     height: auto;
     width: 150px;
-    border: 1px black solid;
     flex: 3
+}
+
+.collection_table_mana_cost {
+    display: flex;
+    justify-content: center;
+    flex-wrap:wrap;
+    padding: 5px 5px;
 }
 
 /*CollectionTableListForm CSS*/
 
-#dropdown_panel {
+#list_sort_panel {
     width: 100%;
     padding-bottom: 3px; 
     margin: 0 auto; 
     border-top: 1px solid black; 
     border-bottom: 1px solid black;
+    background-color: lightgray;
 }
 
 #sortby_position {

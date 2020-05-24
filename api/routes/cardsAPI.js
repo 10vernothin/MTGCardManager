@@ -120,10 +120,11 @@ This api call receives a request(list_of_card_id, opts{attributes}) and sends a 
 contains the attributes of the corresponding card_id
 */
 router.post('/api/cards/fetch-card-attribute', function(req, res, next) {
+    try{
     let attributes = req.body.opts.map((item) => {
         return item
     })
-    cards.selectCardJSONDataInBulk(req.body.lstOfIds, {type: 'id'}).then((res) => {
+    cards.fetchCardObjectDataInBulk(req.body.lstOfIds, {type: 'id'}).then((res) => {
         return Promise.all(res)
     }).then((ress) =>{
         let n = []
@@ -139,10 +140,13 @@ router.post('/api/cards/fetch-card-attribute', function(req, res, next) {
             listObj.amt = req.body.amt[index]
             n.push(listObj)
         })
-        res.json(n)
+        res.send(n)
     }).catch((err) => {
         console.log(err);
     })
+} catch (err) {
+    console.log(err)
+}
 })
 
 module.exports = router;

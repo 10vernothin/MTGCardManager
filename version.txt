@@ -1,17 +1,41 @@
-Latest Version: Alpha 2.5.2
-Static Build: Alpha 1.1
-Last Update: M05/D19/Y2020
+Latest Version: Alpha 2.6.1
+Static Build: Alpha 1.2
+Last Update: M05/D24/Y2020
 
+What's new 2.6:
+  -> Database Overhaul:
+    - database restructured into a repository pattern (as demo'd by pg-promise's author)
+    - Created a repository of .sql files for each table controlled by a .js file, and updated most of the API to reflect that
+    - Changed column names and table names (notably collection_list -> listing) to reflect better what they do. 
+    - This in turn broke some of the front-end stuff, but I have fixed most of the issues.
+    - Updated the static build, so it won't break immediately when you try to run it
+  -> Database Setup:
+    - Part of getting the project to Beta is reproduceability, and part of why it couldn't be reproduced was because there was
+      no way to set up the tables of the database or even create a custom database
+    - Now, you can change your database, create a new database, reload tables, and easily set up everything
+    - It even checks for availability and whether it is online.
+  -> Changed the names of some of the API to better reflect what they do.
+  -> Changed the design of the collection pagination UI.
+  -> Added some additional front-end design
+  -> More testing is needed to check if anything else is broken by the great database update
+
+Known bugs:
+
+What's to come:
+ - Refactoring the API
+ - Splitting of user-build and admin-build (default is admin build)
+ - Ability to upload your collection
+------------------------------------------------------------
 What's new 2.5:
   -> Added alternate hooked implementation for some classes (mostly as an exercise).
      They will not be used until the project is complete and will probably be part of a new split project. All used assets
      will be in class form.
   -> Added confirmation dialogs for logging out and deleting collection so no accidental deletions
-  -> Added routing and fixed missing history objects for some classes.
+  -> Fixed routing and fixed missing history objects for some classes.
   -> Created a Database Setup page. It is currently nonfunctional, and only will show your current settings
   -> Database Setup page now functional. The UI checks for connectivity before the host/database can be changed.
     -Added some formatting
-    -Password can be shown be mousedowning the "show password" button
+    -Password can be shown by mousedowning the "show password" button
     -The Database Setup page will not tell you whether your database is correctly configured. That will be implemented soon.
     -Your sensative data will be stored in db-info.dat, and will be excluded from git
     -db-info.dat will now be auto-generated with dummy default values if it is missing (Note: reading/writing db-info.dat uses Sync.),
@@ -84,10 +108,3 @@ What's new 2.0:
  - Added some error handling
  - Optimize some backend and frontend code so the program runs faster
  - Documentation
-
-Known bugs:
-
-What's to come:
- - Splitting of user-build and admin-build (default is admin build)
- - Ability to upload your collection
- - Ability to set up database

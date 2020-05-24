@@ -6,7 +6,9 @@ class CollectionPageNavPanel extends Component {
         super(props)
         this.state = {
             lastDisabled:true,
-            nextDisabled:true
+            nextDisabled:true,
+            maxPages: Math.ceil(Math.max(1, this.props.totalElems/this.props.elemPerPage)),
+            navPage: this.props.currPage
         }
     }
     
@@ -19,44 +21,64 @@ class CollectionPageNavPanel extends Component {
 
     renderNavPanel = () => {
         return(
-            <div class='collection_title'>
-                <div style={{width: '10%'}} class='nav_panel_elements'>
-                    <button onClick={this.props.handleLastPage} disabled={this.state.lastDisabled}>Previous Page</button>
+            <div class='nav_panel_wrapper'>
+            {this.props.totalElems === 0 ? null:
+                <div style={{width: '98.3%'}} class='nav_panel_elements'>
+                    <div class='nav_inline nav_horizontal_padding'>Page:</div>
+                    <div class='nav_inline nav_horizontal_padding'>{this.renderPageNavigator()}</div>
+                    <div class='nav_inline'>{`/  ${this.state.maxPages}`}</div>
                 </div>
-                <div style={{width: '80%'}} class='nav_panel_elements'>
-                    <div>Page</div>
-                    <div>{this.props.currPage}</div>
-                    <div>/{Math.ceil(Math.max(1, this.props.totalElems/this.props.elemPerPage))}</div>
-                </div>
-                <div style={{width: '10%'}} class='nav_panel_elements'>
-                    <button onClick={this.props.handleNextPage} disabled={this.state.nextDisabled}>Next Page</button>
-                </div>
+            }
             </div>)
     }
 
     renderPageNavigator = () => {
         return(
-            <input
-                type="range"
-                min = "1"
-                name="desc"
+            <select
                 value={this.props.currPage}
-                onChange={this.handleChange}
-                max = {Math.max(1, this.props.totalElems/this.props.elemPerPage)}
-            />
+                onChange={this.handleAnyPage}
+                class = 'page_nav_text_input'
+            >
+            {(new Array(this.state.maxPages)).fill(0).map((_v,index) =>{
+                return (<option value={index+1}>{index+1}</option>)
+            })
+            }
+            </select>
         )
 
     }
     //Loader Methods
 
     loadDisabled = () => {
-        let last = (this.props.currPage === 1)? true: false
-        let next = (this.props.currPage < Math.ceil(this.props.totalElems/this.props.elemPerPage))? false: true
+        var last = (this.props.currPage === 1)? true: false
+        var next = (this.props.currPage < Math.ceil(this.props.totalElems/this.props.elemPerPage))? false: true
         if (!(next === this.state.nextDisabled && last === this.state.lastDisabled)) {
             this.setState({
                 nextDisabled: next,
                 lastDisabled: last
             })
+        }
+    }
+
+    //Handler Methods
+
+    handlePrevPage = e => {
+        e.preventDefault()
+        if (this.props.currPage-1 >= 1 && this.props.currPage-1 <= this.state.maxPages) {
+            this.props.handleChangeAnyPage(this.props.currPage-1)
+        }
+    }
+
+    handleAnyPage = e => {
+        e.preventDefault()
+        const page = parseInt(e.target.value)? parseInt(e.target.value): ''
+        this.props.handleChangeAnyPage(page)
+    }
+
+    handleNextPage = e => {
+        e.preventDefault()
+        if (this.props.currPage+1 >= 1 && this.props.currPage+1 <= this.state.maxPages) {
+            this.props.handleChangeAnyPage(this.props.currPage+1)
         }
     }
 

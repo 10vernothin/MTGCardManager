@@ -146,7 +146,7 @@ router.post('/api/collections/fetch-collection-by-id', function (req, res, next)
                         if (result.length === 0) {
                             console.log('No cards in Collection.')
                         } else {
-                            console.log(result)
+                            console.log(result.length)
                             response = result
                         }
                         res.send({name: listingData[0].collection_name, description: listingData[0].description, list: result})
@@ -269,7 +269,7 @@ router.post('/api/collections/fetch-collection-as-CSV', function (req, res, next
                 console.log('No cards in Collection.')
                 res.send([])
             } else {
-                ds = `"Collection Name","Collection ID","Description","Card Name", "Card Set", "Collector's Number", "Amount", "Foil"\n`
+                ds = `"Collection Name","Collection ID","Description","Card Name","Card Set","Collector Number","Amount","Foil"\n`
                 data.forEach((item) => {
                     ds = ds.concat(`"${item.collection_name}","${item.listing_id}","${item.description}","${item.card_name}",`)
                     ds = ds.concat(`"${item.set_code}","${item.collector_number}","${item.amt}","${item.is_foil}"\n`)

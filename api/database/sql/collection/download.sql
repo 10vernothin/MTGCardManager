@@ -1,5 +1,4 @@
 SELECT 
-    collection.id, 
     cards.collector_number, 
     cards.set_code, 
     collection.card_id, 
