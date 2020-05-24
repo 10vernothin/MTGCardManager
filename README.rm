@@ -1,6 +1,7 @@
 Magic the Gathering Collections Manager
 Creater: Andy Rei Kou
-Version: 2.5.1
+Dev Version: Alpha 2.6.1
+Static Build: Alpha 1.2
 
 Disclaimer: All cards and images displayed are not mine.
 
@@ -20,9 +21,6 @@ To start:
  - For client only on dev server ">>npm run client-dev-start" (The first instance will run at 3000, but the second and third will prompt
    run at 3001, 3002... etc)
  - For concurrent server-client, ">>npm run dev-start"
-
-Notes:
-Current build requires PostgreSQL tables already built-in, but I will have a create table/database function in the future.
 
 Please check version.txt for more updates
 
